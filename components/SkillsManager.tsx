@@ -295,7 +295,7 @@ export function SkillsManager() {
       {/* Filters */}
       <div className="px-6 py-4" style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
         <div className="flex gap-2 flex-wrap">
-          {(['all', ...Object.keys(categorias)] as const).map((cat) => (
+          {(['all', 'scraping', 'analise', 'criacao', 'envio', 'navegacao', 'custom'] as const).map((cat) => (
             <button
               key={cat}
               onClick={() => setFilter(cat)}
@@ -306,7 +306,7 @@ export function SkillsManager() {
                 border: `1px solid ${filter === cat ? 'var(--terracotta)40' : 'var(--border)'}`
               }}
             >
-              {cat === 'all' ? 'Todas' : categorias[cat].label}
+              {cat === 'all' ? 'Todas' : categorias[cat as keyof typeof categorias].label}
             </button>
           ))}
         </div>
