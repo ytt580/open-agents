@@ -225,7 +225,7 @@ export function SkillsManager() {
   const [skills, setSkills] = useState<Skill[]>(defaultSkills)
   const [showModal, setShowModal] = useState(false)
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null)
-  const [filter, setFilter] = useState<'all' | keyof typeof categorias>('all')
+  const [filter, setFilter] = useState<string>('all')
   const [newSkill, setNewSkill] = useState({
     nome: '',
     descricao: '',
