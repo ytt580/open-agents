@@ -104,66 +104,98 @@ body {
 }
 
 /* Componentes */
-@layer components {
-  .card {
-    @apply bg-white rounded-2xl border shadow-sm;
-    border-color: var(--border);
-  }
-  
-  .card-elevated {
-    @apply bg-white rounded-2xl border shadow-md;
-    border-color: var(--border);
-  }
-  
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-xl transition-all duration-200;
-    background: var(--accent);
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background: var(--accent-dark);
-    box-shadow: 0 4px 12px var(--accent-glow);
-  }
-  
-  .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-xl transition-all duration-200 border;
-    background: var(--surface);
-    color: var(--text-primary);
-    border-color: var(--border);
-  }
-  
-  .btn-secondary:hover {
-    background: var(--bg-secondary);
-    border-color: var(--accent);
-  }
-  
-  .btn-sage {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-xl transition-all duration-200;
-    background: var(--sage);
-    color: white;
-  }
-  
-  .btn-sage:hover {
-    background: var(--sage-dark);
-  }
-  
-  .input-field {
-    @apply w-full px-4 py-3 rounded-xl transition-all duration-200 border;
-    background: var(--bg-secondary);
-    border-color: var(--border);
-    color: var(--text-primary);
-  }
-  
-  .input-field:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
-  }
-  
-  .input-field::placeholder {
-    color: var(--text-tertiary);
-  }
+.card {
+  background: var(--surface);
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.card-elevated {
+  background: var(--surface);
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.2s;
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--accent-dark);
+  box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.2s;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent);
+}
+
+.btn-sage {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.2s;
+  background: var(--sage);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-sage:hover {
+  background: var(--sage-dark);
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.input-field::placeholder {
+  color: var(--text-tertiary);
 }
 
 /* Animações sutis */
@@ -178,7 +210,13 @@ body {
 
 /* Botão de status - estilo pílula */
 .status-pill {
-  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .status-pill.active {
@@ -193,7 +231,12 @@ body {
 
 /* Toggle switch */
 .toggle {
-  @apply relative w-11 h-6 rounded-full transition-colors duration-200 cursor-pointer;
+  position: relative;
+  width: 2.75rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+  cursor: pointer;
   background: var(--border);
 }
 
@@ -203,7 +246,15 @@ body {
 
 .toggle::after {
   content: '';
-  @apply absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 shadow-sm;
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: white;
+  border-radius: 9999px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 .toggle.active::after {
@@ -212,7 +263,10 @@ body {
 
 /* Flow connector line */
 .flow-connector {
-  @apply w-0.5 h-8 mx-auto;
+  width: 0.125rem;
+  height: 2rem;
+  margin-left: auto;
+  margin-right: auto;
   background: linear-gradient(to bottom, var(--border), var(--accent-light));
 }
 
