@@ -14,7 +14,6 @@ import {
   Clock
 } from 'lucide-react'
 import { clsx } from 'clsx'
-import { UserMenu } from './UserMenu'
 
 interface SidebarProps {
   currentPage: string
@@ -92,13 +91,6 @@ export function Sidebar({ currentPage, onNavigate, collapsed, onToggleCollapse }
             )
           })}
         </nav>
-
-        {/* User Menu */}
-        {!collapsed && (
-          <div className="p-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-            <UserMenu />
-          </div>
-        )}
 
         {/* Collapse */}
         <div className="p-3">
