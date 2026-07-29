@@ -29,10 +29,10 @@ interface ApiKey {
 }
 
 const provedores = {
-  openai: { label: 'OpenAI (GPT-4/5)', icon: Bot, cor: 'var(--sage-dark)', bg: 'var(--sage)15', url: 'https://platform.openai.com/api-keys' },
-  anthropic: { label: 'Anthropic (Claude)', icon: Bot, cor: 'var(--accent)', bg: 'var(--accent)15', url: 'https://console.anthropic.com/' },
-  google: { label: 'Google (Gemini)', icon: Globe, cor: 'var(--terracotta)', bg: 'var(--terracotta)15', url: 'https://aistudio.google.com/apikey' },
-  modal: { label: 'Modal (Kimi K3)', icon: Zap, cor: 'var(--terracotta-light)', bg: 'var(--terracotta)15', url: '' },
+  openai: { label: 'OpenAI (GPT-4/5)', icon: Bot, cor: 'var(--sage-dark)', bg: 'var(--sage-15)', url: 'https://platform.openai.com/api-keys' },
+  anthropic: { label: 'Anthropic (Claude)', icon: Bot, cor: 'var(--accent)', bg: 'var(--accent-15)', url: 'https://console.anthropic.com/' },
+  google: { label: 'Google (Gemini)', icon: Globe, cor: 'var(--terracotta)', bg: 'var(--terracotta-15)', url: 'https://aistudio.google.com/apikey' },
+  modal: { label: 'Modal (Kimi K3)', icon: Zap, cor: 'var(--terracotta-light)', bg: 'var(--terracotta-15)', url: '' },
   outro: { label: 'Outro', icon: Key, cor: 'var(--text-secondary)', bg: 'var(--bg-secondary)', url: '' },
 }
 
@@ -99,7 +99,7 @@ export function ApiManager() {
       {/* Header */}
       <div className="p-6 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--accent)15' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--accent-15)' }}>
             <Key className="w-6 h-6" style={{ color: 'var(--accent)' }} />
           </div>
           <div>
@@ -114,8 +114,8 @@ export function ApiManager() {
       </div>
 
       {/* Aviso */}
-      <div className="px-6 py-3" style={{ borderBottom: '1px solid var(--sage)30', background: 'var(--sage)10' }}>
-        <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'var(--sage)5', border: '1px solid var(--sage)20' }}>
+      <div className="px-6 py-3" style={{ borderBottom: '1px solid var(--sage-30)', background: 'var(--sage-10)' }}>
+        <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'var(--sage-5)', border: '1px solid var(--sage-20)' }}>
           <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--sage-dark)' }} />
           <div className="text-sm" style={{ color: 'var(--sage-dark)' }}>
             <strong>Segurança:</strong> As chaves são salvas localmente no navegador. Para produção, use variáveis de ambiente no servidor. As chaves ficam acessíveis para todos os fluxos e skills que precisem de IA.
@@ -148,7 +148,7 @@ export function ApiManager() {
                       <div className="flex items-center gap-3">
                         <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{key.nome}</h3>
                         <span className="px-2 py-0.5 rounded text-xs font-medium" style={{
-                          background: key.ativo ? 'var(--sage)20' : 'var(--bg-secondary)',
+                          background: key.ativo ? 'var(--sage-20)' : 'var(--bg-secondary)',
                           color: key.ativo ? 'var(--sage-dark)' : 'var(--text-tertiary)'
                         }}>
                           {key.ativo ? 'Ativa' : 'Inativa'}
@@ -223,7 +223,7 @@ export function ApiManager() {
                     return (
                       <button key={p} onClick={() => setForm({...form, provedor: p})} className="flex items-center gap-2 p-3 rounded-xl border-2 transition-colors" style={{
                         borderColor: form.provedor === p ? 'var(--terracotta)' : 'var(--border)',
-                        background: form.provedor === p ? 'var(--terracotta)15' : 'transparent',
+                        background: form.provedor === p ? 'var(--terracotta-15)' : 'transparent',
                         color: form.provedor === p ? 'var(--terracotta)' : 'var(--text-tertiary)'
                       }}>
                         <Icon className="w-4 h-4" />

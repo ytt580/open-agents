@@ -17,6 +17,31 @@
   --accent-light: #d4956f;
   --accent-dark: #a85a3a;
   --accent-glow: rgba(196, 112, 75, 0.15);
+
+  /* Alias para componentes */
+  --terracotta: #c4704b;
+  --terracotta-light: #d4956f;
+  --terracotta-dark: #a85a3a;
+  --terracotta-glow: rgba(196, 112, 75, 0.15);
+  --terracotta-bg: rgba(196, 112, 75, 0.1);
+  --terracotta-border: rgba(196, 112, 75, 0.3);
+  --sage-bg: rgba(125, 155, 118, 0.1);
+  --sage-border: rgba(125, 155, 118, 0.3);
+
+  /* Opacidades para componentes */
+  --terracotta-5: rgba(196, 112, 75, 0.05);
+  --terracotta-10: rgba(196, 112, 75, 0.10);
+  --terracotta-15: rgba(196, 112, 75, 0.15);
+  --terracotta-20: rgba(196, 112, 75, 0.20);
+  --terracotta-30: rgba(196, 112, 75, 0.30);
+  --terracotta-40: rgba(196, 112, 75, 0.40);
+  --sage-5: rgba(125, 155, 118, 0.05);
+  --sage-10: rgba(125, 155, 118, 0.10);
+  --sage-15: rgba(125, 155, 118, 0.15);
+  --sage-20: rgba(125, 155, 118, 0.20);
+  --sage-30: rgba(125, 155, 118, 0.30);
+  --accent-15: rgba(196, 112, 75, 0.15);
+  --clay-15: rgba(184, 160, 137, 0.15);
   
   --sage: #7d9b76;
   --sage-light: #a3c49b;

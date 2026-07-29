@@ -250,7 +250,7 @@ export function Scheduler() {
       {/* Header */}
       <div className="p-6 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--terracotta)15' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--terracotta-15)' }}>
             <Clock className="w-6 h-6" style={{ color: 'var(--terracotta)' }} />
           </div>
           <div>
@@ -263,7 +263,7 @@ export function Scheduler() {
         
         <div className="flex items-center gap-4">
           {/* Status do Servidor */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: 'var(--sage)10', border: '1px solid var(--sage)30' }}>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: 'var(--sage-10)', border: '1px solid var(--sage-30)' }}>
             <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--sage)' }} />
             <span className="text-sm font-medium" style={{ color: 'var(--sage-dark)' }}>Scheduler Online</span>
           </div>
@@ -278,8 +278,8 @@ export function Scheduler() {
       </div>
 
       {/* Aviso de Infraestrutura */}
-      <div className="px-6 py-3" style={{ borderBottom: '1px solid var(--terracotta)30', background: 'var(--terracotta)10' }}>
-        <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'var(--terracotta)5', border: '1px solid var(--terracotta)20' }}>
+      <div className="px-6 py-3" style={{ borderBottom: '1px solid var(--terracotta-30)', background: 'var(--terracotta-10)' }}>
+        <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'var(--terracotta-5)', border: '1px solid var(--terracotta-20)' }}>
           <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--terracotta)' }} />
           <div className="text-sm" style={{ color: 'var(--terracotta-dark)' }}>
             <strong>Para rodar 24/7:</strong> Este frontend precisa de um backend rodando continuamente. 
@@ -332,13 +332,13 @@ export function Scheduler() {
                   className="card p-5 transition-all"
                   style={{
                     opacity: schedule.ativo ? 1 : 0.7,
-                    boxShadow: isDue ? '0 0 0 2px var(--terracotta)40' : 'none'
+                    boxShadow: isDue ? '0 0 0 2px var(--terracotta-40)' : 'none'
                   }}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{
-                        background: schedule.ativo ? 'var(--sage)20' : 'var(--bg-secondary)'
+                        background: schedule.ativo ? 'var(--sage-20)' : 'var(--bg-secondary)'
                       }}>
                         <Clock className="w-6 h-6" style={{ color: schedule.ativo ? 'var(--sage)' : 'var(--text-tertiary)' }} />
                       </div>
@@ -346,14 +346,14 @@ export function Scheduler() {
                         <div className="flex items-center gap-3">
                           <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{schedule.nome}</h3>
                           <span className="px-2 py-0.5 rounded text-xs font-medium" style={{
-                            background: schedule.ativo ? 'var(--sage)20' : 'var(--bg-secondary)',
+                            background: schedule.ativo ? 'var(--sage-20)' : 'var(--bg-secondary)',
                             color: schedule.ativo ? 'var(--sage-dark)' : 'var(--text-tertiary)'
                           }}>
                             {schedule.ativo ? 'Ativo' : 'Pausado'}
                           </span>
                           {isDue && (
                             <span className="px-2 py-0.5 rounded text-xs font-medium animate-pulse" style={{
-                              background: 'var(--terracotta)20',
+                              background: 'var(--terracotta-20)',
                               color: 'var(--terracotta)'
                             }}>
                               Executando em breve
@@ -383,7 +383,7 @@ export function Scheduler() {
                         onClick={() => setSchedules(prev => prev.map(s => s.id === schedule.id ? {...s, ativo: !s.ativo} : s))}
                         className="p-2 rounded-lg transition-colors"
                         style={{
-                          background: schedule.ativo ? 'var(--terracotta)20' : 'var(--bg-secondary)',
+                          background: schedule.ativo ? 'var(--terracotta-20)' : 'var(--bg-secondary)',
                           color: schedule.ativo ? 'var(--terracotta)' : 'var(--text-tertiary)'
                         }}
                         title={schedule.ativo ? 'Pausar' : 'Ativar'}
@@ -450,9 +450,9 @@ export function Scheduler() {
                       onClick={() => setFormData({...formData, tipo, expressao: tipo === 'cron' ? formData.expressao : getDefaultCron(tipo)})}
                       className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
                       style={{
-                        background: formData.tipo === tipo ? 'var(--terracotta)20' : 'var(--bg-secondary)',
+                        background: formData.tipo === tipo ? 'var(--terracotta-20)' : 'var(--bg-secondary)',
                         color: formData.tipo === tipo ? 'var(--terracotta)' : 'var(--text-tertiary)',
-                        border: `1px solid ${formData.tipo === tipo ? 'var(--terracotta)40' : 'var(--border)'}`
+                        border: `1px solid ${formData.tipo === tipo ? 'var(--terracotta-40)' : 'var(--border)'}`
                       }}
                     >
                       {tipo === 'daily' && 'Diário'}

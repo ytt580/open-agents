@@ -71,7 +71,7 @@ export function BrowserView() {
           })}
         </div>
         <div className="p-3" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-          <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'var(--sage)15' }}>
+          <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'var(--sage-15)' }}>
             <div className="w-2 h-2 rounded-full" style={{ background: 'var(--sage)' }} />
             <span className="text-sm font-medium" style={{ color: 'var(--sage-dark)' }}>IA Online</span>
           </div>

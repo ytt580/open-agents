@@ -37,7 +37,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#0a0a0f]">
+    <div className="flex min-h-screen" style={{ background: 'var(--bg-primary)' }}>
       <Sidebar 
         currentPage={currentPage} 
         onNavigate={(page) => {

@@ -159,7 +159,7 @@ export function Dashboard({ onNavigate, onSelectFlow }: DashboardProps) {
           onClick={() => onNavigate('browser')}
           className="card p-6 text-left hover:shadow-md transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: 'var(--sage)15' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: 'var(--sage-15)' }}>
             <Globe className="w-6 h-6" style={{ color: 'var(--sage)' }} />
           </div>
           <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Abrir Navegador</h3>
@@ -170,7 +170,7 @@ export function Dashboard({ onNavigate, onSelectFlow }: DashboardProps) {
           onClick={() => onNavigate('skills')}
           className="card p-6 text-left hover:shadow-md transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: 'var(--accent)15' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: 'var(--accent-15)' }}>
             <Puzzle className="w-6 h-6" style={{ color: 'var(--accent)' }} />
           </div>
           <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Gerenciar Skills</h3>
@@ -181,7 +181,7 @@ export function Dashboard({ onNavigate, onSelectFlow }: DashboardProps) {
           onClick={() => onNavigate('api')}
           className="card p-6 text-left hover:shadow-md transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: 'var(--clay)15' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: 'var(--clay-15)' }}>
             <Zap className="w-6 h-6" style={{ color: 'var(--clay)' }} />
           </div>
           <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Configurar APIs</h3>

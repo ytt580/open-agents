@@ -19,7 +19,7 @@ export function UserMenu() {
   return (
     <div className="flex items-center gap-3">
       <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: 'var(--bg-secondary)' }}>
-        <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'var(--terracotta)20' }}>
+        <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'var(--terracotta-20)' }}>
           <User className="w-4 h-4" style={{ color: 'var(--terracotta)' }} />
         </div>
         <span className="text-sm font-medium truncate max-w-[120px]" style={{ color: 'var(--text-primary)' }}>

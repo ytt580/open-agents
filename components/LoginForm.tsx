@@ -59,7 +59,7 @@ export function LoginForm() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style={{ background: 'var(--terracotta)15' }}>
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style={{ background: 'var(--terracotta-bg)' }}>
             <User className="w-8 h-8" style={{ color: 'var(--terracotta)' }} />
           </div>
           <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Open-Agents</h1>
@@ -75,14 +75,14 @@ export function LoginForm() {
           </h2>
 
           {error && (
-            <div className="flex items-center gap-3 p-3 rounded-xl mb-4" style={{ background: 'var(--terracotta)10', border: '1px solid var(--terracotta)30' }}>
+            <div className="flex items-center gap-3 p-3 rounded-xl mb-4" style={{ background: 'var(--terracotta-bg)', border: '1px solid var(--terracotta-border)' }}>
               <AlertCircle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--terracotta)' }} />
               <p className="text-sm" style={{ color: 'var(--terracotta-dark)' }}>{error}</p>
             </div>
           )}
 
           {success && (
-            <div className="flex items-center gap-3 p-3 rounded-xl mb-4" style={{ background: 'var(--sage)10', border: '1px solid var(--sage)30' }}>
+            <div className="flex items-center gap-3 p-3 rounded-xl mb-4" style={{ background: 'var(--sage-bg)', border: '1px solid var(--sage-border)' }}>
               <CheckCircle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--sage)' }} />
               <p className="text-sm" style={{ color: 'var(--sage-dark)' }}>{success}</p>
             </div>

@@ -34,11 +34,11 @@ interface Skill {
 }
 
 const categorias = {
-  scraping: { label: 'Scraping', icon: Search, cor: 'var(--sage-dark)', bg: 'var(--sage)15' },
-  analise: { label: 'Análise', icon: Code2, cor: 'var(--accent)', bg: 'var(--accent)15' },
-  criacao: { label: 'Criação', icon: Zap, cor: 'var(--terracotta)', bg: 'var(--terracotta)15' },
-  envio: { label: 'Envio', icon: Mail, cor: 'var(--sage)', bg: 'var(--sage)15' },
-  navegacao: { label: 'Navegação', icon: Globe, cor: 'var(--terracotta-light)', bg: 'var(--terracotta)15' },
+  scraping: { label: 'Scraping', icon: Search, cor: 'var(--sage-dark)', bg: 'var(--sage-15)' },
+  analise: { label: 'Análise', icon: Code2, cor: 'var(--accent)', bg: 'var(--accent-15)' },
+  criacao: { label: 'Criação', icon: Zap, cor: 'var(--terracotta)', bg: 'var(--terracotta-15)' },
+  envio: { label: 'Envio', icon: Mail, cor: 'var(--sage)', bg: 'var(--sage-15)' },
+  navegacao: { label: 'Navegação', icon: Globe, cor: 'var(--terracotta-light)', bg: 'var(--terracotta-15)' },
   custom: { label: 'Custom', icon: Settings, cor: 'var(--text-secondary)', bg: 'var(--bg-secondary)' },
 }
 
@@ -278,7 +278,7 @@ export function SkillsManager() {
       {/* Header */}
       <div className="p-6 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--terracotta)15' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--terracotta-15)' }}>
             <FileCode className="w-6 h-6" style={{ color: 'var(--terracotta)' }} />
           </div>
           <div>
@@ -301,9 +301,9 @@ export function SkillsManager() {
               onClick={() => setFilter(cat)}
               className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
               style={{
-                background: filter === cat ? 'var(--terracotta)20' : 'var(--bg-secondary)',
+                background: filter === cat ? 'var(--terracotta-20)' : 'var(--bg-secondary)',
                 color: filter === cat ? 'var(--terracotta)' : 'var(--text-tertiary)',
-                border: `1px solid ${filter === cat ? 'var(--terracotta)40' : 'var(--border)'}`
+                border: `1px solid ${filter === cat ? 'var(--terracotta-40)' : 'var(--border)'}`
               }}
             >
               {cat === 'all' ? 'Todas' : categorias[cat as keyof typeof categorias].label}
@@ -394,7 +394,7 @@ export function SkillsManager() {
                       <Copy className="w-4 h-4" />
                       Copiar Código
                     </button>
-                    <button className="flex-1 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2" style={{ background: 'var(--terracotta)20', color: 'var(--terracotta)' }}>
+                    <button className="flex-1 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2" style={{ background: 'var(--terracotta-20)', color: 'var(--terracotta)' }}>
                       <Play className="w-4 h-4" />
                       Testar
                     </button>
@@ -469,7 +469,7 @@ export function SkillsManager() {
                         className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-colors"
                         style={{
                           borderColor: isSelected ? 'var(--terracotta)' : 'var(--border)',
-                          background: isSelected ? 'var(--terracotta)15' : 'transparent',
+                          background: isSelected ? 'var(--terracotta-15)' : 'transparent',
                           color: isSelected ? 'var(--terracotta)' : 'var(--text-tertiary)'
                         }}
                       >
