@@ -323,7 +323,7 @@ export function SkillsManager() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredSkills.map((skill) => {
-              const cat = categorias[skill.categoria]
+              const cat = categorias[skill.categoria as keyof typeof categorias]
               const Icon = cat.icon
               const isEditing = editingSkill?.id === skill.id
               
