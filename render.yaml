@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: open-agents
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: 1
+    healthCheckPath: /api/health
+
+  - type: worker
+    name: open-agents-scheduler
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node scheduler.js
+    envVars:
+      - key: NODE_ENV
+        value: production

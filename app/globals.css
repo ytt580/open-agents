@@ -1,0 +1,241 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Paleta Terra - Insperada em natureza e minerais */
+  --bg-primary: #faf8f5;
+  --bg-secondary: #f5f0eb;
+  --bg-tertiary: #ede6dd;
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  
+  /* Cores principais - Terracota + Verde Salva */
+  --accent: #c4704b;
+  --accent-light: #d4956f;
+  --accent-dark: #a85a3a;
+  --accent-glow: rgba(196, 112, 75, 0.15);
+  
+  --sage: #7d9b76;
+  --sage-light: #a3c49b;
+  --sage-dark: #5a7a52;
+  
+  --sand: #d4c5a9;
+  --sand-light: #e8dcc6;
+  
+  --clay: #b8a089;
+  
+  /* Texto */
+  --text-primary: #2d2a26;
+  --text-secondary: #6b6560;
+  --text-tertiary: #9e958c;
+  
+  /* Bordas */
+  --border: #e5ddd4;
+  --border-subtle: #f0ebe5;
+  
+  /* Estados */
+  --success: #7d9b76;
+  --warning: #d4a84b;
+  --error: #c45b5b;
+  --info: #5b8fc4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--clay);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Componentes */
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl border shadow-sm;
+    border-color: var(--border);
+  }
+  
+  .card-elevated {
+    @apply bg-white rounded-2xl border shadow-md;
+    border-color: var(--border);
+  }
+  
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-xl transition-all duration-200;
+    background: var(--accent);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: var(--accent-dark);
+    box-shadow: 0 4px 12px var(--accent-glow);
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-xl transition-all duration-200 border;
+    background: var(--surface);
+    color: var(--text-primary);
+    border-color: var(--border);
+  }
+  
+  .btn-secondary:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent);
+  }
+  
+  .btn-sage {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-xl transition-all duration-200;
+    background: var(--sage);
+    color: white;
+  }
+  
+  .btn-sage:hover {
+    background: var(--sage-dark);
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl transition-all duration-200 border;
+    background: var(--bg-secondary);
+    border-color: var(--border);
+    color: var(--text-primary);
+  }
+  
+  .input-field:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  
+  .input-field::placeholder {
+    color: var(--text-tertiary);
+  }
+}
+
+/* Animações sutis */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
+
+/* Botão de status - estilo pílula */
+.status-pill {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.status-pill.active {
+  background: rgba(125, 155, 118, 0.15);
+  color: var(--sage-dark);
+}
+
+.status-pill.inactive {
+  background: rgba(158, 149, 140, 0.15);
+  color: var(--text-tertiary);
+}
+
+/* Toggle switch */
+.toggle {
+  @apply relative w-11 h-6 rounded-full transition-colors duration-200 cursor-pointer;
+  background: var(--border);
+}
+
+.toggle.active {
+  background: var(--sage);
+}
+
+.toggle::after {
+  content: '';
+  @apply absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 shadow-sm;
+}
+
+.toggle.active::after {
+  transform: translateX(20px);
+}
+
+/* Flow connector line */
+.flow-connector {
+  @apply w-0.5 h-8 mx-auto;
+  background: linear-gradient(to bottom, var(--border), var(--accent-light));
+}
+
+/* Glass morphism para modais */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Texto gradient */
+.text-gradient {
+  background: linear-gradient(135deg, var(--accent), var(--sage));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Borda decorativa */
+.border-decorative {
+  border-image: linear-gradient(135deg, var(--accent), var(--sage)) 1;
+}
+
+/* Sombra colorida */
+.shadow-accent {
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.shadow-sage {
+  box-shadow: 0 4px 20px rgba(125, 155, 118, 0.15);
+}
+
+/* Focus visible para acessibilidade */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Monospace para código */
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
