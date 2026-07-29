@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { AuthProvider } from '@/lib/AuthProvider'
+import { AuthWrapper } from '@/components/AuthWrapper'
 
 export const metadata: Metadata = {
   title: 'Open-Agents - Automação com IA',
@@ -13,7 +15,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          <AuthWrapper>{children}</AuthWrapper>
+        </AuthProvider>
+      </body>
     </html>
   )
 }
