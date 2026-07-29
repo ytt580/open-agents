@@ -39,8 +39,6 @@ const provedores = {
 export function ApiManager() {
   const [keys, setKeys] = useState<ApiKey[]>([
     { id: '1', nome: 'Bluesminds Kimi K3', provedor: 'modal', chave: 'sk-kHPpzsSnsB3qFGzLHc5faG2KDkOfXY16U7rTnzNDvIMiuc1l', ativo: true, usoHoje: 47, limiteDiario: 1000 },
-    { id: '2', nome: 'OpenAI Principal', provedor: 'openai', chave: 'sk-proj-xxxxx...xxxxx', ativo: true, usoHoje: 23, limiteDiario: 1000 },
-    { id: '3', nome: 'Claude Pro', provedor: 'anthropic', chave: 'sk-ant-xxxxx...xxxxx', ativo: true, usoHoje: 15, limiteDiario: 500 },
   ])
 
   const [showModal, setShowModal] = useState(false)
