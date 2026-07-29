@@ -11,7 +11,9 @@ import {
   ChevronRight,
   Zap,
   Plus,
-  Clock
+  Clock,
+  Crown,
+  Bolt
 } from 'lucide-react'
 import { clsx } from 'clsx'
 
@@ -33,6 +35,8 @@ const menuItems = [
 ]
 
 export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggleCollapse }: SidebarProps) {
+  const currentPlan = 'free'
+  
   return (
     <aside className={clsx(
       'fixed left-0 top-0 h-full transition-all duration-300 z-50',
@@ -41,13 +45,22 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
       <div className="flex flex-col h-full">
         <div className="p-6" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent), var(--cyan))' }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent), var(--cyan))', boxShadow: '0 0 20px var(--accent-glow)' }}>
               <Zap className="w-5 h-5 text-white" />
             </div>
             {!collapsed && (
-              <div>
+              <div className="flex-1">
                 <h1 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Open-Agents</h1>
-                <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Automacao com IA</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  {currentPlan === 'premium' ? (
+                    <Crown className="w-3 h-3" style={{ color: 'var(--accent)' }} />
+                  ) : (
+                    <Bolt className="w-3 h-3" style={{ color: 'var(--cyan)' }} />
+                  )}
+                  <span className="text-xs font-medium" style={{ color: currentPlan === 'premium' ? 'var(--accent)' : 'var(--cyan)' }}>
+                    {currentPlan === 'premium' ? 'Premium' : 'Free'}
+                  </span>
+                </div>
               </div>
             )}
           </div>
@@ -90,6 +103,20 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
             )
           })}
         </nav>
+
+        {/* Upgrade banner */}
+        {!collapsed && currentPlan === 'free' && (
+          <div className="mx-3 mb-3 p-4 rounded-xl" style={{ background: 'var(--accent-glow)', border: '1px solid var(--accent)' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <Crown className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+              <span className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>Premium</span>
+            </div>
+            <p className="text-xs mb-3" style={{ color: 'var(--text-secondary)' }}>Desbloqueie Kimi K3 e agentes ilimitados</p>
+            <button className="w-full py-2 rounded-lg text-xs font-semibold" style={{ background: 'var(--accent)', color: 'white' }}>
+              Upgrade
+            </button>
+          </div>
+        )}
 
         <div className="p-3">
           <button
