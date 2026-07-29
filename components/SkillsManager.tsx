@@ -455,15 +455,16 @@ export function SkillsManager() {
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Categoria</label>
                 <div className="flex gap-2 flex-wrap">
-                  {(Object.keys(categorias) as Array<keyof typeof categorias>).map((cat) => {
-                    const Icon = cat.icon
-                    const isSelected = editingSkill?.categoria === cat || newSkill.categoria === cat
+                  {(['scraping', 'analise', 'criacao', 'envio', 'navegacao', 'custom'] as const).map((catKey) => {
+                    const catData = categorias[catKey]
+                    const Icon = catData.icon
+                    const isSelected = editingSkill?.categoria === catKey || newSkill.categoria === catKey
                     return (
                       <button
-                        key={cat}
+                        key={catKey}
                         onClick={() => editingSkill 
-                          ? setEditingSkill({...editingSkill, categoria: cat})
-                          : setNewSkill({...newSkill, categoria: cat})
+                          ? setEditingSkill({...editingSkill, categoria: catKey})
+                          : setNewSkill({...newSkill, categoria: catKey})
                         }
                         className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-colors"
                         style={{
@@ -473,7 +474,7 @@ export function SkillsManager() {
                         }}
                       >
                         <Icon className="w-4 h-4" />
-                        {cat.label}
+                        {catData.label}
                       </button>
                     )
                   })}
