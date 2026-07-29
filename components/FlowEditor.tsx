@@ -24,7 +24,8 @@ import {
   Paperclip,
   File,
   X,
-  Puzzle
+  Puzzle,
+  Sparkles
 } from 'lucide-react'
 import { SkillsSelector } from './SkillsSelector'
 
@@ -82,12 +83,22 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
   const [executionLogs, setExecutionLogs] = useState<ExecutionLog[]>([])
   const [attachedFiles, setAttachedFiles] = useState<string[]>([])
   const [showSkills, setShowSkills] = useState(false)
+  const [selectedModel, setSelectedModel] = useState('moonshotai/kimi-k2.6')
+  const [showModelMenu, setShowModelMenu] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  useEffect(() => {
+    const handleClickOutside = () => setShowModelMenu(false)
+    if (showModelMenu) {
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
+    }
+  }, [showModelMenu])
 
   const parseFlowFromAI = (input: string): Step[] => {
     const lower = input.toLowerCase()
@@ -140,7 +151,7 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages })
+        body: JSON.stringify({ messages: apiMessages, model: selectedModel })
       })
 
       if (!res.ok) throw new Error('API error')
@@ -370,12 +381,66 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
           <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent), var(--cyan))' }}>
             <Bot className="w-5 h-5 text-white" />
           </div>
-          <div>
+          <div className="flex-1">
             <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Assistente de Fluxo</h3>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--neon)' }} />
-              <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Kimi K3 IA</span>
+              <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>IA Ativa</span>
             </div>
+          </div>
+          
+          {/* Model Selector */}
+          <div className="relative">
+            <button 
+              onClick={() => setShowModelMenu(!showModelMenu)}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all hover:scale-105"
+              style={{ 
+                background: 'var(--accent-glow)', 
+                border: '1px solid var(--accent)',
+                boxShadow: '0 0 10px var(--accent-glow)'
+              }}
+            >
+              <Sparkles className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+              <span className="text-xs font-medium" style={{ color: 'var(--accent)' }}>
+                {selectedModel.split('/').pop()?.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+              </span>
+              <ChevronDown className="w-3 h-3" style={{ color: 'var(--accent)' }} />
+            </button>
+            
+            {showModelMenu && (
+              <div className="absolute right-0 top-full mt-2 w-56 rounded-xl overflow-hidden z-50" style={{ 
+                background: 'var(--surface)', 
+                border: '1px solid var(--border)',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.5)'
+              }}>
+                <div className="p-2">
+                  <p className="text-xs px-2 py-1 mb-1" style={{ color: 'var(--text-tertiary)' }}>Modelo de IA</p>
+                  {[
+                    { id: 'moonshotai/kimi-k2.6', name: 'Kimi K3', desc: 'Mais inteligente' },
+                    { id: 'minimaxai/minimax-m2.7', name: 'MiniMax M2.7', desc: 'Equilibrado' },
+                    { id: 'google/gemma-3-12b-it', name: 'Gemma 4', desc: 'Rapido' },
+                    { id: 'meta/llama2-70b', name: 'Llama 2 70B', desc: 'Avancado' },
+                    { id: 'mistralai/mistral-7b-instruct', name: 'Mistral 7B', desc: 'Leve' },
+                  ].map(model => (
+                    <button
+                      key={model.id}
+                      onClick={() => { setSelectedModel(model.id); setShowModelMenu(false) }}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors"
+                      style={{ 
+                        background: selectedModel === model.id ? 'var(--accent-glow)' : 'transparent',
+                        color: selectedModel === model.id ? 'var(--accent)' : 'var(--text-primary)'
+                      }}
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      <div>
+                        <p className="text-sm font-medium">{model.name}</p>
+                        <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{model.desc}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

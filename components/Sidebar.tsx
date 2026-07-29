@@ -35,7 +35,7 @@ const menuItems = [
 ]
 
 export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggleCollapse }: SidebarProps) {
-  const currentPlan = 'free'
+  const currentPlan = 'free' as string
   
   return (
     <aside className={clsx(

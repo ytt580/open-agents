@@ -25,7 +25,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onNavigate, onSelectFlow }: DashboardProps) {
-  const currentPlan = 'free'
+  const currentPlan = 'free' as string
   
   return (
     <div className="p-8 space-y-8 animate-fade-in">
