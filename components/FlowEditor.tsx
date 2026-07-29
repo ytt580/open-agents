@@ -15,13 +15,15 @@ import {
   Loader2,
   CheckCircle,
   Clock,
-  AlertCircle,
   Zap,
   Globe,
   Code,
   Mail,
   Search,
-  MessageSquare
+  MessageSquare,
+  Paperclip,
+  File,
+  X
 } from 'lucide-react'
 
 interface FlowEditorProps {
@@ -42,6 +44,7 @@ interface Message {
   tipo: 'user' | 'ai' | 'system'
   conteudo: string
   timestamp: Date
+  files?: string[]
 }
 
 interface ExecutionLog {
@@ -75,9 +78,9 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
   const [expandedStep, setExpandedStep] = useState<string | null>(null)
   const [executing, setExecuting] = useState(false)
   const [executionLogs, setExecutionLogs] = useState<ExecutionLog[]>([])
-  const [mode, setMode] = useState<'chat' | 'execute'>('chat')
-  const [usedLeads, setUsedLeads] = useState<Set<string>>(new Set())
+  const [attachedFiles, setAttachedFiles] = useState<string[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -88,7 +91,7 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
     const newSteps: Step[] = []
     let id = 1
 
-    if (lower.includes('maps') || lower.includes('google') || lower.includes('buscar') || lower.includes('busca') || lower.includes('lead')) {
+    if (lower.includes('maps') || lower.includes('google') || lower.includes('buscar') || lower.includes('busca') || lower.includes('lead') || lower.includes('empresa')) {
       newSteps.push({ id: String(id++), tipo: 'busca', nome: 'Buscar Leads', descricao: 'Pesquisar empresas no Google Maps por criterio e localizacao', ativo: true })
     }
     if (lower.includes('scraping') || lower.includes('scrap') || lower.includes('extrair') || lower.includes('site')) {
@@ -97,10 +100,10 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
     if (lower.includes('analise') || lower.includes('analisar') || lower.includes('ia') || lower.includes('avaliar')) {
       newSteps.push({ id: String(id++), tipo: 'analise', nome: 'Analise com IA', descricao: 'Avaliar qualidade do site e identificar melhorias', ativo: true })
     }
-    if (lower.includes('criar site') || lower.includes('criar') || lower.includes('novo site') || lower.includes('repaginar') || lower.includes('repagina')) {
+    if (lower.includes('criar site') || lower.includes('criar') || lower.includes('novo site') || lower.includes('repaginar') || lower.includes('repagina') || lower.includes('redesign')) {
       newSteps.push({ id: String(id++), tipo: 'criacao', nome: 'Criar Site Melhorado', descricao: 'Gerar nova versao do site com design profissional', ativo: true })
     }
-    if (lower.includes('proposta') || lower.includes('orçamento') || lower.includes('orcamento')) {
+    if (lower.includes('proposta') || lower.includes('orcamento') || lower.includes('orçamento')) {
       newSteps.push({ id: String(id++), tipo: 'analise', nome: 'Criar Proposta', descricao: 'Gerar proposta comercial personalizada', ativo: true })
     }
     if (lower.includes('email') || lower.includes('enviar') || lower.includes('mandar')) {
@@ -117,10 +120,32 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
     }
 
     if (newSteps.length === 0) {
-      newSteps.push({ id: '1', tipo: 'busca', nome: 'Buscar Leads', descricao: input, ativo: true })
+      newSteps.push({ id: '1', tipo: 'busca', nome: 'Processar', descricao: input, ativo: true })
     }
 
     return newSteps
+  }
+
+  const callAI = async (userInput: string, history: Message[]): Promise<string> => {
+    try {
+      const apiMessages = history.slice(-10).map(m => ({
+        role: m.tipo === 'user' ? 'user' : 'assistant',
+        content: m.conteudo
+      }))
+      apiMessages.push({ role: 'user', content: userInput })
+
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: apiMessages })
+      })
+
+      if (!res.ok) throw new Error('API error')
+      const data = await res.json()
+      return data.content || 'Desculpe, nao consegui processar.'
+    } catch {
+      return 'Erro ao conectar com IA. Tente novamente.'
+    }
   }
 
   const handleSendMessage = async () => {
@@ -130,52 +155,63 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
       id: Date.now().toString(),
       tipo: 'user',
       conteudo: inputValue,
-      timestamp: new Date()
+      timestamp: new Date(),
+      files: attachedFiles.length > 0 ? [...attachedFiles] : undefined
     }
 
     setMessages(prev => [...prev, userMessage])
     const userInput = inputValue
     setInputValue('')
+    setAttachedFiles([])
     setIsTyping(true)
 
-    setTimeout(() => {
-      const lower = userInput.toLowerCase()
-      let aiResponse = ''
+    const lower = userInput.toLowerCase()
+    const isCreatingFlow = lower.includes('fluxo') || lower.includes('automatizar') || 
+      lower.includes('busque') || lower.includes('scraping') || lower.includes('criar site') ||
+      lower.includes('enviar') || lower.includes('proposta') || lower.includes('repagina') ||
+      lower.includes('maps') || lower.includes('google') || lower.includes('leads') ||
+      lower.includes('empresa') || lower.includes('negocio')
 
-      const isCreatingFlow = lower.includes('fluxo') || lower.includes('automatizar') || 
-        lower.includes('busque') || lower.includes('scraping') || lower.includes('criar site') ||
-        lower.includes('enviar') || lower.includes('proposta') || lower.includes('repagina') ||
-        lower.includes('maps') || lower.includes('google') || lower.includes('leads')
-
-      if (isCreatingFlow) {
-        const parsed = parseFlowFromAI(userInput)
-        setSteps(parsed)
-        
-        const stepList = parsed.map(s => `  ${parsed.indexOf(s) + 1}. ${s.nome} - ${s.descricao}`).join('\n')
-        aiResponse = `Perfeito! Criei seu fluxo com ${parsed.length} etapas:\n\n${stepList}\n\nFluxo pronto! Agora voce pode:\n- Clicar em "Executar Fluxo" para rodar\n- Ou me mandar um prompt como "20 empresas com site feio em Sao Paulo" para executar automaticamente`
-      } else if (lower.includes('executar') || lower.includes('rodar') || lower.includes('run')) {
-        if (steps.length === 0) {
-          aiResponse = 'Nenhum fluxo criado ainda. Descreva o fluxo que voce quer automatizar primeiro.'
-        } else {
-          aiResponse = 'Para executar, clique no botao "Executar Fluxo" ou mande um prompt como:\n\n"20 empresas com site feio em SP"\n"10 clinicas 5 estrelas sem site no RJ"\n"15 restaurantes com avaliacao baixa"'
-        }
-      } else if (lower.includes('20 empresa') || lower.includes('10 empresa') || lower.includes('15 empresa') || /\d+\s*(empresa|lead|negocio)/.test(lower)) {
-        const match = userInput.match(/(\d+)/)
-        const count = match ? parseInt(match[1]) : 10
-        aiResponse = `Vou executar seu fluxo para ${count} empresas!\n\nProcesso:\n1. Buscando ${count} empresas no Google Maps...\n2. Coletando dados de cada empresa...\n3. Analisando sites...\n4. Criando propostas...\n5. Enviando emails...\n\n(Execucao real em breve com backend)`
-      } else {
-        aiResponse = 'Entendi! Posso ajudar com isso. Para criar um fluxo, descreva o que quer automatizar. Para executar, mande um prompt como "20 empresas com site feio".'
-      }
-
-      const aiMessage: Message = {
+    if (isCreatingFlow) {
+      const parsed = parseFlowFromAI(userInput)
+      setSteps(parsed)
+      
+      const stepList = parsed.map((s, i) => `  ${i + 1}. ${s.nome} - ${s.descricao}`).join('\n')
+      setTimeout(() => {
+        setMessages(prev => [...prev, {
+          id: (Date.now() + 1).toString(),
+          tipo: 'ai',
+          conteudo: `Perfeito! Criei seu fluxo com ${parsed.length} etapas:\n\n${stepList}\n\nFluxo pronto! Clique em "Executar Fluxo" ou mande um prompt como "20 empresas com site feio em SP".`,
+          timestamp: new Date()
+        }])
+        setIsTyping(false)
+      }, 1000)
+    } else {
+      const aiResponse = await callAI(userInput, [...messages, userMessage])
+      setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         tipo: 'ai',
         conteudo: aiResponse,
         timestamp: new Date()
-      }
-      setMessages(prev => [...prev, aiMessage])
+      }])
       setIsTyping(false)
-    }, 1500)
+    }
+  }
+
+  const handleFileAttach = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files) {
+      const names = Array.from(files).map(f => f.name)
+      setAttachedFiles(prev => [...prev, ...names])
+    }
+  }
+
+  const removeFile = (name: string) => {
+    setAttachedFiles(prev => prev.filter(f => f !== name))
   }
 
   const removeStep = (id: string) => {
@@ -191,7 +227,6 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
   const executeFlow = async () => {
     if (steps.length === 0 || executing) return
     setExecuting(true)
-    setMode('execute')
     
     const logs: ExecutionLog[] = steps.map(s => ({
       step: s.nome,
@@ -215,20 +250,20 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
     }
 
     setExecuting(false)
-    const execMessage: Message = {
+    setMessages(prev => [...prev, {
       id: Date.now().toString(),
       tipo: 'system',
       conteudo: `Fluxo executado! ${steps.filter(s => s.ativo).length} etapas concluidas.`,
       timestamp: new Date()
-    }
-    setMessages(prev => [...prev, execMessage])
+    }])
   }
 
   return (
     <div className="flex h-screen" style={{ background: 'var(--bg-primary)' }}>
+      <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} />
+
       {/* Steps Panel */}
       <div className="w-96 flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--surface)' }}>
-        {/* Header */}
         <div className="p-4 flex items-center gap-3" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
           <button onClick={onBack} className="p-2 rounded-lg transition-colors" style={{ color: 'var(--text-tertiary)' }}>
             <ArrowLeft className="w-5 h-5" />
@@ -239,19 +274,14 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
           </div>
         </div>
 
-        {/* Steps list */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {steps.length === 0 ? (
             <div className="text-center py-8">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'var(--accent-15)' }}>
                 <Plus className="w-6 h-6" style={{ color: 'var(--accent)' }} />
               </div>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                Nenhuma etapa ainda
-              </p>
-              <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
-                Descreva seu fluxo no chat
-              </p>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Nenhuma etapa ainda</p>
+              <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>Descreva seu fluxo no chat</p>
             </div>
           ) : (
             steps.map((step, index) => {
@@ -308,16 +338,8 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
               )
             })
           )}
-
-          {steps.length > 0 && (
-            <button onClick={() => {}} className="w-full py-4 border-2 border-dashed rounded-xl font-medium transition-all duration-200" style={{ borderColor: 'var(--border)', color: 'var(--text-tertiary)' }}>
-              <Plus className="w-5 h-5 inline mr-2" />
-              Adicionar Etapa
-            </button>
-          )}
         </div>
 
-        {/* Execute button */}
         <div className="p-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
           {executing ? (
             <div className="space-y-2">
@@ -341,7 +363,6 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
 
       {/* Chat Panel */}
       <div className="flex-1 flex flex-col" style={{ background: 'var(--bg-primary)' }}>
-        {/* Chat header */}
         <div className="p-4 flex items-center gap-3" style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--surface)' }}>
           <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent), var(--sage))' }}>
             <Bot className="w-5 h-5 text-white" />
@@ -350,12 +371,11 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
             <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Assistente de Fluxo</h3>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full" style={{ background: 'var(--sage)' }} />
-              <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Online</span>
+              <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Kimi K3 IA</span>
             </div>
           </div>
         </div>
 
-        {/* Messages */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.map((message) => (
             <div key={message.id} className={`flex gap-3 ${message.tipo === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -376,6 +396,16 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
                 border: message.tipo === 'user' ? 'none' : message.tipo === 'system' ? '1px solid var(--sage-30)' : '1px solid var(--border)'
               }}>
                 <p className="text-sm whitespace-pre-line">{message.conteudo}</p>
+                {message.files && message.files.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {message.files.map((f, i) => (
+                      <span key={i} className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.2)' }}>
+                        <File className="w-3 h-3" />
+                        {f}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <p className="text-xs mt-2 opacity-50">
                   {message.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                 </p>
@@ -407,9 +437,26 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
+        {/* Attached files */}
+        {attachedFiles.length > 0 && (
+          <div className="px-4 py-2 flex flex-wrap gap-2" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+            {attachedFiles.map((f, i) => (
+              <span key={i} className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--accent-15)', color: 'var(--accent)' }}>
+                <File className="w-3 h-3" />
+                {f}
+                <button onClick={() => removeFile(f)} className="ml-1">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
         <div className="p-4" style={{ borderTop: '1px solid var(--border-subtle)', background: 'var(--surface)' }}>
           <div className="flex gap-3">
+            <button onClick={handleFileAttach} className="p-3 rounded-xl transition-colors" style={{ color: 'var(--text-tertiary)', border: '1px solid var(--border)' }}>
+              <Paperclip className="w-5 h-5" />
+            </button>
             <input
               type="text"
               value={inputValue}
@@ -425,19 +472,19 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
           <div className="flex gap-2 mt-2">
             {steps.length === 0 ? (
               <>
-                <button onClick={() => { setInputValue('Busque empresas no Google Maps, faca scraping, crie proposta e envie por email'); }} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                <button onClick={() => setInputValue('Busque empresas no Google Maps, faca scraping, crie proposta e envie por email')} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
                   Fluxo completo de prospeccao
                 </button>
-                <button onClick={() => { setInputValue('Pesquise leads, analise com IA, crie site melhorado e publique'); }} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                <button onClick={() => setInputValue('Pesquise leads, analise com IA, crie site melhorado e publique')} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
                   Criar e publicar sites
                 </button>
               </>
             ) : (
               <>
-                <button onClick={() => { setInputValue('20 empresas com site feio em Sao Paulo'); }} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                <button onClick={() => setInputValue('20 empresas com site feio em Sao Paulo')} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
                   20 empresas com site feio
                 </button>
-                <button onClick={() => { setInputValue('10 clinicas 5 estrelas sem site no RJ'); }} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                <button onClick={() => setInputValue('10 clinicas 5 estrelas sem site no RJ')} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
                   10 clinicas sem site
                 </button>
               </>
