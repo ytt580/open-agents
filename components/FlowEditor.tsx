@@ -23,8 +23,10 @@ import {
   MessageSquare,
   Paperclip,
   File,
-  X
+  X,
+  Puzzle
 } from 'lucide-react'
+import { SkillsSelector } from './SkillsSelector'
 
 interface FlowEditorProps {
   flowId: string
@@ -79,6 +81,7 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
   const [executing, setExecuting] = useState(false)
   const [executionLogs, setExecutionLogs] = useState<ExecutionLog[]>([])
   const [attachedFiles, setAttachedFiles] = useState<string[]>([])
+  const [showSkills, setShowSkills] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -265,7 +268,7 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
       {/* Steps Panel */}
       <div className="w-96 flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--surface)' }}>
         <div className="p-4 flex items-center gap-3" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-          <button onClick={onBack} className="p-2 rounded-lg transition-colors" style={{ color: 'var(--text-tertiary)' }}>
+          <button onClick={onBack} className="p-2 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-tertiary)' }}>
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
@@ -277,7 +280,7 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {steps.length === 0 ? (
             <div className="text-center py-8">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'var(--accent-15)' }}>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'var(--accent-glow)' }}>
                 <Plus className="w-6 h-6" style={{ color: 'var(--accent)' }} />
               </div>
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Nenhuma etapa ainda</p>
@@ -293,11 +296,11 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
                 <div 
                   key={step.id}
                   className="card p-4 transition-all duration-200"
-                  style={!step.ativo ? { opacity: 0.5 } : isExpanded ? { borderColor: 'var(--accent)' } : {}}
+                  style={!step.ativo ? { opacity: 0.5 } : isExpanded ? { borderColor: 'var(--accent)', boxShadow: '0 0 15px var(--accent-glow)' } : {}}
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" 
-                      style={{ background: 'var(--accent-15)', color: 'var(--accent)' }}>
+                      style={{ background: 'var(--accent-glow)', color: 'var(--accent)' }}>
                       {index + 1}
                     </div>
                     
@@ -312,11 +315,11 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
                     </div>
 
                     <div className="flex items-center gap-1">
-                      <button onClick={() => setExpandedStep(isExpanded ? null : step.id)} className="p-1.5 rounded-lg transition-colors" style={{ color: 'var(--text-tertiary)' }}>
+                      <button onClick={() => setExpandedStep(isExpanded ? null : step.id)} className="p-1.5 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-tertiary)' }}>
                         {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                       </button>
                       <div className={`toggle ${step.ativo ? 'active' : ''}`} onClick={() => toggleStep(step.id)} />
-                      <button onClick={() => removeStep(step.id)} className="p-1.5 rounded-lg transition-colors" style={{ color: 'var(--text-tertiary)' }}>
+                      <button onClick={() => removeStep(step.id)} className="p-1.5 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-tertiary)' }}>
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -346,9 +349,9 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
               {executionLogs.map((log, i) => (
                 <div key={i} className="flex items-center gap-2 text-xs">
                   {log.status === 'running' && <Loader2 className="w-3 h-3 animate-spin" style={{ color: 'var(--accent)' }} />}
-                  {log.status === 'done' && <CheckCircle className="w-3 h-3" style={{ color: 'var(--sage)' }} />}
+                  {log.status === 'done' && <CheckCircle className="w-3 h-3" style={{ color: 'var(--neon)' }} />}
                   {log.status === 'pending' && <Clock className="w-3 h-3" style={{ color: 'var(--text-tertiary)' }} />}
-                  <span style={{ color: log.status === 'done' ? 'var(--sage-dark)' : 'var(--text-secondary)' }}>{log.step}</span>
+                  <span style={{ color: log.status === 'done' ? 'var(--neon)' : 'var(--text-secondary)' }}>{log.step}</span>
                 </div>
               ))}
             </div>
@@ -364,13 +367,13 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
       {/* Chat Panel */}
       <div className="flex-1 flex flex-col" style={{ background: 'var(--bg-primary)' }}>
         <div className="p-4 flex items-center gap-3" style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--surface)' }}>
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent), var(--sage))' }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent), var(--cyan))' }}>
             <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
             <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Assistente de Fluxo</h3>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full" style={{ background: 'var(--sage)' }} />
+              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--neon)' }} />
               <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Kimi K3 IA</span>
             </div>
           </div>
@@ -380,20 +383,21 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
           {messages.map((message) => (
             <div key={message.id} className={`flex gap-3 ${message.tipo === 'user' ? 'justify-end' : 'justify-start'}`}>
               {message.tipo === 'ai' && (
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--accent), var(--sage))' }}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--accent), var(--cyan))' }}>
                   <Bot className="w-4 h-4 text-white" />
                 </div>
               )}
               {message.tipo === 'system' && (
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'var(--sage-15)' }}>
-                  <Zap className="w-4 h-4" style={{ color: 'var(--sage)' }} />
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(6, 214, 160, 0.15)' }}>
+                  <Zap className="w-4 h-4" style={{ color: 'var(--neon)' }} />
                 </div>
               )}
               
               <div className="max-w-[80%] rounded-2xl px-4 py-3" style={{ 
-                background: message.tipo === 'user' ? 'var(--accent)' : message.tipo === 'system' ? 'var(--sage-10)' : 'var(--surface)',
+                background: message.tipo === 'user' ? 'var(--accent)' : message.tipo === 'system' ? 'rgba(6, 214, 160, 0.1)' : 'var(--surface)',
                 color: message.tipo === 'user' ? 'white' : 'var(--text-primary)',
-                border: message.tipo === 'user' ? 'none' : message.tipo === 'system' ? '1px solid var(--sage-30)' : '1px solid var(--border)'
+                border: message.tipo === 'user' ? 'none' : message.tipo === 'system' ? '1px solid rgba(6, 214, 160, 0.3)' : '1px solid var(--border)',
+                boxShadow: message.tipo === 'user' ? '0 0 20px var(--accent-glow)' : 'none'
               }}>
                 <p className="text-sm whitespace-pre-line">{message.conteudo}</p>
                 {message.files && message.files.length > 0 && (
@@ -421,14 +425,14 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
 
           {isTyping && (
             <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--accent), var(--sage))' }}>
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--accent), var(--cyan))' }}>
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div className="rounded-2xl px-4 py-3" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text-tertiary)', animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text-tertiary)', animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text-tertiary)', animationDelay: '300ms' }} />
+                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--accent)', animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--cyan)', animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--neon)', animationDelay: '300ms' }} />
                 </div>
               </div>
             </div>
@@ -437,14 +441,13 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Attached files */}
         {attachedFiles.length > 0 && (
           <div className="px-4 py-2 flex flex-wrap gap-2" style={{ borderTop: '1px solid var(--border-subtle)' }}>
             {attachedFiles.map((f, i) => (
-              <span key={i} className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--accent-15)', color: 'var(--accent)' }}>
+              <span key={i} className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--accent-glow)', color: 'var(--accent)' }}>
                 <File className="w-3 h-3" />
                 {f}
-                <button onClick={() => removeFile(f)} className="ml-1">
+                <button onClick={() => removeFile(f)} className="ml-1 hover:opacity-70">
                   <X className="w-3 h-3" />
                 </button>
               </span>
@@ -454,7 +457,10 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
 
         <div className="p-4" style={{ borderTop: '1px solid var(--border-subtle)', background: 'var(--surface)' }}>
           <div className="flex gap-3">
-            <button onClick={handleFileAttach} className="p-3 rounded-xl transition-colors" style={{ color: 'var(--text-tertiary)', border: '1px solid var(--border)' }}>
+            <button onClick={() => setShowSkills(true)} className="p-3 rounded-xl transition-all hover:scale-105" style={{ color: 'var(--accent)', border: '1px solid var(--accent)', background: 'var(--accent-glow)', boxShadow: '0 0 15px var(--accent-glow)' }}>
+              <Puzzle className="w-5 h-5" />
+            </button>
+            <button onClick={handleFileAttach} className="p-3 rounded-xl transition-all hover:scale-105" style={{ color: 'var(--text-tertiary)', border: '1px solid var(--border)' }}>
               <Paperclip className="w-5 h-5" />
             </button>
             <input
@@ -472,19 +478,19 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
           <div className="flex gap-2 mt-2">
             {steps.length === 0 ? (
               <>
-                <button onClick={() => setInputValue('Busque empresas no Google Maps, faca scraping, crie proposta e envie por email')} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                <button onClick={() => setInputValue('Busque empresas no Google Maps, faca scraping, crie proposta e envie por email')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
                   Fluxo completo de prospeccao
                 </button>
-                <button onClick={() => setInputValue('Pesquise leads, analise com IA, crie site melhorado e publique')} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                <button onClick={() => setInputValue('Pesquise leads, analise com IA, crie site melhorado e publique')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
                   Criar e publicar sites
                 </button>
               </>
             ) : (
               <>
-                <button onClick={() => setInputValue('20 empresas com site feio em Sao Paulo')} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                <button onClick={() => setInputValue('20 empresas com site feio em Sao Paulo')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
                   20 empresas com site feio
                 </button>
-                <button onClick={() => setInputValue('10 clinicas 5 estrelas sem site no RJ')} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                <button onClick={() => setInputValue('10 clinicas 5 estrelas sem site no RJ')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
                   10 clinicas sem site
                 </button>
               </>
@@ -492,6 +498,15 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
           </div>
         </div>
       </div>
+
+      {showSkills && (
+        <SkillsSelector 
+          onSelect={(skill) => {
+            setInputValue(`Use a skill ${skill.nome}: ${skill.descricao}`)
+          }} 
+          onClose={() => setShowSkills(false)} 
+        />
+      )}
     </div>
   )
 }

@@ -41,21 +41,21 @@ interface Schedule {
 }
 
 const scheduleTemplates = [
-  { label: 'Todo dia às 9:00', tipo: 'daily' as ScheduleType, expressao: '0 9 * * *', desc: 'Executa diariamente às 09:00' },
-  { label: 'Todo dia às 18:00', tipo: 'daily' as ScheduleType, expressao: '0 18 * * *', desc: 'Executa diariamente às 18:00' },
-  { label: 'Segunda a sexta 9:00', tipo: 'cron' as ScheduleType, expressao: '0 9 * * 1-5', desc: 'Dias úteis às 09:00' },
-  { label: 'A cada hora', tipo: 'interval' as ScheduleType, expressao: '0 * * * *', desc: 'Executa no início de cada hora' },
+  { label: 'Todo dia as 9:00', tipo: 'daily' as ScheduleType, expressao: '0 9 * * *', desc: 'Executa diariamente as 09:00' },
+  { label: 'Todo dia as 18:00', tipo: 'daily' as ScheduleType, expressao: '0 18 * * *', desc: 'Executa diariamente as 18:00' },
+  { label: 'Segunda a sexta 9:00', tipo: 'cron' as ScheduleType, expressao: '0 9 * * 1-5', desc: 'Dias uteis as 09:00' },
+  { label: 'A cada hora', tipo: 'interval' as ScheduleType, expressao: '0 * * * *', desc: 'Executa no inicio de cada hora' },
   { label: 'A cada 30 min', tipo: 'interval' as ScheduleType, expressao: '*/30 * * * *', desc: 'Executa a cada 30 minutos' },
-  { label: 'Segundas 9:00', tipo: 'weekly' as ScheduleType, expressao: '0 9 * * 1', desc: 'Toda segunda às 09:00' },
-  { label: 'Dia 1 de cada mês', tipo: 'monthly' as ScheduleType, expressao: '0 9 1 * *', desc: 'Primeiro dia do mês às 09:00' },
-  { label: 'Personalizado', tipo: 'cron' as ScheduleType, expressao: '', desc: 'Digite expressão cron customizada' },
+  { label: 'Segundas 9:00', tipo: 'weekly' as ScheduleType, expressao: '0 9 * * 1', desc: 'Toda segunda as 09:00' },
+  { label: 'Dia 1 de cada mes', tipo: 'monthly' as ScheduleType, expressao: '0 9 1 * *', desc: 'Primeiro dia do mes as 09:00' },
+  { label: 'Personalizado', tipo: 'cron' as ScheduleType, expressao: '', desc: 'Digite expressao cron customizada' },
 ]
 
 const flows = [
-  { id: '1', nome: 'Prospecção Google Maps' },
-  { id: '2', nome: 'Automação WhatsApp' },
-  { id: '3', nome: 'Criação de Sites' },
-  { id: '4', nome: 'Scraping + Análise' },
+  { id: '1', nome: 'Prospeccao Google Maps' },
+  { id: '2', nome: 'Automacao WhatsApp' },
+  { id: '3', nome: 'Criacao de Sites' },
+  { id: '4', nome: 'Scraping + Analise' },
 ]
 
 function getProximaExecucao(cron: string, from: Date = new Date()): Date {
@@ -114,7 +114,7 @@ export function Scheduler() {
   const [schedules, setSchedules] = useState<Schedule[]>([
     {
       id: '1',
-      nome: 'Prospecção Diária 9h',
+      nome: 'Prospeccao Diaria 9h',
       flowId: '1',
       tipo: 'daily',
       expressao: '0 9 * * *',
@@ -136,7 +136,7 @@ export function Scheduler() {
     },
     {
       id: '3',
-      nome: 'Publicação Semanal',
+      nome: 'Publicacao Semanal',
       flowId: '3',
       tipo: 'weekly',
       expressao: '0 9 * * 1',
@@ -250,26 +250,24 @@ export function Scheduler() {
       {/* Header */}
       <div className="p-6 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--terracotta-15)' }}>
-            <Clock className="w-6 h-6" style={{ color: 'var(--terracotta)' }} />
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(34, 211, 238, 0.15)' }}>
+            <Clock className="w-6 h-6" style={{ color: 'var(--cyan)' }} />
           </div>
           <div>
             <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Agendador 24/7</h1>
             <p style={{ color: 'var(--text-tertiary)' }}>
-              {schedules.filter(s => s.ativo).length} ativos • {schedules.length} total
+              {schedules.filter(s => s.ativo).length} ativos - {schedules.length} total
             </p>
           </div>
         </div>
         
         <div className="flex items-center gap-4">
-          {/* Status do Servidor */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: 'var(--sage-10)', border: '1px solid var(--sage-30)' }}>
-            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--sage)' }} />
-            <span className="text-sm font-medium" style={{ color: 'var(--sage-dark)' }}>Scheduler Online</span>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: 'rgba(6, 214, 160, 0.1)', border: '1px solid rgba(6, 214, 160, 0.3)' }}>
+            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--neon)' }} />
+            <span className="text-sm font-medium" style={{ color: 'var(--neon)' }}>Scheduler Online</span>
           </div>
           <button onClick={() => { setFormData({...formData, nome: '', expressao: '0 9 * * *'}); setShowModal(true); }} 
             className="btn-primary flex items-center gap-2"
-            style={{ background: 'var(--terracotta)' }}
           >
             <Plus className="w-5 h-5" />
             Novo Agendamento
@@ -277,29 +275,29 @@ export function Scheduler() {
         </div>
       </div>
 
-      {/* Aviso de Infraestrutura */}
-      <div className="px-6 py-3" style={{ borderBottom: '1px solid var(--terracotta-30)', background: 'var(--terracotta-10)' }}>
-        <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'var(--terracotta-5)', border: '1px solid var(--terracotta-20)' }}>
-          <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--terracotta)' }} />
-          <div className="text-sm" style={{ color: 'var(--terracotta-dark)' }}>
+      {/* Aviso */}
+      <div className="px-6 py-3" style={{ borderBottom: '1px solid rgba(251, 191, 36, 0.3)', background: 'rgba(251, 191, 36, 0.05)' }}>
+        <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'rgba(251, 191, 36, 0.05)', border: '1px solid rgba(251, 191, 36, 0.2)' }}>
+          <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--warning)' }} />
+          <div className="text-sm" style={{ color: 'var(--warning)' }}>
             <strong>Para rodar 24/7:</strong> Este frontend precisa de um backend rodando continuamente. 
-            Opções: <strong>Render Background Worker</strong> (grátis), 
+            Opcoes: <strong>Render Background Worker</strong> (gratis), 
             <strong>GitHub Actions</strong> (agendado), 
-            <strong>Servidor próprio/VPS</strong> (PM2 + Node.js). 
-            O agendamento aqui define <em>quando</em> rodar; a execução real precisa de um worker rodando 24/7.
+            <strong>Servidor proprio/VPS</strong> (PM2 + Node.js). 
+            O agendamento aqui define <em>quando</em> rodar; a execucao real precisa de um worker rodando 24/7.
           </div>
         </div>
       </div>
 
-      {/* Templates Rápidos */}
+      {/* Templates */}
       <div className="px-6 py-4" style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
-        <h3 className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-tertiary)' }}>Templates Rápidos</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-tertiary)' }}>Templates Rapidos</h3>
         <div className="flex gap-2 flex-wrap">
           {scheduleTemplates.map((template) => (
             <button
               key={template.label}
-              onClick={() => { handleTemplateClick(template); setFormData(prev => ({...prev, nome: template.label.replace('Todo ', '').replace(' às ', ' ').replace(' a ', ' ') })); setShowModal(true); }}
-              className="px-4 py-2 rounded-xl text-sm transition-colors whitespace-nowrap"
+              onClick={() => { handleTemplateClick(template); setFormData(prev => ({...prev, nome: template.label.replace('Todo ', '').replace(' as ', ' ').replace(' a ', ' ') })); setShowModal(true); }}
+              className="px-4 py-2 rounded-xl text-sm transition-all whitespace-nowrap hover:border-[var(--accent)]"
               style={{ 
                 background: 'var(--bg-secondary)', 
                 border: '1px solid var(--border)',
@@ -312,7 +310,7 @@ export function Scheduler() {
         </div>
       </div>
 
-      {/* Lista de Agendamentos */}
+      {/* Lista */}
       <div className="flex-1 overflow-y-auto p-6">
         {schedules.length === 0 ? (
           <div className="text-center py-16">
@@ -329,32 +327,32 @@ export function Scheduler() {
               return (
                 <div 
                   key={schedule.id}
-                  className="card p-5 transition-all"
+                  className="card p-5 transition-all duration-200 hover:border-[var(--accent)]"
                   style={{
                     opacity: schedule.ativo ? 1 : 0.7,
-                    boxShadow: isDue ? '0 0 0 2px var(--terracotta-40)' : 'none'
+                    boxShadow: isDue ? '0 0 0 2px var(--cyan)' : 'none'
                   }}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{
-                        background: schedule.ativo ? 'var(--sage-20)' : 'var(--bg-secondary)'
+                        background: schedule.ativo ? 'rgba(6, 214, 160, 0.2)' : 'var(--bg-secondary)'
                       }}>
-                        <Clock className="w-6 h-6" style={{ color: schedule.ativo ? 'var(--sage)' : 'var(--text-tertiary)' }} />
+                        <Clock className="w-6 h-6" style={{ color: schedule.ativo ? 'var(--neon)' : 'var(--text-tertiary)' }} />
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-3">
                           <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{schedule.nome}</h3>
                           <span className="px-2 py-0.5 rounded text-xs font-medium" style={{
-                            background: schedule.ativo ? 'var(--sage-20)' : 'var(--bg-secondary)',
-                            color: schedule.ativo ? 'var(--sage-dark)' : 'var(--text-tertiary)'
+                            background: schedule.ativo ? 'rgba(6, 214, 160, 0.2)' : 'var(--bg-secondary)',
+                            color: schedule.ativo ? 'var(--neon)' : 'var(--text-tertiary)'
                           }}>
                             {schedule.ativo ? 'Ativo' : 'Pausado'}
                           </span>
                           {isDue && (
                             <span className="px-2 py-0.5 rounded text-xs font-medium animate-pulse" style={{
-                              background: 'var(--terracotta-20)',
-                              color: 'var(--terracotta)'
+                              background: 'rgba(34, 211, 238, 0.2)',
+                              color: 'var(--cyan)'
                             }}>
                               Executando em breve
                             </span>
@@ -364,7 +362,7 @@ export function Scheduler() {
                         <div className="flex items-center gap-4 mt-2 text-xs" style={{ color: 'var(--text-tertiary)' }}>
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            Próxima: {schedule.proximaExecucaoStr}
+                            Proxima: {schedule.proximaExecucaoStr}
                           </span>
                           <span className="flex items-center gap-1">
                             <Repeat className="w-3 h-3" />
@@ -383,17 +381,17 @@ export function Scheduler() {
                         onClick={() => setSchedules(prev => prev.map(s => s.id === schedule.id ? {...s, ativo: !s.ativo} : s))}
                         className="p-2 rounded-lg transition-colors"
                         style={{
-                          background: schedule.ativo ? 'var(--terracotta-20)' : 'var(--bg-secondary)',
-                          color: schedule.ativo ? 'var(--terracotta)' : 'var(--text-tertiary)'
+                          background: schedule.ativo ? 'rgba(34, 211, 238, 0.2)' : 'var(--bg-secondary)',
+                          color: schedule.ativo ? 'var(--cyan)' : 'var(--text-tertiary)'
                         }}
                         title={schedule.ativo ? 'Pausar' : 'Ativar'}
                       >
                         {schedule.ativo ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
                       </button>
-                      <button onClick={() => handleEdit(schedule)} className="p-2 rounded-lg transition-colors" style={{ color: 'var(--text-tertiary)' }} title="Editar">
+                      <button onClick={() => handleEdit(schedule)} className="p-2 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-tertiary)' }} title="Editar">
                         <Edit3 className="w-5 h-5" />
                       </button>
-                      <button onClick={() => handleDelete(schedule.id)} className="p-2 rounded-lg transition-colors" style={{ color: 'var(--text-tertiary)' }} title="Excluir">
+                      <button onClick={() => handleDelete(schedule.id)} className="p-2 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-tertiary)' }} title="Excluir">
                         <Trash className="w-5 h-5" />
                       </button>
                     </div>
@@ -407,13 +405,13 @@ export function Scheduler() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)' }}>
-          <div className="card w-full max-w-2xl max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
+          <div className="card w-full max-w-2xl max-h-[90vh] flex flex-col" style={{ boxShadow: '0 0 60px var(--accent-glow)' }}>
             <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
               <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
                 {editingSchedule ? 'Editar Agendamento' : 'Novo Agendamento'}
               </h2>
-              <button onClick={closeModal} className="p-2 rounded-lg transition-colors" style={{ color: 'var(--text-tertiary)' }}>
+              <button onClick={closeModal} className="p-2 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-tertiary)' }}>
                 <ChevronDown className="w-5 h-5" />
               </button>
             </div>
@@ -426,7 +424,7 @@ export function Scheduler() {
                   value={formData.nome}
                   onChange={(e) => setFormData({...formData, nome: e.target.value})}
                   className="input-field"
-                  placeholder="Ex: Prospecção Diária 9h"
+                  placeholder="Ex: Prospeccao Diaria 9h"
                 />
               </div>
 
@@ -448,14 +446,15 @@ export function Scheduler() {
                     <button
                       key={tipo}
                       onClick={() => setFormData({...formData, tipo, expressao: tipo === 'cron' ? formData.expressao : getDefaultCron(tipo)})}
-                      className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                      className="px-4 py-2 rounded-xl text-sm font-medium transition-all"
                       style={{
-                        background: formData.tipo === tipo ? 'var(--terracotta-20)' : 'var(--bg-secondary)',
-                        color: formData.tipo === tipo ? 'var(--terracotta)' : 'var(--text-tertiary)',
-                        border: `1px solid ${formData.tipo === tipo ? 'var(--terracotta-40)' : 'var(--border)'}`
+                        background: formData.tipo === tipo ? 'var(--accent-glow)' : 'var(--bg-secondary)',
+                        color: formData.tipo === tipo ? 'var(--accent)' : 'var(--text-tertiary)',
+                        border: `1px solid ${formData.tipo === tipo ? 'var(--accent)' : 'var(--border)'}`,
+                        boxShadow: formData.tipo === tipo ? '0 0 15px var(--accent-glow)' : 'none'
                       }}
                     >
-                      {tipo === 'daily' && 'Diário'}
+                      {tipo === 'daily' && 'Diario'}
                       {tipo === 'weekly' && 'Semanal'}
                       {tipo === 'monthly' && 'Mensal'}
                       {tipo === 'interval' && 'Intervalo'}
@@ -467,7 +466,7 @@ export function Scheduler() {
 
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
-                  Expressão Cron {formData.tipo === 'cron' && <span style={{ color: 'var(--terracotta)' }}>(obrigatório)</span>}
+                  Expressao Cron {formData.tipo === 'cron' && <span style={{ color: 'var(--accent)' }}>(obrigatorio)</span>}
                 </label>
                 <div className="relative">
                   <input
@@ -479,15 +478,15 @@ export function Scheduler() {
                   />
                 </div>
                 <p className="text-xs mt-2" style={{ color: 'var(--text-tertiary)' }}>
-                  Formato: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>min hora dia mês dia_semana</code>
-                  • Ex: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>0 9 * * *</code> = todo dia 9h
-                  • Ex: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>*/30 * * * *</code> = a cada 30 min
-                  • Ex: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>0 9 * * 1-5</code> = seg-sex 9h
+                  Formato: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>min hora dia mes dia_semana</code>
+                  - Ex: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>0 9 * * *</code> = todo dia 9h
+                  - Ex: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>*/30 * * * *</code> = a cada 30 min
+                  - Ex: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>0 9 * * 1-5</code> = seg-sex 9h
                 </p>
                 <div className="mt-2 text-sm">
-                  <strong style={{ color: 'var(--text-primary)' }}>Próxima execução estimada:</strong>{' '}
-                  <span className="font-mono" style={{ color: 'var(--terracotta)' }}>
-                    {formData.expressao ? formatNextRun(getProximaExecucao(formData.expressao)) : 'Inválido'}
+                  <strong style={{ color: 'var(--text-primary)' }}>Proxima execucao estimada:</strong>{' '}
+                  <span className="font-mono" style={{ color: 'var(--accent)' }}>
+                    {formData.expressao ? formatNextRun(getProximaExecucao(formData.expressao)) : 'Invalido'}
                   </span>
                 </div>
               </div>
@@ -513,9 +512,9 @@ export function Scheduler() {
                       checked={formData.ativo}
                       onChange={(e) => setFormData({...formData, ativo: e.target.checked})}
                       className="w-4 h-4 rounded"
-                      style={{ accentColor: 'var(--terracotta)' }}
+                      style={{ accentColor: 'var(--accent)' }}
                     />
-                    Ativar imediatamente após salvar
+                    Ativar imediatamente apos salvar
                   </label>
                 </div>
               </div>
@@ -523,9 +522,9 @@ export function Scheduler() {
 
             <div className="p-4 flex justify-end gap-3" style={{ borderTop: '1px solid var(--border)' }}>
               <button onClick={closeModal} className="btn-secondary">Cancelar</button>
-              <button onClick={handleSave} disabled={!formData.nome || !formData.expressao} className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" style={{ background: 'var(--terracotta)' }}>
+              <button onClick={handleSave} disabled={!formData.nome || !formData.expressao} className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                 <Save className="w-5 h-5" />
-                {editingSchedule ? 'Salvar Alterações' : 'Criar Agendamento'}
+                {editingSchedule ? 'Salvar Alteracoes' : 'Criar Agendamento'}
               </button>
             </div>
           </div>

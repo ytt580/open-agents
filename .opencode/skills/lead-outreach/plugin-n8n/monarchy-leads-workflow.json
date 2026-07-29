@@ -1,0 +1,219 @@
+{
+  "name": "Monarchy Lead Machine",
+  "nodes": [
+    {
+      "id": "trigger-manual",
+      "name": "Iniciar",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [250, 300],
+      "parameters": {}
+    },
+    {
+      "id": "schedule",
+      "name": "Agenda Diária",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [250, 100],
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "hours", "hoursInterval": 24}]
+        }
+      }
+    },
+    {
+      "id": "google-maps-search",
+      "name": "Buscar no Google Maps",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [450, 300],
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/place/textsearch/json",
+        "options": {
+          "query": {
+            "query": "={{ $json.query }}",
+            "key": "={{ $env.GOOGLE_MAPS_API_KEY }}"
+          }
+        }
+      }
+    },
+    {
+      "id": "scrape-website",
+      "name": "Analisar Site do Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [650, 300],
+      "parameters": {
+        "url": "={{ $json.website }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "ai-redesign",
+      "name": "Redesign com IA",
+      "type": "n8n-nodes-base.openAi",
+      "position": [850, 300],
+      "parameters": {
+        "model": "gpt-4o",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Você é um web designer especializado em redesenhar sites. Mantenha todas as informações originais do negócio (nome, telefone, endereço, serviços) mas crie um design moderno, responsivo e profissional. Use HTML + CSS puro em um único arquivo."
+          },
+          {
+            "role": "user",
+            "content": "Redesenhe este site mantendo todas as informações: {{ $json.site_content }}"
+          }
+        ]
+      }
+    },
+    {
+      "id": "publish-site",
+      "name": "Publicar Site na Vercel",
+      "type": "n8n-nodes-base.vercel",
+      "position": [1050, 300],
+      "parameters": {
+        "operation": "deploy",
+        "projectId": "={{ $env.VERCEL_PROJECT_ID }}",
+        "source": {
+          "type": "raw",
+          "content": "={{ $json.html }}"
+        }
+      }
+    },
+    {
+      "id": "save-lead-db",
+      "name": "Salvar Lead no Banco",
+      "type": "n8n-nodes-base.postgres",
+      "position": [1250, 300],
+      "parameters": {
+        "operation": "insert",
+        "schema": "public",
+        "table": "leads",
+        "data": {
+          "nome": "={{ $json.business_name }}",
+          "telefone": "={{ $json.phone }}",
+          "email": "={{ $json.email }}",
+          "nota": "={{ $json.rating }}",
+          "site_original": "={{ $json.original_url }}",
+          "site_novo": "={{ $json.new_url }}",
+          "status": "proposta_enviada"
+        }
+      }
+    },
+    {
+      "id": "send-email-proposal",
+      "name": "Enviar Proposta por Email",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [1450, 300],
+      "parameters": {
+        "fromEmail": "={{ $env.EMAIL_FROM }}",
+        "toEmail": "={{ $json.email }}",
+        "subject": "Sua proposta de site moderno - Monarchy",
+        "text": "={{ $json.email_body }}"
+      }
+    },
+    {
+      "id": "gmail-watch",
+      "name": "Monitorar Respostas (Gmail)",
+      "type": "n8n-nodes-base.gmail",
+      "position": [1650, 100],
+      "parameters": {
+        "operation": "get",
+        "query": "subject:'Monarchy' is:unread"
+      },
+      "pollTimes": {"item": [{"field": "minutes", "minutesInterval": 5}]}
+    },
+    {
+      "id": "check-response",
+      "name": "Verificar Resposta",
+      "type": "n8n-nodes-base.if",
+      "position": [1850, 100],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {"value1": "={{ $json.subject }}", "operation": "contains", "value2": "Monarchy"}
+          ]
+        }
+      }
+    },
+    {
+      "id": "update-lead-status",
+      "name": "Atualizar Status Lead",
+      "type": "n8n-nodes-base.postgres",
+      "position": [2050, 100],
+      "parameters": {
+        "operation": "update",
+        "schema": "public",
+        "table": "leads",
+        "updateKey": "email",
+        "data": {
+          "email": "={{ $json.from }}",
+          "status": "cliente_respondeu",
+          "resposta": "={{ $json.body }}"
+        }
+      }
+    },
+    {
+      "id": "send-whatsapp",
+      "name": "Notificar no WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [2250, 100],
+      "parameters": {
+        "url": "http://localhost:3001/api/enviar-mensagem",
+        "method": "POST",
+        "body": {
+          "telefone": "={{ $env.MONARCHY_PHONE }}",
+          "mensagem": "={{ 'Lead respondeu! ' + $json.business_name + ' - ' + $json.body }}"
+        }
+      }
+    },
+    {
+      "id": "generate-contract",
+      "name": "Gerar Contrato Word",
+      "type": "n8n-nodes-base.html",
+      "position": [2450, 100],
+      "parameters": {
+        "template": "<html><body><h1>Contrato de Prestação de Serviços</h1><p>Entre Monarchy e {{ business_name }}...</p></body></html>"
+      }
+    },
+    {
+      "id": "sales-panel",
+      "name": "Dashboard de Vendas",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [250, 500],
+      "parameters": {
+        "content": {
+          "html": "{{ $json.html_dashboard }}"
+        }
+      }
+    },
+    {
+      "id": "setup-config",
+      "name": "Configurar Plugin",
+      "type": "n8n-nodes-base.set",
+      "position": [50, 300],
+      "parameters": {
+        "values": {
+          "string": [
+            {"name": "query", "value": "clínicas bem avaliadas com site ruim em São Paulo"},
+            {"name": "niche", "value": "saúde"},
+            {"name": "max_leads", "value": "10"}
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "trigger-manual": {"main": [[{"node": "setup-config", "type": "main"}]]},
+    "schedule": {"main": [[{"node": "setup-config", "type": "main"}]]},
+    "setup-config": {"main": [[{"node": "google-maps-search", "type": "main"}]]},
+    "google-maps-search": {"main": [[{"node": "scrape-website", "type": "main"}]]},
+    "scrape-website": {"main": [[{"node": "ai-redesign", "type": "main"}]]},
+    "ai-redesign": {"main": [[{"node": "publish-site", "type": "main"}]]},
+    "publish-site": {"main": [[{"node": "save-lead-db", "type": "main"}]]},
+    "save-lead-db": {"main": [[{"node": "send-email-proposal", "type": "main"}]]},
+    "send-email-proposal": {"main": [[]]},
+    "gmail-watch": {"main": [[{"node": "check-response", "type": "main"}]]},
+    "check-response": {"main": [[{"node": "update-lead-status", "type": "main"}]]},
+    "update-lead-status": {"main": [[{"node": "send-whatsapp", "type": "main"}]]},
+    "send-whatsapp": {"main": [[{"node": "generate-contract", "type": "main"}]]},
+    "generate-contract": {"main": [[]]}
+  }
+}

@@ -5,67 +5,77 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Paleta Terra - Insperada em natureza e minerais */
-  --bg-primary: #faf8f5;
-  --bg-secondary: #f5f0eb;
-  --bg-tertiary: #ede6dd;
-  --surface: #ffffff;
-  --surface-elevated: #ffffff;
+  /* Tema Agentes de IA - Dark + Neon */
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-tertiary: #1a1a25;
+  --surface: #15151f;
+  --surface-elevated: #1a1a28;
   
-  /* Cores principais - Terracota + Verde Salva */
-  --accent: #c4704b;
-  --accent-light: #d4956f;
-  --accent-dark: #a85a3a;
-  --accent-glow: rgba(196, 112, 75, 0.15);
-
-  /* Alias para componentes */
-  --terracotta: #c4704b;
-  --terracotta-light: #d4956f;
-  --terracotta-dark: #a85a3a;
-  --terracotta-glow: rgba(196, 112, 75, 0.15);
-  --terracotta-bg: rgba(196, 112, 75, 0.1);
-  --terracotta-border: rgba(196, 112, 75, 0.3);
-  --sage-bg: rgba(125, 155, 118, 0.1);
-  --sage-border: rgba(125, 155, 118, 0.3);
-
-  /* Opacidades para componentes */
-  --terracotta-5: rgba(196, 112, 75, 0.05);
-  --terracotta-10: rgba(196, 112, 75, 0.10);
-  --terracotta-15: rgba(196, 112, 75, 0.15);
-  --terracotta-20: rgba(196, 112, 75, 0.20);
-  --terracotta-30: rgba(196, 112, 75, 0.30);
-  --terracotta-40: rgba(196, 112, 75, 0.40);
-  --sage-5: rgba(125, 155, 118, 0.05);
-  --sage-10: rgba(125, 155, 118, 0.10);
-  --sage-15: rgba(125, 155, 118, 0.15);
-  --sage-20: rgba(125, 155, 118, 0.20);
-  --sage-30: rgba(125, 155, 118, 0.30);
-  --accent-15: rgba(196, 112, 75, 0.15);
-  --clay-15: rgba(184, 160, 137, 0.15);
+  /* Cores principais - Violeta Neon + Ciano */
+  --accent: #8b5cf6;
+  --accent-light: #a78bfa;
+  --accent-dark: #7c3aed;
+  --accent-glow: rgba(139, 92, 246, 0.15);
+  --accent-glow-strong: rgba(139, 92, 246, 0.3);
   
-  --sage: #7d9b76;
-  --sage-light: #a3c49b;
-  --sage-dark: #5a7a52;
+  --neon: #06d6a0;
+  --neon-light: #34d399;
+  --neon-dark: #059669;
   
-  --sand: #d4c5a9;
-  --sand-light: #e8dcc6;
+  --cyan: #22d3ee;
+  --cyan-light: #67e8f9;
+  --cyan-dark: #0891b2;
   
-  --clay: #b8a089;
+  --pink: #f472b6;
+  --pink-light: #f9a8d4;
+  --pink-dark: #db2777;
   
   /* Texto */
-  --text-primary: #2d2a26;
-  --text-secondary: #6b6560;
-  --text-tertiary: #9e958c;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
   
   /* Bordas */
-  --border: #e5ddd4;
-  --border-subtle: #f0ebe5;
+  --border: #1e293b;
+  --border-subtle: #1a1a2e;
   
   /* Estados */
-  --success: #7d9b76;
-  --warning: #d4a84b;
-  --error: #c45b5b;
-  --info: #5b8fc4;
+  --success: #06d6a0;
+  --warning: #fbbf24;
+  --error: #f43f5e;
+  --info: #22d3ee;
+  
+  /* Cores antigos (compatibilidade) */
+  --sage: #06d6a0;
+  --sage-light: #34d399;
+  --sage-dark: #059669;
+  --sage-5: rgba(6, 214, 160, 0.05);
+  --sage-10: rgba(6, 214, 160, 0.10);
+  --sage-15: rgba(6, 214, 160, 0.15);
+  --sage-20: rgba(6, 214, 160, 0.20);
+  --sage-30: rgba(6, 214, 160, 0.30);
+  --sage-bg: rgba(6, 214, 160, 0.1);
+  --sage-border: rgba(6, 214, 160, 0.3);
+  --sage-dark: #059669;
+  
+  --terracotta: #8b5cf6;
+  --terracotta-light: #a78bfa;
+  --terracotta-dark: #7c3aed;
+  --terracotta-glow: rgba(139, 92, 246, 0.15);
+  --terracotta-bg: rgba(139, 92, 246, 0.1);
+  --terracotta-border: rgba(139, 92, 246, 0.3);
+  
+  --terracotta-5: rgba(139, 92, 246, 0.05);
+  --terracotta-10: rgba(139, 92, 246, 0.10);
+  --terracotta-15: rgba(139, 92, 246, 0.15);
+  --terracotta-20: rgba(139, 92, 246, 0.20);
+  --terracotta-30: rgba(139, 92, 246, 0.30);
+  --terracotta-40: rgba(139, 92, 246, 0.40);
+  
+  --accent-15: rgba(139, 92, 246, 0.15);
+  --clay: #64748b;
+  --clay-15: rgba(100, 116, 139, 0.15);
 }
 
 * {
@@ -86,8 +96,8 @@ body {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -95,8 +105,8 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--clay);
-  border-radius: 4px;
+  background: var(--border);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -108,14 +118,14 @@ body {
   background: var(--surface);
   border-radius: 1rem;
   border: 1px solid var(--border);
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
 }
 
 .card-elevated {
-  background: var(--surface);
+  background: var(--surface-elevated);
   border-radius: 1rem;
   border: 1px solid var(--border);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.4);
 }
 
 .btn-primary {
@@ -131,11 +141,13 @@ body {
   color: white;
   border: none;
   cursor: pointer;
+  box-shadow: 0 0 20px var(--accent-glow);
 }
 
 .btn-primary:hover {
   background: var(--accent-dark);
-  box-shadow: 0 4px 12px var(--accent-glow);
+  box-shadow: 0 0 30px var(--accent-glow-strong);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
@@ -154,7 +166,7 @@ body {
 }
 
 .btn-secondary:hover {
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   border-color: var(--accent);
 }
 
@@ -167,14 +179,17 @@ body {
   font-weight: 600;
   border-radius: 0.75rem;
   transition: all 0.2s;
-  background: var(--sage);
-  color: white;
+  background: var(--neon);
+  color: var(--bg-primary);
   border: none;
   cursor: pointer;
+  box-shadow: 0 0 20px rgba(6, 214, 160, 0.3);
 }
 
 .btn-sage:hover {
-  background: var(--sage-dark);
+  background: var(--neon-dark);
+  box-shadow: 0 0 30px rgba(6, 214, 160, 0.4);
+  transform: translateY(-1px);
 }
 
 .input-field {
@@ -208,7 +223,16 @@ body {
   animation: fade-in 0.4s ease-out;
 }
 
-/* Botão de status - estilo pílula */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+  50% { box-shadow: 0 0 40px var(--accent-glow-strong); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Status pill */
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -220,12 +244,12 @@ body {
 }
 
 .status-pill.active {
-  background: rgba(125, 155, 118, 0.15);
-  color: var(--sage-dark);
+  background: rgba(6, 214, 160, 0.15);
+  color: var(--neon);
 }
 
 .status-pill.inactive {
-  background: rgba(158, 149, 140, 0.15);
+  background: rgba(100, 116, 139, 0.15);
   color: var(--text-tertiary);
 }
 
@@ -241,7 +265,7 @@ body {
 }
 
 .toggle.active {
-  background: var(--sage);
+  background: var(--neon);
 }
 
 .toggle::after {
@@ -261,33 +285,20 @@ body {
   transform: translateX(20px);
 }
 
-/* Flow connector line */
-.flow-connector {
-  width: 0.125rem;
-  height: 2rem;
-  margin-left: auto;
-  margin-right: auto;
-  background: linear-gradient(to bottom, var(--border), var(--accent-light));
-}
-
 /* Glass morphism para modais */
 .glass {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(21, 21, 31, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
 }
 
 /* Texto gradient */
 .text-gradient {
-  background: linear-gradient(135deg, var(--accent), var(--sage));
+  background: linear-gradient(135deg, var(--accent), var(--cyan));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-/* Borda decorativa */
-.border-decorative {
-  border-image: linear-gradient(135deg, var(--accent), var(--sage)) 1;
 }
 
 /* Sombra colorida */
@@ -295,8 +306,8 @@ body {
   box-shadow: 0 4px 20px var(--accent-glow);
 }
 
-.shadow-sage {
-  box-shadow: 0 4px 20px rgba(125, 155, 118, 0.15);
+.shadow-neon {
+  box-shadow: 0 4px 20px rgba(6, 214, 160, 0.2);
 }
 
 /* Focus visible para acessibilidade */
@@ -317,4 +328,16 @@ body {
 /* Monospace para código */
 .font-mono {
   font-family: 'JetBrains Mono', monospace;
+}
+
+/* Glow border */
+.glow-border {
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+/* Neon text */
+.neon-text {
+  color: var(--neon);
+  text-shadow: 0 0 10px rgba(6, 214, 160, 0.5);
 }

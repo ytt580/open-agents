@@ -1,0 +1,209 @@
+{
+  "cenario": "Monarchy Lead Machine - Make.com",
+  "descricao": "Automação completa de prospecção de leads via Make.com",
+  "versao": "1.0",
+  "cenarios": [
+    {
+      "id": 1,
+      "nome": "Buscar + Criar Site + Enviar Proposta",
+      "trigger": "Schedule (24h) / Manual",
+      "modulos": [
+        {
+          "ordem": 1,
+          "app": "HTTP",
+          "operacao": "Fazer uma requisição",
+          "config": {
+            "url": "https://maps.googleapis.com/maps/api/place/textsearch/json",
+            "method": "GET",
+            "params": {
+              "query": "clínicas bem avaliadas com site desatualizado em São Paulo",
+              "key": "{{google_maps_api_key}}"
+            }
+          },
+          "output": "Array de resultados do Google Maps"
+        },
+        {
+          "ordem": 2,
+          "app": "Flow Control",
+          "operacao": "Iterator",
+          "config": {
+            "array": "{{1.results}}"
+          },
+          "output": "Cada lead individualmente"
+        },
+        {
+          "ordem": 3,
+          "app": "HTTP",
+          "operacao": "Fazer uma requisição",
+          "config": {
+            "url": "{{2.website}}",
+            "method": "GET",
+            "parseResponse": false
+          },
+          "output": "HTML do site original"
+        },
+        {
+          "ordem": 4,
+          "app": "OpenAI",
+          "operacao": "Criar uma conclusão de chat",
+          "config": {
+            "model": "gpt-4o",
+            "messages": [
+              {"role": "system", "content": "Você é web designer especialista em landing pages. Mantenha TODAS as informações originais. Gere HTML+CSS completo, responsivo, design premium dark/gold."},
+              {"role": "user", "content": "Redesenhe: {{3.body}}. Dados: Nome={{1.name}}, Nota={{1.rating}}, Endereço={{1.formatted_address}}, Telefone={{1.formatted_phone_number}}"}
+            ]
+          },
+          "output": "HTML do novo site"
+        },
+        {
+          "ordem": 5,
+          "app": "HTTP",
+          "operacao": "Fazer uma requisição",
+          "config": {
+            "url": "https://api.vercel.com/v1/deployments",
+            "method": "POST",
+            "headers": {"Authorization": "Bearer {{vercel_token}}"},
+            "body": {
+              "name": "site-{{replace(1.name, ' ', '-')}}",
+              "files": [{"file": "index.html", "data": "{{base64(4.choices[0].message.content)}}"}]
+            }
+          },
+          "output": "URL do novo site publicado"
+        },
+        {
+          "ordem": 6,
+          "app": "Data Store",
+          "operacao": "Adicionar um registro",
+          "config": {
+            "data_store": "leads_monarchy",
+            "record": {
+              "nome": "{{1.name}}",
+              "telefone": "{{1.formatted_phone_number}}",
+              "email": "{{extrair_email(3.body)}}",
+              "nota": "{{1.rating}}",
+              "site_original": "{{1.website}}",
+              "site_novo": "{{5.url}}",
+              "status": "proposta_enviada",
+              "criado_em": "{{now}}"
+            }
+          },
+          "output": "Lead salvo no banco"
+        },
+        {
+          "ordem": 7,
+          "app": "Gmail",
+          "operacao": "Enviar um e-mail",
+          "config": {
+            "to": "{{extrair_email(3.body)}}",
+            "subject": "Monarchy - Nova versão do site {{1.name}}",
+            "html": "<h2>Olá {{1.name}}!</h2><p>Vi que vocês são nota {{1.rating}} ⭐ no Google! Criei um site novo pra vocês.</p><p><a href='{{5.url}}'>🔗 VER NOVO SITE</a></p>"
+          },
+          "output": "E-mail enviado"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "nome": "Monitorar Respostas",
+      "trigger": "Schedule (5 min)",
+      "modulos": [
+        {
+          "ordem": 1,
+          "app": "Gmail",
+          "operacao": "Listar e-mails",
+          "config": {
+            "query": "subject:Monarchy is:unread",
+            "max": 10
+          }
+        },
+        {
+          "ordem": 2,
+          "app": "Flow Control",
+          "operacao": "Iterator"
+        },
+        {
+          "ordem": 3,
+          "app": "Gmail",
+          "operacao": "Ler e-mail"
+        },
+        {
+          "ordem": 4,
+          "app": "Data Store",
+          "operacao": "Atualizar registro",
+          "config": {
+            "data_store": "leads_monarchy",
+            "key": "{{3.from}}",
+            "record": {
+              "status": "cliente_respondeu",
+              "resposta": "{{3.body}}"
+            }
+          }
+        },
+        {
+          "ordem": 5,
+          "app": "HTTP",
+          "operacao": "Fazer uma requisição",
+          "config": {
+            "url": "http://localhost:3001/api/enviar-mensagem",
+            "method": "POST",
+            "body": {
+              "telefone": "554784743492",
+              "mensagem": "Lead respondeu! {{1.from}} - {{3.body}}"
+            }
+          }
+        },
+        {
+          "ordem": 6,
+          "app": "Gmail",
+          "operacao": "Marcar como lido"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nome": "Follow-up Automático",
+      "trigger": "Schedule (24h)",
+      "modulos": [
+        {
+          "ordem": 1,
+          "app": "Data Store",
+          "operacao": "Listar registros",
+          "config": {
+            "data_store": "leads_monarchy",
+            "filter": {
+              "status": "proposta_enviada"
+            }
+          }
+        },
+        {
+          "ordem": 2,
+          "app": "Flow Control",
+          "operacao": "Filter",
+          "config": {
+            "condition": "{{now - 1.criado_em}} > 48"
+          }
+        },
+        {
+          "ordem": 3,
+          "app": "Gmail",
+          "operacao": "Enviar um e-mail",
+          "config": {
+            "to": "{{1.email}}",
+            "subject": "Monarchy - Lembrei de você!",
+            "html": "<p>Oi {{1.nome}}! Enviei uma proposta de site pra vocês. O link: <a href='{{1.site_novo}}'>{{1.site_novo}}</a></p>"
+          }
+        },
+        {
+          "ordem": 4,
+          "app": "Data Store",
+          "operacao": "Atualizar registro",
+          "config": {
+            "data_store": "leads_monarchy",
+            "key": "{{1.id}}",
+            "record": {"status": "follow_up_enviado"}
+          }
+        }
+      ]
+    }
+  ]
+}

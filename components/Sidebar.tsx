@@ -24,7 +24,7 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'Visão Geral' },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'Visao Geral' },
   { id: 'flows', icon: GitBranch, label: 'Fluxos' },
   { id: 'browser', icon: Globe, label: 'Navegador' },
   { id: 'skills', icon: Puzzle, label: 'Skills' },
@@ -39,33 +39,30 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
       collapsed ? 'w-20' : 'w-64'
     )} style={{ background: 'var(--surface)', borderRight: '1px solid var(--border)' }}>
       <div className="flex flex-col h-full">
-        {/* Logo */}
         <div className="p-6" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent), var(--sage))' }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent), var(--cyan))' }}>
               <Zap className="w-5 h-5 text-white" />
             </div>
             {!collapsed && (
               <div>
                 <h1 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Open-Agents</h1>
-                <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Automação com IA</p>
+                <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Automacao com IA</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* New Flow Button */}
         <div className="p-4">
           <button onClick={onNewFlow} className={clsx(
             'w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition-all duration-200',
             'hover:shadow-lg'
-          )} style={{ background: 'var(--accent)', color: 'white' }}>
+          )} style={{ background: 'var(--accent)', color: 'white', boxShadow: '0 0 20px var(--accent-glow)' }}>
             <Plus className="w-5 h-5" />
             {!collapsed && <span>Novo Fluxo</span>}
           </button>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 px-3 space-y-1">
           {menuItems.map((item) => {
             const isActive = currentPage === item.id
@@ -81,7 +78,8 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
                 )}
                 style={isActive ? {
                   background: 'var(--accent-glow)',
-                  color: 'var(--accent-dark)'
+                  color: 'var(--accent-light)',
+                  boxShadow: 'inset 0 0 20px var(--accent-glow)'
                 } : {
                   color: 'var(--text-secondary)'
                 }}
@@ -93,7 +91,6 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
           })}
         </nav>
 
-        {/* Collapse */}
         <div className="p-3">
           <button
             onClick={onToggleCollapse}

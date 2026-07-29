@@ -34,11 +34,11 @@ interface Skill {
 }
 
 const categorias = {
-  scraping: { label: 'Scraping', icon: Search, cor: 'var(--sage-dark)', bg: 'var(--sage-15)' },
-  analise: { label: 'Análise', icon: Code2, cor: 'var(--accent)', bg: 'var(--accent-15)' },
-  criacao: { label: 'Criação', icon: Zap, cor: 'var(--terracotta)', bg: 'var(--terracotta-15)' },
-  envio: { label: 'Envio', icon: Mail, cor: 'var(--sage)', bg: 'var(--sage-15)' },
-  navegacao: { label: 'Navegação', icon: Globe, cor: 'var(--terracotta-light)', bg: 'var(--terracotta-15)' },
+  scraping: { label: 'Scraping', icon: Search, cor: 'var(--neon)', bg: 'rgba(6, 214, 160, 0.15)' },
+  analise: { label: 'Analise', icon: Code2, cor: 'var(--accent)', bg: 'var(--accent-glow)' },
+  criacao: { label: 'Criacao', icon: Zap, cor: 'var(--cyan)', bg: 'rgba(34, 211, 238, 0.15)' },
+  envio: { label: 'Envio', icon: Mail, cor: 'var(--pink)', bg: 'rgba(244, 114, 182, 0.15)' },
+  navegacao: { label: 'Navegacao', icon: Globe, cor: 'var(--accent-light)', bg: 'var(--accent-glow)' },
   custom: { label: 'Custom', icon: Settings, cor: 'var(--text-secondary)', bg: 'var(--bg-secondary)' },
 }
 
@@ -46,7 +46,7 @@ const defaultSkills: Skill[] = [
   {
     id: '1',
     nome: 'Google Maps Scraper',
-    descricao: 'Busca negócios no Google Maps por critério e localização',
+    descricao: 'Busca negocios no Google Maps por criterio e localizacao',
     categoria: 'scraping',
     codigo: `async function googleMapsScraper(criterio, localizacao) {
   const page = await browser.newPage()
@@ -98,7 +98,7 @@ const defaultSkills: Skill[] = [
   {
     id: '3',
     nome: 'Site Generator',
-    descricao: 'Cria site melhorado baseado em análise',
+    descricao: 'Cria site melhorado baseado em analise',
     categoria: 'criacao',
     codigo: `async function generateImprovedSite(data) {
   const template = \`
@@ -119,7 +119,7 @@ const defaultSkills: Skill[] = [
           <p class="text-gray-600">\${data.descricao}</p>
         </section>
         <section>
-          <h2 class="text-2xl font-bold mb-4">Serviços</h2>
+          <h2 class="text-2xl font-bold mb-4">Servicos</h2>
           <div class="grid md:grid-cols-3 gap-6">
             \${data.servicos.map(s => \`
               <div class="border rounded-lg p-6">
@@ -151,7 +151,6 @@ const defaultSkills: Skill[] = [
   const page = await browser.newPage()
   await page.goto('https://web.whatsapp.com')
   
-  // Aguardar QR Code se necessário
   const qr = await page.$('[data-testid=qrcode]')
   if (qr) {
     await page.waitForSelector('[data-testid=conversation-compose-box-input]', { timeout: 60000 })
@@ -173,7 +172,6 @@ const defaultSkills: Skill[] = [
     descricao: 'Detecta e resolve login/captcha automaticamente',
     categoria: 'navegacao',
     codigo: `async function handleLogin(page, selectors) {
-  // Verificar se precisa de login
   const loginForm = await page.$(selectors.login)
   if (loginForm) {
     await page.fill(selectors.email, process.env.EMAIL)
@@ -182,10 +180,8 @@ const defaultSkills: Skill[] = [
     await page.waitForNavigation()
   }
   
-  // Verificar captcha
   const captcha = await page.$(selectors.captcha)
   if (captcha) {
-    // Pausar para intervenção manual
     await page.waitForSelector(selectors.postLogin, { timeout: 300000 })
   }
   
@@ -278,15 +274,15 @@ export function SkillsManager() {
       {/* Header */}
       <div className="p-6 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--terracotta-15)' }}>
-            <FileCode className="w-6 h-6" style={{ color: 'var(--terracotta)' }} />
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--accent-glow)' }}>
+            <FileCode className="w-6 h-6" style={{ color: 'var(--accent)' }} />
           </div>
           <div>
             <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Skills</h1>
-            <p style={{ color: 'var(--text-tertiary)' }}>{skills.length} skills • {skills.filter(s => s.ativo).length} ativas</p>
+            <p style={{ color: 'var(--text-tertiary)' }}>{skills.length} skills - {skills.filter(s => s.ativo).length} ativas</p>
           </div>
         </div>
-        <button onClick={handleNew} className="btn-primary flex items-center gap-2" style={{ background: 'var(--terracotta)' }}>
+        <button onClick={handleNew} className="btn-primary flex items-center gap-2">
           <Plus className="w-5 h-5" />
           Nova Skill
         </button>
@@ -299,11 +295,12 @@ export function SkillsManager() {
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+              className="px-4 py-2 rounded-xl text-sm font-medium transition-all"
               style={{
-                background: filter === cat ? 'var(--terracotta-20)' : 'var(--bg-secondary)',
-                color: filter === cat ? 'var(--terracotta)' : 'var(--text-tertiary)',
-                border: `1px solid ${filter === cat ? 'var(--terracotta-40)' : 'var(--border)'}`
+                background: filter === cat ? 'var(--accent-glow)' : 'var(--bg-secondary)',
+                color: filter === cat ? 'var(--accent)' : 'var(--text-tertiary)',
+                border: `1px solid ${filter === cat ? 'var(--accent)' : 'var(--border)'}`,
+                boxShadow: filter === cat ? '0 0 15px var(--accent-glow)' : 'none'
               }}
             >
               {cat === 'all' ? 'Todas' : categorias[cat as keyof typeof categorias].label}
@@ -325,12 +322,11 @@ export function SkillsManager() {
             {filteredSkills.map((skill) => {
               const cat = categorias[skill.categoria as keyof typeof categorias]
               const Icon = cat.icon
-              const isEditing = editingSkill?.id === skill.id
               
               return (
                 <div 
                   key={skill.id}
-                  className="card p-5 transition-all"
+                  className="card p-5 transition-all duration-200 hover:border-[var(--accent)]"
                   style={{
                     opacity: skill.ativo ? 1 : 0.7,
                   }}
@@ -342,7 +338,7 @@ export function SkillsManager() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => handleEdit(skill)}
-                        className="p-1.5 rounded-lg transition-colors"
+                        className="p-1.5 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]"
                         style={{ color: 'var(--text-tertiary)' }}
                         title="Editar"
                       >
@@ -352,7 +348,7 @@ export function SkillsManager() {
                         onClick={() => setSkills(prev => prev.map(s => s.id === skill.id ? { ...s, ativo: !s.ativo } : s))}
                         className="w-10 h-5 rounded-full transition-colors relative"
                         style={{
-                          background: skill.ativo ? 'var(--sage)' : 'var(--border)'
+                          background: skill.ativo ? 'var(--neon)' : 'var(--border)'
                         }}
                         title={skill.ativo ? 'Desativar' : 'Ativar'}
                       >
@@ -362,7 +358,7 @@ export function SkillsManager() {
                       </button>
                       <button
                         onClick={() => handleDelete(skill.id)}
-                        className="p-1.5 rounded-lg transition-colors"
+                        className="p-1.5 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]"
                         style={{ color: 'var(--text-tertiary)' }}
                         title="Excluir"
                       >
@@ -390,11 +386,11 @@ export function SkillsManager() {
                   </div>
 
                   <div className="flex items-center gap-2 mt-3 pt-3" style={{ borderTop: '1px solid var(--border)' }}>
-                    <button className="flex-1 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+                    <button className="flex-1 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
                       <Copy className="w-4 h-4" />
-                      Copiar Código
+                      Copiar
                     </button>
-                    <button className="flex-1 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2" style={{ background: 'var(--terracotta-20)', color: 'var(--terracotta)' }}>
+                    <button className="flex-1 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2" style={{ background: 'var(--accent-glow)', color: 'var(--accent)' }}>
                       <Play className="w-4 h-4" />
                       Testar
                     </button>
@@ -408,15 +404,15 @@ export function SkillsManager() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)' }}>
-          <div className="card w-full max-w-3xl max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
+          <div className="card w-full max-w-3xl max-h-[90vh] flex flex-col" style={{ boxShadow: '0 0 60px var(--accent-glow)' }}>
             <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
               <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
                 {editingSkill ? 'Editar Skill' : 'Nova Skill'}
               </h2>
               <button 
                 onClick={() => { setShowModal(false); setEditingSkill(null); }}
-                className="p-2 rounded-lg transition-colors"
+                className="p-2 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]"
                 style={{ color: 'var(--text-tertiary)' }}
               >
                 <ChevronDown className="w-5 h-5" />
@@ -439,7 +435,7 @@ export function SkillsManager() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Descrição</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Descricao</label>
                 <textarea
                   value={editingSkill?.descricao || newSkill.descricao}
                   onChange={(e) => editingSkill 
@@ -466,11 +462,12 @@ export function SkillsManager() {
                           ? setEditingSkill({...editingSkill, categoria: catKey})
                           : setNewSkill({...newSkill, categoria: catKey})
                         }
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all"
                         style={{
-                          borderColor: isSelected ? 'var(--terracotta)' : 'var(--border)',
-                          background: isSelected ? 'var(--terracotta-15)' : 'transparent',
-                          color: isSelected ? 'var(--terracotta)' : 'var(--text-tertiary)'
+                          borderColor: isSelected ? 'var(--accent)' : 'var(--border)',
+                          background: isSelected ? 'var(--accent-glow)' : 'transparent',
+                          color: isSelected ? 'var(--accent)' : 'var(--text-tertiary)',
+                          boxShadow: isSelected ? '0 0 15px var(--accent-glow)' : 'none'
                         }}
                       >
                         <Icon className="w-4 h-4" />
@@ -482,7 +479,7 @@ export function SkillsManager() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Código (JavaScript/TypeScript)</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Codigo (JavaScript/TypeScript)</label>
                 <textarea
                   value={editingSkill?.codigo || newSkill.codigo}
                   onChange={(e) => editingSkill 
@@ -491,7 +488,7 @@ export function SkillsManager() {
                   }
                   rows={15}
                   className="input-field font-mono text-sm resize-none"
-                  placeholder="// Sua função async aqui\nexport async function minhaSkill(params) {\n  // código...\n}"
+                  placeholder="// Sua funcao async aqui\nexport async function minhaSkill(params) {\n  // codigo...\n}"
                   spellCheck={false}
                 />
               </div>
@@ -507,10 +504,9 @@ export function SkillsManager() {
               <button
                 onClick={editingSkill ? handleUpdateSkill : handleSaveSkill}
                 className="btn-primary flex items-center gap-2"
-                style={{ background: 'var(--terracotta)' }}
               >
                 <Save className="w-5 h-5" />
-                {editingSkill ? 'Salvar Alterações' : 'Criar Skill'}
+                {editingSkill ? 'Salvar Alteracoes' : 'Criar Skill'}
               </button>
             </div>
           </div>

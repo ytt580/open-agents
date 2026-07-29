@@ -1,0 +1,13 @@
+{
+  "pix": "COLOQUE_SEU_PIX_AQUI",
+  "valor": "497",
+  "nomeBusiness": "Monarchy",
+  "telefone": "554784743492",
+  "instagram": "monarchy.agencia",
+  "whatsapp_api_url": "http://localhost:3001",
+  "templates": {
+    "proposta_inicial": "Olá {nome}! Vi que vocês são nota {nota} no Google! Criei uma proposta de site para vocês: {url}",
+    "follow_up": "Oi {nome}! Enviei uma proposta de site para vocês. Quer que eu mostre como ficaria?",
+    "fechamento": "Perfeito! O valor é R$ {valor}. PIX: {pix}"
+  }
+}
