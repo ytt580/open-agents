@@ -13,6 +13,15 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState('dashboard')
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [flows, setFlows] = useState<{id: string, nome: string}[]>([])
+
+  const handleNewFlow = () => {
+    const id = Date.now().toString()
+    const nome = 'Novo Fluxo'
+    setFlows(prev => [...prev, { id, nome }])
+    setSelectedFlow(id)
+    setCurrentPage('flows')
+  }
 
   const renderPage = () => {
     switch (currentPage) {
@@ -44,6 +53,7 @@ export default function Home() {
           setCurrentPage(page)
           if (page !== 'flows') setSelectedFlow(null)
         }}
+        onNewFlow={handleNewFlow}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />

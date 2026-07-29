@@ -41,14 +41,7 @@ interface Message {
   timestamp: Date
 }
 
-const defaultSteps: Step[] = [
-  { id: '1', tipo: 'busca', nome: 'Buscar no Google Maps', descricao: 'Pesquisar negocios por criterio e localizacao', ativo: true },
-  { id: '2', tipo: 'scraping', nome: 'Scraping do Site', descricao: 'Extrair dados e analisar site atual', ativo: true },
-  { id: '3', tipo: 'analise', nome: 'Analise com IA', descricao: 'Identificar problemas e melhorias', ativo: true },
-  { id: '4', tipo: 'criacao', nome: 'Criar Site Melhorado', descricao: 'Gerar nova versao do site', ativo: true },
-  { id: '5', tipo: 'email', nome: 'Enviar Proposta', descricao: 'Enviar email/WhatsApp com proposta', ativo: true },
-  { id: '6', tipo: 'publicacao', nome: 'Publicar Site', descricao: 'Publicar na Vercel/Netlify', ativo: true },
-]
+const defaultSteps: Step[] = []
 
 const stepIcons: Record<string, any> = {
   busca: Search,
@@ -229,7 +222,7 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
 
         {/* Execute button */}
         <div className="p-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-          <button className="btn-sage w-full">
+          <button onClick={() => alert('Fluxo sera executado em breve! Configure as etapas primeiro.')} className="btn-sage w-full">
             <Play className="w-5 h-5" />
             Executar Fluxo
           </button>

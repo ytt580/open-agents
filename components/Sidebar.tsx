@@ -18,6 +18,7 @@ import { clsx } from 'clsx'
 interface SidebarProps {
   currentPage: string
   onNavigate: (page: string) => void
+  onNewFlow: () => void
   collapsed: boolean
   onToggleCollapse: () => void
 }
@@ -31,7 +32,7 @@ const menuItems = [
   { id: 'api', icon: Key, label: 'APIs' },
 ]
 
-export function Sidebar({ currentPage, onNavigate, collapsed, onToggleCollapse }: SidebarProps) {
+export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggleCollapse }: SidebarProps) {
   return (
     <aside className={clsx(
       'fixed left-0 top-0 h-full transition-all duration-300 z-50',
@@ -55,7 +56,7 @@ export function Sidebar({ currentPage, onNavigate, collapsed, onToggleCollapse }
 
         {/* New Flow Button */}
         <div className="p-4">
-          <button className={clsx(
+          <button onClick={onNewFlow} className={clsx(
             'w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition-all duration-200',
             'hover:shadow-lg'
           )} style={{ background: 'var(--accent)', color: 'white' }}>
