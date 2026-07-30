@@ -28,10 +28,13 @@ import {
   Sparkles
 } from 'lucide-react'
 import { SkillsSelector } from './SkillsSelector'
+import { Flow } from '@/app/dashboard/page'
 
 interface FlowEditorProps {
   flowId: string
+  flow?: Flow
   onBack: () => void
+  onSave?: (id: string, nome: string, steps: any[]) => void
 }
 
 interface Step {
@@ -66,8 +69,9 @@ const stepIcons: Record<string, any> = {
   publicacao: Globe,
 }
 
-export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
-  const [steps, setSteps] = useState<Step[]>([])
+export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
+  const [steps, setSteps] = useState<Step[]>(flow?.steps || [])
+  const [flowName, setFlowName] = useState(flow?.nome || 'Novo Fluxo')
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -91,6 +95,12 @@ export function FlowEditor({ flowId, onBack }: FlowEditorProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  useEffect(() => {
+    if (steps.length > 0 && onSave) {
+      onSave(flowId, flowName, steps)
+    }
+  }, [steps])
 
   useEffect(() => {
     const handleClickOutside = () => setShowModelMenu(false)

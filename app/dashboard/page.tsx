@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Sidebar } from '@/components/Sidebar'
 import { Dashboard } from '@/components/Dashboard'
@@ -11,26 +11,64 @@ import { ApiManager } from '@/components/ApiManager'
 import { Scheduler } from '@/components/Scheduler'
 import { Zap, ArrowLeft } from 'lucide-react'
 
+export interface Flow {
+  id: string
+  nome: string
+  steps: any[]
+  createdAt: string
+}
+
 export default function DashboardPage() {
   const [currentPage, setCurrentPage] = useState('dashboard')
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [flows, setFlows] = useState<Flow[]>([])
+
+  useEffect(() => {
+    const saved = localStorage.getItem('open-agents-flows')
+    if (saved) setFlows(JSON.parse(saved))
+  }, [])
+
+  const saveFlows = (newFlows: Flow[]) => {
+    setFlows(newFlows)
+    localStorage.setItem('open-agents-flows', JSON.stringify(newFlows))
+  }
 
   const handleNewFlow = () => {
     const id = Date.now().toString()
+    const newFlow: Flow = { id, nome: 'Novo Fluxo', steps: [], createdAt: new Date().toISOString() }
+    saveFlows([...flows, newFlow])
     setSelectedFlow(id)
     setCurrentPage('flows')
+  }
+
+  const handleSelectFlow = (id: string) => {
+    setSelectedFlow(id)
+    setCurrentPage('flows')
+  }
+
+  const handleSaveFlow = (id: string, nome: string, steps: any[]) => {
+    const updated = flows.map(f => f.id === id ? { ...f, nome, steps } : f)
+    saveFlows(updated)
+  }
+
+  const handleDeleteFlow = (id: string) => {
+    const updated = flows.filter(f => f.id !== id)
+    saveFlows(updated)
+    setSelectedFlow(null)
+    setCurrentPage('dashboard')
   }
 
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={setSelectedFlow} />
+        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={handleSelectFlow} flows={flows} />
       case 'flows':
         if (selectedFlow) {
-          return <FlowEditor flowId={selectedFlow} onBack={() => setSelectedFlow(null)} />
+          const flow = flows.find(f => f.id === selectedFlow)
+          return <FlowEditor flowId={selectedFlow} flow={flow} onBack={() => setSelectedFlow(null)} onSave={handleSaveFlow} />
         }
-        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={setSelectedFlow} />
+        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={handleSelectFlow} flows={flows} />
       case 'browser':
         return <BrowserView />
       case 'skills':
@@ -40,7 +78,7 @@ export default function DashboardPage() {
       case 'scheduler':
         return <Scheduler />
       default:
-        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={setSelectedFlow} />
+        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={handleSelectFlow} flows={flows} />
     }
   }
 
