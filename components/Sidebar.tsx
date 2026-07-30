@@ -34,7 +34,7 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
         collapsed ? 'w-20' : 'w-72'
       )} 
       style={{ 
-        background: '#ffffff', 
+        background: 'var(--bg)', 
         borderRight: '1px solid var(--border)',
       }}
     >
@@ -122,17 +122,17 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
             }}
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <Crown className="w-4 h-4" style={{ color: 'var(--fg)' }} />
+              <Crown className="w-4 h-4" style={{ color: 'var(--orange)' }} />
               <span className="text-sm font-semibold" style={{ color: 'var(--fg)' }}>Premium</span>
             </div>
             <p className="text-sm mb-3" style={{ color: 'var(--fg-muted)' }}>
-              Kimi K3, agentes ilimitados
+              Fable 5, gerador de sites Next.js
             </p>
             <button 
               className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all hover:opacity-80"
               style={{ background: 'var(--fg)', color: 'white', minHeight: '42px' }}
             >
-              Upgrade
+              R$ 99/site
             </button>
           </div>
         )}

@@ -42,14 +42,14 @@ const capabilities = [
 ]
 
 const models = [
-  { name: 'GPT-4o', provider: 'OpenAI', tier: 'Free', color: 'var(--green)' },
-  { name: 'GPT-5 Nano', provider: 'OpenAI', tier: 'Free', color: 'var(--green)' },
-  { name: 'Claude Sonnet', provider: 'Anthropic', tier: 'Free', color: 'var(--green)' },
-  { name: 'Llama 4', provider: 'Meta', tier: 'Free', color: 'var(--green)' },
-  { name: 'DeepSeek R1', provider: 'DeepSeek', tier: 'Free', color: 'var(--green)' },
-  { name: 'Gemini Flash', provider: 'Google', tier: 'Free', color: 'var(--green)' },
-  { name: 'Claude Opus', provider: 'Anthropic', tier: 'Premium', color: 'var(--orange)' },
-  { name: 'GPT-5.3 Codex', provider: 'OpenAI', tier: 'Premium', color: 'var(--orange)' },
+  { name: 'GPT-4o Mini', provider: 'GitHub AI', tier: 'Free', color: 'var(--green)' },
+  { name: 'GPT-4o', provider: 'GitHub AI', tier: 'Free', color: 'var(--green)' },
+  { name: 'GPT-5 Nano', provider: 'GitHub AI', tier: 'Free', color: 'var(--green)' },
+  { name: 'Claude Sonnet', provider: 'GitHub AI', tier: 'Free', color: 'var(--green)' },
+  { name: 'DeepSeek R1', provider: 'GitHub AI', tier: 'Free', color: 'var(--green)' },
+  { name: 'Llama 3.3 70B', provider: 'GitHub AI', tier: 'Free', color: 'var(--green)' },
+  { name: 'GPT-5.3 Codex', provider: 'Puter.js', tier: 'Premium', color: 'var(--orange)' },
+  { name: 'Claude Opus', provider: 'Puter.js', tier: 'Premium', color: 'var(--orange)' },
 ]
 
 export default function LandingPage() {
@@ -264,10 +264,10 @@ export default function LandingPage() {
                   <span className="text-sm ml-1" style={{ color: 'var(--fg-muted)' }}>para sempre</span>
                 </div>
                 <div className="px-4 py-2.5 rounded-xl mb-6 text-sm font-bold" style={{ background: 'var(--bg-muted)', color: 'var(--fg-muted)' }}>
-                  Motor: <span style={{ color: 'var(--fg)' }}>GitHub AI</span> — 14 modelos
+                  Motor: <span style={{ color: 'var(--fg)' }}>GitHub AI</span> — 8 modelos
                 </div>
                 <div className="space-y-3 mb-8">
-                  {['GPT-4o, GPT-5 Nano, Claude Sonnet', 'Llama 4, DeepSeek R1, Gemini Flash', 'Agentes ilimitados', 'Scraping + Email + WhatsApp'].map(f => (
+                  {['GPT-4o Mini, GPT-4o, GPT-5 Nano', 'Claude Sonnet, DeepSeek R1, Llama 3.3', 'Agentes ilimitados', 'Scraping + Email + WhatsApp'].map(f => (
                     <div key={f} className="flex items-center gap-3">
                       <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'var(--green-bg)' }}>
                         <svg className="w-3 h-3" style={{ color: 'var(--green)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
