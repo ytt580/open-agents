@@ -2,144 +2,117 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
-import { 
-  ArrowRight, Globe, Mail, Search, Code, Clock,
-  Zap, Crown, Terminal, Brain, Sparkles, Menu, X,
-  ChevronRight, ArrowUpRight, Bot
-} from 'lucide-react'
+import { ArrowRight, ArrowUpRight } from 'lucide-react'
 
-function useScrollReveal() {
+function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const [show, setShow] = useState(false)
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setShow(true); obs.unobserve(e.target) } }, { threshold: 0.1 })
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setShow(true); obs.unobserve(e.target) } }, { threshold: 0.15 })
     obs.observe(el)
-    const t = setTimeout(() => setShow(true), 300)
+    const t = setTimeout(() => setShow(true), 400)
     return () => { obs.disconnect(); clearTimeout(t) }
   }, [])
-  return { ref, show }
-}
-
-function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const { ref, show } = useScrollReveal()
   return (
     <div ref={ref} className={className}
-      style={{ opacity: show ? 1 : 0, transform: show ? 'none' : 'translateY(20px)', transition: `all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms` }}>
+      style={{ opacity: show ? 1 : 0, transform: show ? 'none' : 'translateY(24px)', transition: `all 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms` }}>
       {children}
     </div>
   )
 }
 
-const capabilities = [
-  { icon: Search, label: 'Caca Leads', desc: 'Google Maps, LinkedIn, qualquer site', color: '#22c55e' },
-  { icon: Globe, label: 'Scraping Neural', desc: 'Extrai dados com IA de qualquer pagina', color: '#3b82f6' },
-  { icon: Code, label: 'Cria Sites', desc: 'Sites Next.js profissionais em minutos', color: '#f97316' },
-  { icon: Mail, label: 'Email Autonomo', desc: 'Propostas personalizadas enviadas', color: '#a855f7' },
-  { icon: Clock, label: '24/7 Ativo', desc: 'Agentes rodam sem parar', color: '#fafafa' },
-  { icon: Brain, label: '39+ Modelos', desc: 'GPT-5, Claude, Gemini, Llama, DeepSeek', color: '#ef4444' },
-]
-
-const codeSnippet = `// Seu agente em acao
-const agente = await openagents.create({
-  nome: "Caca Leads Tech",
-  objetivo: "Encontrar startups de SaaS no Brasil",
-  motor: "github-free", // 24 modelos gratis
-  etapas: [
-    "Buscar no Google Maps",
-    "Extrair dados do site",
-    "Classificar por porte",
-    "Enviar proposta personalizada"
-  ]
-})
-
-// Resultado em 5 minutos:
-// 47 leads qualificados
-// 12 propostas enviadas
-// 3 respostas positivas`
-
 export default function LandingPage() {
   const [mobileMenu, setMobileMenu] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 40)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
-    <div className="min-h-screen" style={{ background: '#0a0a0a', color: '#fafafa' }}>
+    <div className="min-h-screen" style={{ background: '#fafafa', color: '#0a0a0a' }}>
       
       {/* ============ NAV ============ */}
-      <nav className="fixed top-0 w-full z-50" style={{ background: 'rgba(10, 10, 10, 0.8)', backdropFilter: 'blur(20px)', borderBottom: '1px solid #222' }}>
-        <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: '#fafafa' }}>
-              <Zap className="w-3.5 h-3.5" style={{ color: '#0a0a0a' }} strokeWidth={3} />
-            </div>
-            <span className="font-bold text-sm tracking-tight">open-agents</span>
-          </div>
-          <div className="hidden md:flex items-center gap-6 text-xs font-medium" style={{ color: '#666' }}>
-            <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#models" className="hover:text-white transition-colors">Modelos</a>
-            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-            <a href="https://github.com/ytt580/open-agents" target="_blank" rel="noopener" className="hover:text-white transition-colors flex items-center gap-1">GitHub <ArrowUpRight className="w-3 h-3" /></a>
+      <nav 
+        className="fixed top-0 w-full z-50 transition-all duration-700"
+        style={{ 
+          background: scrolled ? 'rgba(250, 250, 250, 0.85)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(24px) saturate(180%)' : 'none',
+          borderBottom: scrolled ? '1px solid rgba(0,0,0,0.06)' : '1px solid transparent'
+        }}
+      >
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
+          <Link href="/" className="font-bold text-[15px] tracking-[-0.03em]">open-agents</Link>
+          <div className="hidden md:flex items-center gap-8 text-[13px] font-medium" style={{ color: '#999' }}>
+            <a href="#features" className="hover:text-[#0a0a0a] transition-colors duration-300">Features</a>
+            <a href="#workflow" className="hover:text-[#0a0a0a] transition-colors duration-300">Workflow</a>
+            <a href="#models" className="hover:text-[#0a0a0a] transition-colors duration-300">Modelos</a>
+            <a href="#pricing" className="hover:text-[#0a0a0a] transition-colors duration-300">Pricing</a>
+            <a href="https://github.com/ytt580/open-agents" target="_blank" rel="noopener" className="hover:text-[#0a0a0a] transition-colors duration-300 flex items-center gap-1">GitHub <ArrowUpRight className="w-3 h-3" /></a>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-xs font-medium hidden md:block" style={{ color: '#666' }}>Entrar</Link>
-            <Link href="/dashboard" className="text-xs font-semibold px-4 py-2 rounded-lg transition-all hover:opacity-90" style={{ background: '#fafafa', color: '#0a0a0a' }}>
+            <Link href="/dashboard" className="text-[13px] font-medium hidden md:block" style={{ color: '#999' }}>Entrar</Link>
+            <Link href="/dashboard" className="text-[13px] font-semibold px-5 py-2 rounded-full transition-all duration-300 hover:opacity-80" style={{ background: '#0a0a0a', color: '#fafafa' }}>
               Comecar Gratis
             </Link>
-            <button onClick={() => setMobileMenu(!mobileMenu)} className="md:hidden btn-icon" style={{ color: '#fafafa', width: '36px', height: '36px' }}>
-              {mobileMenu ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            <button onClick={() => setMobileMenu(!mobileMenu)} className="md:hidden" style={{ color: '#0a0a0a' }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d={mobileMenu ? "M5 5L15 15M15 5L5 15" : "M3 6H17M3 10H17M3 14H17"} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
             </button>
           </div>
         </div>
         {mobileMenu && (
-          <div className="md:hidden px-4 pb-4 space-y-2" style={{ borderTop: '1px solid #222' }}>
-            <a href="#features" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium" style={{ color: '#666' }}>Features</a>
-            <a href="#models" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium" style={{ color: '#666' }}>Modelos</a>
-            <a href="#pricing" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-medium" style={{ color: '#666' }}>Pricing</a>
-            <Link href="/dashboard" onClick={() => setMobileMenu(false)} className="block py-2 text-sm font-semibold" style={{ color: '#fafafa' }}>Entrar</Link>
+          <div className="md:hidden px-6 pb-6 space-y-4" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+            <a href="#features" onClick={() => setMobileMenu(false)} className="block py-1 text-[13px] font-medium" style={{ color: '#999' }}>Features</a>
+            <a href="#workflow" onClick={() => setMobileMenu(false)} className="block py-1 text-[13px] font-medium" style={{ color: '#999' }}>Workflow</a>
+            <a href="#pricing" onClick={() => setMobileMenu(false)} className="block py-1 text-[13px] font-medium" style={{ color: '#999' }}>Pricing</a>
+            <Link href="/dashboard" onClick={() => setMobileMenu(false)} className="block py-1 text-[13px] font-semibold" style={{ color: '#0a0a0a' }}>Entrar</Link>
           </div>
         )}
       </nav>
 
       {/* ============ HERO ============ */}
-      <section className="pt-20 pb-16 md:pt-32 md:pb-24 px-4 md:px-6 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, #fafafa 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        
-        <div className="max-w-6xl mx-auto relative z-10">
+      <section className="pt-36 pb-16 md:pt-52 md:pb-24 px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto">
           <Reveal>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-xs font-medium" style={{ background: '#1a1a1a', color: '#666', border: '1px solid #222' }}>
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#22c55e' }} />
-              24 modelos gratis + 15 premium
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-8 text-[11px] font-semibold uppercase tracking-[0.15em]" style={{ background: '#f0f0f0', color: '#888' }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#111]" />
+              39+ modelos de IA
             </div>
           </Reveal>
           
-          <Reveal delay={60}>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-[-0.03em] max-w-3xl">
+          <Reveal delay={80}>
+            <h1 className="text-[clamp(3rem,8vw,7.5rem)] font-bold leading-[0.88] tracking-[-0.05em] max-w-[1000px]">
               Automatize
-              <br />
-              <span style={{ color: '#666' }}>qualquer fluxo</span>
-              <br />
-              do seu negocio.
+            </h1>
+          </Reveal>
+          <Reveal delay={140}>
+            <h1 className="text-[clamp(3rem,8vw,7.5rem)] font-bold leading-[0.88] tracking-[-0.05em] max-w-[1000px]" style={{ color: '#ccc' }}>
+              qualquer fluxo.
             </h1>
           </Reveal>
           
-          <Reveal delay={120}>
-            <p className="text-base md:text-lg mt-5 max-w-xl leading-relaxed" style={{ color: '#666' }}>
+          <Reveal delay={220}>
+            <p className="text-[15px] md:text-[17px] mt-8 md:mt-10 max-w-lg leading-relaxed" style={{ color: '#999' }}>
               Seus agentes buscam leads, criam sites, enviam propostas e fecham negocios.
-              <span style={{ color: '#fafafa' }}> Voce so define o objetivo.</span>
+              <span className="font-semibold" style={{ color: '#0a0a0a' }}> Voce so define o objetivo.</span>
             </p>
           </Reveal>
           
-          <Reveal delay={180}>
-            <div className="flex flex-col sm:flex-row items-start gap-3 mt-7">
+          <Reveal delay={300}>
+            <div className="flex flex-col sm:flex-row items-start gap-3 mt-8">
               <Link href="/dashboard" 
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
-                style={{ background: '#fafafa', color: '#0a0a0a' }}>
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-full font-semibold text-[13px] transition-all duration-300 hover:opacity-80"
+                style={{ background: '#0a0a0a', color: '#fafafa' }}>
                 Criar Primeiro Agente
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <a href="#features" 
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all hover:border-[#444]"
-                style={{ background: 'transparent', color: '#fafafa', border: '1px solid #333' }}>
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-full font-semibold text-[13px] transition-all duration-300 hover:opacity-60"
+                style={{ color: '#0a0a0a' }}>
                 Ver como funciona
               </a>
             </div>
@@ -147,48 +120,43 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============ CODE DEMO ============ */}
-      <section className="py-12 md:py-20 px-4 md:px-6">
-        <div className="max-w-4xl mx-auto">
-          <Reveal>
-            <div className="code-block relative overflow-hidden">
-              <div className="flex items-center gap-2 mb-4 pb-4" style={{ borderBottom: '1px solid #222' }}>
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full" style={{ background: '#ef4444' }} />
-                  <div className="w-3 h-3 rounded-full" style={{ background: '#fbbf24' }} />
-                  <div className="w-3 h-3 rounded-full" style={{ background: '#22c55e' }} />
-                </div>
-                <span className="text-xs font-medium ml-2" style={{ color: '#666', fontFamily: 'var(--font-mono)' }}>agente.ts</span>
-              </div>
-              <pre className="text-sm leading-relaxed overflow-x-auto" style={{ color: '#a1a1a1', fontFamily: 'var(--font-mono)' }}>
-                <code>{codeSnippet}</code>
-              </pre>
+      {/* ============ MARQUEE ============ */}
+      <section className="py-6 overflow-hidden" style={{ borderTop: '1px solid #eee', borderBottom: '1px solid #eee' }}>
+        <div className="flex items-center gap-16 animate-marquee whitespace-nowrap">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="flex items-center gap-16">
+              {['GitHub AI', 'Cloudflare Workers', 'Puter.js', 'GPT-5', 'Claude Sonnet', 'Gemini', 'DeepSeek', 'Llama 4', 'Mistral', 'FLUX.2', 'Codestral'].map(name => (
+                <span key={name} className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#ccc' }}>{name}</span>
+              ))}
             </div>
-          </Reveal>
+          ))}
         </div>
       </section>
 
       {/* ============ FEATURES ============ */}
-      <section id="features" className="py-16 md:py-24 px-4 md:px-6">
-        <div className="max-w-6xl mx-auto">
+      <section id="features" className="py-24 md:py-40 px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto">
           <Reveal>
-            <div className="mb-12 md:mb-16">
-              <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: '#666' }}>Capabilities</p>
-              <h2 className="text-2xl md:text-4xl font-bold tracking-tight">
-                Tudo que voce precisa.<br/>
-                <span style={{ color: '#666' }}>Nada que voce nao precisa.</span>
+            <div className="mb-20 md:mb-28">
+              <p className="section-num mb-4">01 / Capabilities</p>
+              <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-0.04em] leading-[1.05]">
+                Tudo que voce precisa.
               </h2>
             </div>
           </Reveal>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: '#222' }}>
-            {capabilities.map((cap, i) => (
-              <Reveal key={cap.label} delay={i * 50}>
-                <div className="group p-6 transition-all duration-300 cursor-default" style={{ background: '#0a0a0a' }}>
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-110" style={{ background: '#1a1a1a' }}>
-                    <cap.icon className="w-5 h-5" style={{ color: cap.color }} />
-                  </div>
-                  <h3 className="font-semibold text-sm mb-1">{cap.label}</h3>
-                  <p className="text-xs leading-relaxed" style={{ color: '#666' }}>{cap.desc}</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ background: '#eee' }}>
+            {[
+              { title: 'Caca Leads', desc: 'Google Maps, LinkedIn, qualquer site. Seu agente encontra e qualifica leads automaticamente.', num: '01' },
+              { title: 'Scraping Neural', desc: 'Extrai dados de qualquer pagina com IA. Estruturado, limpo e pronto para uso.', num: '02' },
+              { title: 'Cria Sites', desc: 'Sites Next.js profissionais em minutos. Deploy automatico no Render.', num: '03' },
+              { title: 'Email Autonomo', desc: 'Propostas personalizadas enviadas com follow-up automatico.', num: '04' },
+            ].map((feat, i) => (
+              <Reveal key={feat.num} delay={i * 80}>
+                <div className="p-8 md:p-12 lg:p-16 transition-all duration-500 group cursor-default" style={{ background: '#fafafa' }}>
+                  <p className="section-num mb-6">{feat.num}</p>
+                  <h3 className="text-[clamp(1.5rem,3vw,2.2rem)] font-bold tracking-[-0.03em] mb-4 leading-[1.1]">{feat.title}</h3>
+                  <p className="text-[14px] leading-[1.7] max-w-sm" style={{ color: '#999' }}>{feat.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -196,29 +164,31 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============ HOW IT WORKS ============ */}
-      <section className="py-16 md:py-24 px-4 md:px-6" style={{ borderTop: '1px solid #222', borderBottom: '1px solid #222' }}>
-        <div className="max-w-6xl mx-auto">
+      {/* ============ WORKFLOW ============ */}
+      <section id="workflow" className="py-24 md:py-40 px-6 md:px-10" style={{ background: '#0a0a0a' }}>
+        <div className="max-w-[1400px] mx-auto">
           <Reveal>
-            <div className="mb-12 md:mb-16">
-              <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: '#666' }}>Workflow</p>
-              <h2 className="text-2xl md:text-4xl font-bold tracking-tight">
+            <div className="mb-20 md:mb-28">
+              <p className="section-num mb-4" style={{ color: '#444' }}>02 / Workflow</p>
+              <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-0.04em] leading-[1.05] text-white">
                 Simples como conversar.
               </h2>
             </div>
           </Reveal>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ background: '#222' }}>
+          <div className="space-y-0">
             {[
-              { num: '01', title: 'Defina o objetivo', desc: 'Converse com o agente e descreva o que quer fazer', color: '#f97316' },
-              { num: '02', title: 'Ative o agente', desc: 'O agente cria o plano e comeca a executar', color: '#fafafa' },
-              { num: '03', title: 'Acompanhe', desc: 'Veja cada acao sendo tomada em tempo real', color: '#22c55e' },
+              { num: '01', title: 'Defina', desc: 'Converse com o agente. Descreva o objetivo em linguagem natural.' },
+              { num: '02', title: 'Ative', desc: 'O agente cria o plano e comeca a executar cada etapa.' },
+              { num: '03', title: 'Acompanhe', desc: 'Veja cada acao em tempo real. Ajuste quando quiser.' },
             ].map((step, i) => (
-              <Reveal key={step.num} delay={i * 80}>
-                <div className="p-6 md:p-8 transition-all duration-300" style={{ background: '#0a0a0a' }}>
-                  <span className="text-4xl md:text-5xl font-bold" style={{ color: step.color, opacity: 0.15 }}>{step.num}</span>
-                  <h3 className="text-lg md:text-xl font-bold mt-3 mb-1.5">{step.title}</h3>
-                  <p className="text-sm" style={{ color: '#666' }}>{step.desc}</p>
+              <Reveal key={step.num} delay={i * 100}>
+                <div className="flex items-start gap-8 md:gap-16 py-10 md:py-14" style={{ borderBottom: '1px solid #222' }}>
+                  <span className="text-[clamp(2rem,5vw,4rem)] font-bold leading-none" style={{ color: '#333' }}>{step.num}</span>
+                  <div>
+                    <h3 className="text-[clamp(1.3rem,2.5vw,2rem)] font-bold text-white mb-3 tracking-[-0.03em]">{step.title}</h3>
+                    <p className="text-[14px] leading-[1.7] max-w-md" style={{ color: '#666' }}>{step.desc}</p>
+                  </div>
                 </div>
               </Reveal>
             ))}
@@ -227,49 +197,46 @@ export default function LandingPage() {
       </section>
 
       {/* ============ MODELS ============ */}
-      <section id="models" className="py-16 md:py-24 px-4 md:px-6">
-        <div className="max-w-6xl mx-auto">
+      <section id="models" className="py-24 md:py-40 px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto">
           <Reveal>
-            <div className="mb-12 md:mb-16">
-              <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: '#666' }}>Modelos</p>
-              <h2 className="text-2xl md:text-4xl font-bold tracking-tight">
+            <div className="mb-20 md:mb-28">
+              <p className="section-num mb-4">03 / Modelos</p>
+              <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-0.04em] leading-[1.05]">
                 Potenciado pelos melhores.
               </h2>
-              <p className="text-sm mt-2" style={{ color: '#666' }}>24 gratuitos + 15 premium</p>
+              <p className="text-[13px] mt-4" style={{ color: '#aaa' }}>24 gratuitos + 15 premium</p>
             </div>
           </Reveal>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ background: '#222' }}>
+          <div className="space-y-0">
             {[
-              { name: 'GPT-5', provider: 'GitHub AI', tier: 'Free', color: '#22c55e' },
-              { name: 'Claude Sonnet', provider: 'GitHub AI', tier: 'Free', color: '#22c55e' },
-              { name: 'Gemini 2.5', provider: 'GitHub AI', tier: 'Free', color: '#22c55e' },
-              { name: 'DeepSeek R1', provider: 'GitHub AI', tier: 'Free', color: '#22c55e' },
-              { name: 'Llama 4 Scout', provider: 'GitHub AI', tier: 'Free', color: '#22c55e' },
-              { name: 'Mistral Large', provider: 'GitHub AI', tier: 'Free', color: '#22c55e' },
-              { name: 'Codestral', provider: 'GitHub AI', tier: 'Free', color: '#22c55e' },
-              { name: 'Phi-4', provider: 'GitHub AI', tier: 'Free', color: '#22c55e' },
-              { name: 'GPT-4o', provider: 'Puter.js', tier: 'Premium', color: '#f97316' },
-              { name: 'DeepSeek R1', provider: 'Puter.js', tier: 'Premium', color: '#f97316' },
-              { name: 'GPT-OSS 120B', provider: 'Cloudflare', tier: 'Premium', color: '#06b6d4' },
-              { name: 'Gemma 4 26B', provider: 'Cloudflare', tier: 'Premium', color: '#06b6d4' },
-              { name: 'Nemotron 3', provider: 'Cloudflare', tier: 'Premium', color: '#06b6d4' },
-              { name: 'FLUX.2 Dev', provider: 'Cloudflare', tier: 'Premium', color: '#06b6d4' },
-              { name: 'Kimi K2.7', provider: 'Cloudflare', tier: 'Premium', color: '#06b6d4' },
-              { name: 'QwQ 32B', provider: 'Cloudflare', tier: 'Premium', color: '#06b6d4' },
+              { name: 'GPT-5', provider: 'GitHub AI', tier: 'Free' },
+              { name: 'Claude Sonnet', provider: 'GitHub AI', tier: 'Free' },
+              { name: 'Gemini 2.5 Flash', provider: 'GitHub AI', tier: 'Free' },
+              { name: 'DeepSeek R1', provider: 'GitHub AI', tier: 'Free' },
+              { name: 'Llama 4 Scout', provider: 'GitHub AI', tier: 'Free' },
+              { name: 'Mistral Large', provider: 'GitHub AI', tier: 'Free' },
+              { name: 'Codestral', provider: 'GitHub AI', tier: 'Free' },
+              { name: 'GPT-4o', provider: 'Puter.js', tier: 'Premium' },
+              { name: 'DeepSeek R1', provider: 'Puter.js', tier: 'Premium' },
+              { name: 'GPT-OSS 120B', provider: 'Cloudflare', tier: 'Premium' },
+              { name: 'Gemma 4 26B', provider: 'Cloudflare', tier: 'Premium' },
+              { name: 'Nemotron 3 120B', provider: 'Cloudflare', tier: 'Premium' },
+              { name: 'FLUX.2 Dev', provider: 'Cloudflare', tier: 'Premium' },
             ].map((m, i) => (
-              <Reveal key={m.name + m.provider} delay={i * 30}>
-                <div className="p-4 md:p-5 transition-all duration-300 cursor-default" style={{ background: '#0a0a0a' }}>
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-sm">{m.name}</h4>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{ 
-                      background: m.tier === 'Free' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(249, 115, 22, 0.1)', 
-                      color: m.tier === 'Free' ? '#22c55e' : '#f97316' 
-                    }}>
-                      {m.tier}
-                    </span>
+              <Reveal key={m.name + m.provider} delay={i * 35}>
+                <div className="flex items-center justify-between py-5 md:py-6 transition-all duration-300 group cursor-default" style={{ borderBottom: '1px solid #eee' }}>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-[clamp(1rem,2vw,1.4rem)] font-bold tracking-[-0.02em] group-hover:tracking-[0em] transition-all duration-500">{m.name}</span>
+                    <span className="text-[11px] font-medium uppercase tracking-[0.1em]" style={{ color: '#bbb' }}>{m.provider}</span>
                   </div>
-                  <p className="text-xs" style={{ color: '#666' }}>{m.provider}</p>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] px-2.5 py-1 rounded-full" style={{ 
+                    background: m.tier === 'Free' ? '#f0f0f0' : '#0a0a0a', 
+                    color: m.tier === 'Free' ? '#888' : '#fafafa' 
+                  }}>
+                    {m.tier}
+                  </span>
                 </div>
               </Reveal>
             ))}
@@ -278,43 +245,40 @@ export default function LandingPage() {
       </section>
 
       {/* ============ PRICING ============ */}
-      <section id="pricing" className="py-16 md:py-24 px-4 md:px-6" style={{ borderTop: '1px solid #222' }}>
-        <div className="max-w-4xl mx-auto">
+      <section id="pricing" className="py-24 md:py-40 px-6 md:px-10" style={{ borderTop: '1px solid #eee' }}>
+        <div className="max-w-[1000px] mx-auto">
           <Reveal>
-            <div className="mb-12 md:mb-16">
-              <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: '#22c55e' }}>Pricing</p>
-              <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-2">
-                Escolha seu motor de IA
+            <div className="mb-20 md:mb-28">
+              <p className="section-num mb-4">04 / Pricing</p>
+              <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-0.04em] leading-[1.05]">
+                Escolha seu motor.
               </h2>
-              <p className="text-sm" style={{ color: '#666' }}>Comece gratis. Evolua quando quiser.</p>
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ background: '#222' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Free */}
             <Reveal delay={80}>
-              <div className="p-6 md:p-8" style={{ background: '#0a0a0a' }}>
-                <div className="flex items-center gap-2 mb-4">
-                  <Zap className="w-4 h-4" style={{ color: '#666' }} />
-                  <h3 className="text-lg font-bold">Free</h3>
+              <div className="p-8 md:p-10 rounded-[24px] transition-all duration-500" style={{ background: '#f5f5f5', border: '1px solid #eee' }}>
+                <h3 className="text-lg font-bold mb-1">Free</h3>
+                <p className="text-[12px] mb-8" style={{ color: '#aaa' }}>Comece sem pagar</p>
+                <div className="mb-8">
+                  <span className="text-[clamp(3rem,6vw,4.5rem)] font-bold tracking-[-0.04em] leading-none">R$ 0</span>
+                  <span className="text-[13px] ml-1" style={{ color: '#aaa' }}>para sempre</span>
                 </div>
-                <div className="mb-4">
-                  <span className="text-4xl font-bold">R$ 0</span>
-                  <span className="text-sm ml-1" style={{ color: '#666' }}>para sempre</span>
-                </div>
-                <p className="text-xs font-medium mb-4" style={{ color: '#666' }}>
-                  Motor: <span style={{ color: '#fafafa' }}>GitHub AI</span> — 24 modelos
+                <p className="text-[12px] font-medium mb-6" style={{ color: '#aaa' }}>
+                  Motor: <span style={{ color: '#0a0a0a' }}>GitHub AI</span> — 24 modelos
                 </p>
-                <div className="space-y-2.5 mb-6">
-                  {['GPT-4o, GPT-5 Nano, Claude Sonnet', 'DeepSeek R1, Llama 4, Mistral Large', 'Agentes ilimitados', 'Scraping + Email + WhatsApp'].map(f => (
-                    <div key={f} className="flex items-center gap-2">
-                      <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#22c55e' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                      <span className="text-xs" style={{ color: '#a1a1a1' }}>{f}</span>
+                <div className="space-y-3 mb-8">
+                  {['GPT-4o, GPT-5 Nano, Claude Sonnet', 'DeepSeek R1, Llama 4, Mistral Large', 'Agentes ilimitados', 'Scraping + Email'].map(f => (
+                    <div key={f} className="flex items-center gap-2.5">
+                      <span className="text-[11px]" style={{ color: '#ccc' }}>—</span>
+                      <span className="text-[13px]" style={{ color: '#888' }}>{f}</span>
                     </div>
                   ))}
                 </div>
-                <Link href="/dashboard" className="block w-full text-center py-3 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
-                  style={{ background: '#1a1a1a', color: '#fafafa', border: '1px solid #333' }}>
+                <Link href="/dashboard" className="block w-full text-center py-3.5 rounded-full font-semibold text-[13px] transition-all duration-300 hover:opacity-80"
+                  style={{ background: '#e8e8e8', color: '#0a0a0a' }}>
                   Comecar Gratis
                 </Link>
               </div>
@@ -322,31 +286,28 @@ export default function LandingPage() {
 
             {/* Premium */}
             <Reveal delay={160}>
-              <div className="p-6 md:p-8 relative" style={{ background: '#111' }}>
-                <div className="absolute top-6 right-6 px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider"
-                  style={{ background: 'rgba(249, 115, 22, 0.15)', color: '#f97316' }}>
+              <div className="p-8 md:p-10 rounded-[24px] relative transition-all duration-500" style={{ background: '#0a0a0a', border: '1px solid #222' }}>
+                <div className="absolute top-6 right-6 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ background: '#222', color: '#888' }}>
                   Popular
                 </div>
-                <div className="flex items-center gap-2 mb-4">
-                  <Crown className="w-4 h-4" style={{ color: '#f97316' }} />
-                  <h3 className="text-lg font-bold">Premium</h3>
+                <h3 className="text-lg font-bold text-white mb-1">Premium</h3>
+                <p className="text-[12px] mb-8" style={{ color: '#555' }}>Puter.js + Cloudflare</p>
+                <div className="mb-8">
+                  <span className="text-[clamp(3rem,6vw,4.5rem)] font-bold tracking-[-0.04em] leading-none text-white">R$ 49</span>
+                  <span className="text-[13px] ml-1" style={{ color: '#555' }}>/mes</span>
                 </div>
-                <div className="mb-4">
-                  <span className="text-4xl font-bold">R$ 49</span>
-                  <span className="text-sm ml-1" style={{ color: '#666' }}>/mes</span>
-                </div>
-                <p className="text-xs font-medium mb-4" style={{ color: '#666' }}>
-                  Motor: <span style={{ color: '#fafafa' }}>Puter.js + Cloudflare</span> — 15 modelos
+                <p className="text-[12px] font-medium mb-6" style={{ color: '#555' }}>
+                  Motor: <span className="text-white">Puter.js + Cloudflare</span> — 15 modelos
                 </p>
-                <div className="space-y-2.5 mb-6">
-                  {['GPT-4o, Claude Sonnet, DeepSeek R1', 'GPT-OSS 120B, Gemma 4, Nemotron 3', 'Agentes ilimitados', 'Scraping + Email + WhatsApp'].map(f => (
-                    <div key={f} className="flex items-center gap-2">
-                      <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#f97316' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                      <span className="text-xs" style={{ color: '#a1a1a1' }}>{f}</span>
+                <div className="space-y-3 mb-8">
+                  {['GPT-4o, Claude Sonnet, DeepSeek R1', 'GPT-OSS 120B, Gemma 4, Nemotron 3', 'Agentes ilimitados', 'Scraping + Email'].map(f => (
+                    <div key={f} className="flex items-center gap-2.5">
+                      <span className="text-[11px]" style={{ color: '#444' }}>—</span>
+                      <span className="text-[13px]" style={{ color: '#888' }}>{f}</span>
                     </div>
                   ))}
                 </div>
-                <Link href="/dashboard" className="block w-full text-center py-3 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
+                <Link href="/dashboard" className="block w-full text-center py-3.5 rounded-full font-semibold text-[13px] transition-all duration-300 hover:opacity-90"
                   style={{ background: '#fafafa', color: '#0a0a0a' }}>
                   Ativar Premium
                 </Link>
@@ -357,18 +318,18 @@ export default function LandingPage() {
       </section>
 
       {/* ============ CTA ============ */}
-      <section className="py-16 md:py-24 px-4 md:px-6">
+      <section className="py-24 md:py-40 px-6 md:px-10">
         <Reveal>
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-4">
-              Seus agentes estao prontos.
+          <div className="max-w-[700px] mx-auto text-center">
+            <h2 className="text-[clamp(2.5rem,5vw,4.5rem)] font-bold tracking-[-0.04em] leading-[0.95] mb-6">
+              Seus agentes<br/>estao prontos.
             </h2>
-            <p className="text-sm mb-8" style={{ color: '#666' }}>
-              Comece gratis. Sem cartao de credito. Ativacao instantanea.
+            <p className="text-[14px] mb-10" style={{ color: '#999' }}>
+              Comece gratis. Sem cartao. Ativacao instantanea.
             </p>
             <Link href="/dashboard"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
-              style={{ background: '#fafafa', color: '#0a0a0a' }}>
+              className="inline-flex items-center gap-2 px-10 py-4 rounded-full font-semibold text-[13px] transition-all duration-300 hover:opacity-80"
+              style={{ background: '#0a0a0a', color: '#fafafa' }}>
               Ativar Meus Agentes
               <ArrowRight className="w-4 h-4" />
             </Link>
@@ -377,18 +338,13 @@ export default function LandingPage() {
       </section>
 
       {/* ============ FOOTER ============ */}
-      <footer className="py-6 px-4 md:px-6" style={{ borderTop: '1px solid #222' }}>
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded flex items-center justify-center" style={{ background: '#fafafa' }}>
-              <Zap className="w-2.5 h-2.5" style={{ color: '#0a0a0a' }} strokeWidth={3} />
-            </div>
-            <span className="font-bold text-xs">open-agents</span>
-          </div>
-          <p className="text-xs" style={{ color: '#666' }}>2026 Open-Agents. Agentes trabalhando 24/7.</p>
-          <div className="flex items-center gap-4 text-xs font-medium" style={{ color: '#666' }}>
-            <a href="https://github.com/ytt580/open-agents" target="_blank" rel="noopener" className="hover:text-white transition-colors">GitHub</a>
-            <a href="mailto:contato@open-agents.com" className="hover:text-white transition-colors">Contato</a>
+      <footer className="py-8 px-6 md:px-10" style={{ borderTop: '1px solid #eee' }}>
+        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <span className="font-bold text-[13px] tracking-[-0.02em]">open-agents</span>
+          <p className="text-[12px]" style={{ color: '#bbb' }}>2026 Open-Agents.</p>
+          <div className="flex items-center gap-6 text-[12px] font-medium" style={{ color: '#bbb' }}>
+            <a href="https://github.com/ytt580/open-agents" target="_blank" rel="noopener" className="hover:text-[#0a0a0a] transition-colors duration-300">GitHub</a>
+            <a href="mailto:contato@open-agents.com" className="hover:text-[#0a0a0a] transition-colors duration-300">Contato</a>
           </div>
         </div>
       </footer>
