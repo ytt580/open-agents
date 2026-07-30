@@ -200,8 +200,8 @@ export function BrowserView() {
 
           {mode === 'standard' && (
             <div className="flex items-center gap-3 p-4 rounded-xl" style={{ 
-              background: 'rgba(139, 92, 246, 0.08)',
-              border: '1px solid rgba(139, 92, 246, 0.2)'
+              background: 'rgba(217, 70, 239, 0.08)',
+              border: '1px solid rgba(217, 70, 239, 0.2)'
             }}>
               <Globe className="w-5 h-5" style={{ color: 'var(--violet-400)' }} />
               <div>
@@ -287,7 +287,7 @@ export function BrowserView() {
         <div className="text-center max-w-lg">
           <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ 
             background: mode === 'browserclaw' ? 'rgba(52, 211, 153, 0.1)' : 
-                        mode === 'rtrvr' ? 'rgba(34, 211, 238, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+                        mode === 'rtrvr' ? 'rgba(34, 211, 238, 0.1)' : 'rgba(217, 70, 239, 0.1)'
           }}>
             {mode === 'browserclaw' ? (
               <Monitor className="w-10 h-10" style={{ color: 'var(--emerald-400)' }} />

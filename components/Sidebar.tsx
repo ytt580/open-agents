@@ -121,7 +121,7 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
             className="mx-3 mb-3 p-4 rounded-xl"
             style={{ 
               background: 'var(--accent-glow)', 
-              border: '1px solid rgba(139, 92, 246, 0.2)',
+              border: '1px solid rgba(217, 70, 239, 0.2)',
               boxShadow: '0 0 20px var(--accent-glow)'
             }}
           >

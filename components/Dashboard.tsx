@@ -51,7 +51,7 @@ export function Dashboard({ onNavigate, onSelectFlow, onNewFlow, flows }: Dashbo
           <div className="flex items-center gap-4">
             <div 
               className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'rgba(139, 92, 246, 0.1)' }}
+              style={{ background: 'rgba(217, 70, 239, 0.1)' }}
             >
               <BarChart3 className="w-6 h-6" style={{ color: 'var(--violet-400)' }} />
             </div>
@@ -215,7 +215,7 @@ export function Dashboard({ onNavigate, onSelectFlow, onNewFlow, flows }: Dashbo
         >
           <div 
             className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-transform duration-200 group-hover:scale-105"
-            style={{ background: 'rgba(139, 92, 246, 0.1)' }}
+            style={{ background: 'rgba(217, 70, 239, 0.1)' }}
           >
             <Puzzle className="w-7 h-7" style={{ color: 'var(--violet-400)' }} />
           </div>
@@ -224,18 +224,18 @@ export function Dashboard({ onNavigate, onSelectFlow, onNewFlow, flows }: Dashbo
         </button>
 
         <button 
-          onClick={() => onNavigate('api')}
-          className="card p-6 text-left transition-all duration-200 group hover:border-[var(--rose-500)]"
-          aria-label="Configurar APIs"
+          onClick={() => onNavigate('scheduler')}
+          className="card p-6 text-left transition-all duration-200 group hover:border-[var(--emerald-500)]"
+          aria-label="Agendador"
         >
           <div 
             className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-transform duration-200 group-hover:scale-105"
-            style={{ background: 'rgba(244, 63, 94, 0.1)' }}
+            style={{ background: 'rgba(52, 211, 153, 0.1)' }}
           >
-            <Zap className="w-7 h-7" style={{ color: 'var(--rose-400)' }} />
+            <Clock className="w-7 h-7" style={{ color: 'var(--emerald-400)' }} />
           </div>
-          <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Configurar APIs</h3>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>Adicione suas chaves de API</p>
+          <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Agendador</h3>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>Configure tarefas automaticas</p>
         </button>
       </div>
 

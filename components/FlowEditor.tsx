@@ -664,7 +664,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       {/* Chat Panel */}
       <div className="flex-1 flex flex-col" style={{ background: 'var(--bg-void)' }}>
         <div className="p-4 flex items-center gap-4" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--violet-500), var(--cyan-500))' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--violet-600), var(--violet-400))' }}>
             <Bot className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
@@ -682,7 +682,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-sm font-semibold"
               style={{ 
                 background: 'var(--accent-glow)', 
-                border: '1px solid rgba(139, 92, 246, 0.2)',
+                border: '1px solid rgba(217, 70, 239, 0.2)',
               }}
             >
               <Sparkles className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
@@ -772,7 +772,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           
           {messages.length === 1 && !isTyping && (
             <div className="text-center py-8">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px solid rgba(139, 92, 246, 0.2)' }}>
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px solid rgba(217, 70, 239, 0.2)' }}>
                 <Bot className="w-8 h-8" style={{ color: 'var(--violet-400)' }} />
               </div>
               <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Como posso ajudar?</h3>
@@ -786,7 +786,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           {messages.map((message) => (
             <div key={message.id} className={`flex gap-3 ${message.tipo === 'user' ? 'justify-end' : 'justify-start'}`}>
               {message.tipo === 'ai' && (
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--violet-500), var(--cyan-500))' }}>
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--violet-600), var(--violet-400))' }}>
                   <Bot className="w-4.5 h-4.5 text-white" />
                 </div>
               )}
@@ -826,7 +826,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
           {isTyping && (
             <div className="flex gap-3">
-              <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--violet-500), var(--cyan-500))' }}>
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--violet-600), var(--violet-400))' }}>
                 <Bot className="w-4.5 h-4.5 text-white" />
               </div>
               <div className="rounded-2xl px-4 py-3" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
@@ -858,7 +858,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
             <button 
               onClick={() => setShowSkills(true)} 
               className="btn-icon"
-              style={{ color: 'var(--violet-400)', border: '1px solid rgba(139, 92, 246, 0.2)', background: 'var(--accent-glow)' }}
+              style={{ color: 'var(--violet-400)', border: '1px solid rgba(217, 70, 239, 0.2)', background: 'var(--accent-glow)' }}
               aria-label="Abrir seletor de skills"
             >
               <Puzzle className="w-5 h-5" />
@@ -928,7 +928,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       {showUpgradeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
           <div className="card w-full max-w-md p-8 text-center" style={{ boxShadow: '0 0 50px var(--accent-glow)' }}>
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px solid rgba(139, 92, 246, 0.2)' }}>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px solid rgba(217, 70, 239, 0.2)' }}>
               <Crown className="w-8 h-8" style={{ color: 'var(--violet-400)' }} />
             </div>
             <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Upgrade para Premium</h2>
