@@ -16,7 +16,6 @@ import {
 function NeuralBackground() {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-      {/* Gradient orbs */}
       <div 
         className="absolute w-[800px] h-[800px] rounded-full opacity-[0.07]"
         style={{ 
@@ -45,8 +44,6 @@ function NeuralBackground() {
           animation: 'float 25s ease-in-out infinite'
         }}
       />
-      
-      {/* Grid pattern */}
       <div 
         className="absolute inset-0 opacity-[0.02]"
         style={{
@@ -62,29 +59,54 @@ function NeuralBackground() {
 }
 
 /* ============================================
-   FLOATING ORBS COMPONENT
+   SCROLL ANIMATION HOOK
    ============================================ */
-function FloatingOrbs() {
+function useScrollAnimation(threshold = 0.1) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => observer.disconnect()
+  }, [threshold])
+
+  return { ref, isVisible }
+}
+
+/* ============================================
+   ANIMATED SECTION COMPONENT
+   ============================================ */
+function AnimatedSection({ children, className = '', delay = 0 }: { 
+  children: React.ReactNode
+  className?: string
+  delay?: number 
+}) {
+  const { ref, isVisible } = useScrollAnimation(0.1)
+  
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(6)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            width: `${60 + Math.random() * 100}px`,
-            height: `${60 + Math.random() * 100}px`,
-            left: `${10 + Math.random() * 80}%`,
-            top: `${10 + Math.random() * 80}%`,
-            background: `radial-gradient(circle, ${
-              ['var(--neural-600)', 'var(--electric-600)', 'var(--plasma-600)'][i % 3]
-            } 0%, transparent 70%)`,
-            opacity: 0.06 + Math.random() * 0.04,
-            animation: `float ${8 + Math.random() * 10}s ease-in-out infinite`,
-            animationDelay: `${Math.random() * 5}s`
-          }}
-        />
-      ))}
+    <div
+      ref={ref}
+      className={`transition-all duration-500 ${className}`}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+        transitionDelay: `${delay}ms`
+      }}
+    >
+      {children}
     </div>
   )
 }
@@ -172,7 +194,6 @@ const agents = [
    ============================================ */
 export default function LandingPage() {
   const [isVisible, setIsVisible] = useState(false)
-  const heroRef = useRef<HTMLDivElement>(null)
   
   useEffect(() => {
     setIsVisible(true)
@@ -182,29 +203,45 @@ export default function LandingPage() {
     <div className="min-h-screen" style={{ background: 'var(--bg-void)' }}>
       <NeuralBackground />
       
+      {/* Skip to content - Accessibility */}
+      <a 
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:font-medium"
+        style={{ 
+          background: 'var(--neural-600)', 
+          color: 'white',
+          outline: '2px solid var(--neural-400)',
+          outlineOffset: '2px'
+        }}
+      >
+        Pular para o conteudo
+      </a>
+      
       {/* Nav */}
       <nav 
-        className="fixed top-0 w-full z-50 transition-all duration-300"
+        className="fixed top-0 w-full z-50 transition-all duration-200"
         style={{ 
           background: 'rgba(6, 6, 11, 0.85)', 
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid var(--border)'
         }}
+        role="navigation"
+        aria-label="Navegacao principal"
       >
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10">
-              <img src="/logo.svg" alt="Open-Agents" className="w-full h-full" />
+              <img src="/logo.svg" alt="" className="w-full h-full" aria-hidden="true" />
             </div>
-            <span className="font-bold text-lg text-gradient">Open-Agents</span>
+            <span className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Open-Agents</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm" style={{ color: 'var(--text-secondary)' }}>
-            <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#agents" className="hover:text-white transition-colors">Agentes</a>
-            <a href="#pricing" className="hover:text-white transition-colors">Planos</a>
+            <a href="#features" className="hover:text-white transition-colors duration-200">Features</a>
+            <a href="#agents" className="hover:text-white transition-colors duration-200">Agentes</a>
+            <a href="#pricing" className="hover:text-white transition-colors duration-200">Planos</a>
           </div>
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-sm font-medium hidden md:block" style={{ color: 'var(--text-secondary)' }}>
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="text-sm font-medium hidden md:block hover:text-white transition-colors duration-200" style={{ color: 'var(--text-secondary)' }}>
               Entrar
             </Link>
             <Link href="/dashboard" className="btn-primary text-sm py-2 px-5">
@@ -214,418 +251,433 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="pt-32 pb-24 px-6 relative overflow-hidden" ref={heroRef}>
-        <FloatingOrbs />
-        
-        <div className="max-w-5xl mx-auto text-center relative z-10">
-          {/* Badge */}
-          <div 
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 transition-all duration-700 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-            style={{ 
-              background: 'var(--accent-glow)', 
-              border: '1px solid rgba(139, 92, 246, 0.3)',
-              boxShadow: '0 0 30px var(--accent-glow)'
-            }}
-          >
-            <Sparkles className="w-4 h-4" style={{ color: 'var(--neural-400)' }} />
-            <span className="text-sm font-medium" style={{ color: 'var(--neural-300)' }}>Agentes de IA Autonomos</span>
-          </div>
-          
-          {/* Title */}
-          <h1 
-            className={`text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.92] mb-8 tracking-tight transition-all duration-700 delay-100 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-            }`}
-          >
-            <span className="text-gradient">Automatize</span>
-            <br />
-            <span style={{ color: 'var(--text-primary)' }}>qualquer fluxo</span>
-            <br />
-            <span style={{ color: 'var(--text-muted)' }}>com IA autonoma</span>
-          </h1>
-          
-          {/* Subtitle */}
-          <p 
-            className={`text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-            }`}
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            Seus agentes buscam leads, criam sites, enviam propostas e fecham negocios.
-            <br />
-            <span className="font-semibold" style={{ color: 'var(--plasma-400)' }}>Voce so define o objetivo.</span>
-          </p>
-          
-          {/* CTAs */}
-          <div 
-            className={`flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 transition-all duration-700 delay-300 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-            }`}
-          >
-            <Link href="/dashboard" className="btn-primary text-base py-4 px-8 group">
-              <span>Criar Primeiro Agente</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <a href="#pricing" className="btn-secondary text-base py-4 px-8">
-              Ver Planos
-            </a>
-          </div>
-          
-          {/* Stats */}
-          <div 
-            className={`grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto transition-all duration-700 delay-400 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-            }`}
-          >
-            {stats.map((stat, i) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-3xl md:text-4xl font-bold" style={{ color: 'var(--plasma-400)' }}>
-                  {stat.value}
-                </p>
-                <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Live Demo Banner */}
-      <section 
-        className="py-6 px-6"
-        style={{ 
-          background: 'var(--bg-secondary)', 
-          borderTop: '1px solid var(--border)', 
-          borderBottom: '1px solid var(--border)' 
-        }}
-      >
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-6 md:gap-12">
-          <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-tertiary)' }}>
-            <Eye className="w-4 h-4" style={{ color: 'var(--plasma-400)' }} />
-            <span>Agentes executando agora</span>
-          </div>
-          {agents.slice(0, 3).map((a) => (
-            <div key={a.name} className="flex items-center gap-2 text-sm">
-              <span 
-                className="w-2 h-2 rounded-full animate-pulse" 
-                style={{ background: 'var(--plasma-400)', boxShadow: '0 0 8px var(--plasma-400)' }} 
+      <main id="main-content">
+        {/* Hero */}
+        <section className="pt-32 pb-24 px-6 relative overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute rounded-full"
+                style={{
+                  width: `${60 + Math.random() * 100}px`,
+                  height: `${60 + Math.random() * 100}px`,
+                  left: `${10 + Math.random() * 80}%`,
+                  top: `${10 + Math.random() * 80}%`,
+                  background: `radial-gradient(circle, ${
+                    ['var(--neural-600)', 'var(--electric-600)', 'var(--plasma-600)'][i % 3]
+                  } 0%, transparent 70%)`,
+                  opacity: 0.06 + Math.random() * 0.04,
+                  animation: `float ${8 + Math.random() * 10}s ease-in-out infinite`,
+                  animationDelay: `${Math.random() * 5}s`
+                }}
               />
-              <span style={{ color: 'var(--text-secondary)' }}>{a.name}</span>
-              <span className="font-mono text-xs" style={{ color: 'var(--plasma-400)' }}>{a.tasks}</span>
+            ))}
+          </div>
+          
+          <div className="max-w-5xl mx-auto text-center relative z-10">
+            {/* Badge */}
+            <div 
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 transition-all duration-500 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+              style={{ 
+                background: 'var(--accent-glow)', 
+                border: '1px solid rgba(139, 92, 246, 0.3)'
+              }}
+            >
+              <Sparkles className="w-4 h-4" style={{ color: 'var(--neural-400)' }} />
+              <span className="text-sm font-medium" style={{ color: 'var(--neural-300)' }}>Agentes de IA Autonomos</span>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Agents Preview */}
-      <section id="agents" className="py-24 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--plasma-400)' }}>Seus Agentes</p>
-            <h2 className="text-3xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>Trabalhando para voce</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {agents.map((agent) => (
-              <div 
-                key={agent.name} 
-                className="card p-6 group transition-all duration-300"
-                style={{ 
-                  '--hover-border': 'var(--neural-500)'
-                } as any}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--neural-500)'
-                  e.currentTarget.style.boxShadow = '0 0 30px var(--accent-glow)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = ''
-                  e.currentTarget.style.boxShadow = ''
-                }}
-              >
-                <div className="flex items-start gap-4">
-                  <div 
-                    className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform"
-                    style={{ 
-                      background: 'linear-gradient(135deg, var(--neural-600), var(--electric-600))',
-                      boxShadow: '0 0 20px var(--accent-glow)'
-                    }}
-                  >
-                    <Bot className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{agent.name}</h3>
-                      <span 
-                        className="w-2 h-2 rounded-full" 
-                        style={{ background: 'var(--plasma-400)', boxShadow: '0 0 8px var(--plasma-400)' }} 
-                      />
-                    </div>
-                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{agent.desc}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Tarefas</p>
-                    <p className="font-semibold font-mono" style={{ color: 'var(--plasma-400)' }}>{agent.tasks}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="py-24 px-6" style={{ background: 'var(--bg-secondary)' }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--plasma-400)' }}>Como funciona</p>
-            <h2 className="text-3xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>Simples como conversar</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {steps.map((step, i) => (
-              <div key={step.num} className="text-center relative">
-                {i < steps.length - 1 && (
-                  <div 
-                    className="hidden md:block absolute top-8 left-[60%] w-[80%] h-px"
-                    style={{ background: 'linear-gradient(90deg, var(--neural-500), transparent)' }}
-                  />
-                )}
-                <div 
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 relative z-10"
-                  style={{ 
-                    background: 'var(--surface)', 
-                    border: '1px solid var(--neural-500)', 
-                    boxShadow: '0 0 20px var(--accent-glow)' 
-                  }}
-                >
-                  <step.icon className="w-7 h-7" style={{ color: 'var(--neural-400)' }} />
-                </div>
-                <p className="text-xs font-mono mb-2" style={{ color: 'var(--plasma-400)' }}>{step.num}</p>
-                <h3 className="font-semibold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>{step.title}</h3>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="features" className="py-24 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--plasma-400)' }}>Poderes</p>
-            <h2 className="text-3xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>O que seus agentes podem fazer</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {features.map((feat) => (
-              <div 
-                key={feat.title} 
-                className="card p-8 transition-all duration-300 group relative overflow-hidden"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = feat.color
-                  e.currentTarget.style.boxShadow = `0 0 30px ${feat.color}20`
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = ''
-                  e.currentTarget.style.boxShadow = ''
-                }}
-              >
-                <div 
-                  className="absolute top-0 right-0 w-40 h-40 opacity-0 group-hover:opacity-10 transition-opacity"
-                  style={{ background: `radial-gradient(circle, ${feat.color} 0%, transparent 70%)` }}
-                />
-                <div 
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110 relative z-10"
-                  style={{ background: `${feat.color}15` }}
-                >
-                  <feat.icon className="w-7 h-7" style={{ color: feat.color }} />
-                </div>
-                <h3 className="font-semibold text-xl mb-3 relative z-10" style={{ color: 'var(--text-primary)' }}>{feat.title}</h3>
-                <p className="text-sm leading-relaxed relative z-10" style={{ color: 'var(--text-secondary)' }}>{feat.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section id="pricing" className="py-24 px-6" style={{ background: 'var(--bg-secondary)' }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--plasma-400)' }}>Planos</p>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Escolha seu motor de IA</h2>
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Comece gratis. Evolua quando quiser.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {plans.map((plan) => (
-              <div 
-                key={plan.name} 
-                className="relative rounded-2xl p-8 transition-all duration-300"
-                style={{ 
-                  background: 'var(--surface)',
-                  border: `2px solid ${plan.popular ? 'var(--neural-500)' : 'var(--border)'}`,
-                  boxShadow: plan.popular ? '0 0 40px var(--accent-glow)' : 'none'
-                }}
-              >
-                {plan.popular && (
-                  <div 
-                    className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
-                    style={{ 
-                      background: 'var(--neural-600)', 
-                      color: 'white', 
-                      boxShadow: '0 0 20px var(--accent-glow)' 
-                    }}
-                  >
-                    MAIS POPULAR
-                  </div>
-                )}
-                
-                <div className="flex items-center gap-3 mb-6">
-                  <div 
-                    className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ 
-                      background: `${plan.color}15`, 
-                      border: `1px solid ${plan.color}40` 
-                    }}
-                  >
-                    <plan.icon className="w-6 h-6" style={{ color: plan.color }} />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{plan.name}</h3>
-                    <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{plan.tagline}</p>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>{plan.price}</span>
-                    <span className="text-sm" style={{ color: 'var(--text-tertiary)' }}>{plan.period}</span>
-                  </div>
-                  <div className="mt-2 flex items-center gap-2">
-                    <span 
-                      className="px-2 py-0.5 rounded text-xs font-mono font-bold"
-                      style={{ background: `${plan.color}15`, color: plan.color, border: `1px solid ${plan.color}40` }}
-                    >
-                      {plan.model}
-                    </span>
-                    <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{plan.modelDesc}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3 mb-8">
-                  {plan.features.map((f, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      {f.included ? (
-                        <Check className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--plasma-400)' }} />
-                      ) : (
-                        <X className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-tertiary)', opacity: 0.4 }} />
-                      )}
-                      <span 
-                        className="text-sm" 
-                        style={{ color: f.included ? 'var(--text-secondary)' : 'var(--text-tertiary)', opacity: f.included ? 1 : 0.4 }}
-                      >
-                        {f.text}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <Link href="/dashboard" className={`${plan.ctaStyle} w-full text-center`}>
-                  {plan.cta}
-                </Link>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
-              Todos os planos incluem SSL, hospedagem e atualizacoes. Cancele quando quiser.
+            
+            {/* Title - Gradient text only here */}
+            <h1 
+              className={`text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[0.92] mb-8 tracking-tight transition-all duration-500 delay-100 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              }`}
+            >
+              <span className="text-gradient">Automatize</span>
+              <br />
+              <span style={{ color: 'var(--text-primary)' }}>qualquer fluxo</span>
+              <br />
+              <span className="font-medium" style={{ color: 'var(--text-muted)' }}>com IA autonoma</span>
+            </h1>
+            
+            {/* Subtitle */}
+            <p 
+              className={`text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed transition-all duration-500 delay-200 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              }`}
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              Seus agentes buscam leads, criam sites, enviam propostas e fecham negocios.
+              <br />
+              <span className="font-semibold" style={{ color: 'var(--plasma-400)' }}>Voce so define o objetivo.</span>
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* AI Models */}
-      <section className="py-24 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--plasma-400)' }}>Modelos de IA</p>
-            <h2 className="text-3xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>Potenciado pelos melhores</h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { name: 'GPT-5', provider: 'OpenAI', tier: 'Free', color: 'var(--plasma-500)' },
-              { name: 'Kimi K3', provider: 'Bluesminds', tier: 'Premium', color: 'var(--neural-500)' },
-              { name: 'Claude', provider: 'Anthropic', tier: 'Em breve', color: 'var(--electric-500)' },
-              { name: 'Gemini', provider: 'Google', tier: 'Em breve', color: 'var(--hot-500)' },
-            ].map((m) => (
-              <div 
-                key={m.name} 
-                className="card p-6 text-center transition-all duration-300"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = m.color
-                  e.currentTarget.style.boxShadow = `0 0 30px ${m.color}20`
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = ''
-                  e.currentTarget.style.boxShadow = ''
-                }}
-              >
-                <div 
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                  style={{ background: `${m.color}15` }}
-                >
-                  <Cpu className="w-7 h-7" style={{ color: m.color }} />
+            
+            {/* CTAs */}
+            <div 
+              className={`flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 transition-all duration-500 delay-300 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              }`}
+            >
+              <Link href="/dashboard" className="btn-primary text-base py-4 px-8 group">
+                <span>Criar Primeiro Agente</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+              </Link>
+              <a href="#pricing" className="btn-secondary text-base py-4 px-8">
+                Ver Planos
+              </a>
+            </div>
+            
+            {/* Stats */}
+            <div 
+              className={`grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto transition-all duration-500 delay-400 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              }`}
+            >
+              {stats.map((stat) => (
+                <div key={stat.label} className="text-center p-4 rounded-xl" style={{ background: 'var(--surface)' }}>
+                  <p className="text-3xl md:text-4xl font-bold" style={{ color: 'var(--plasma-400)' }}>
+                    {stat.value}
+                  </p>
+                  <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>{stat.label}</p>
                 </div>
-                <h4 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{m.name}</h4>
-                <p className="text-xs mb-2" style={{ color: 'var(--text-tertiary)' }}>{m.provider}</p>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Live Demo Banner */}
+        <section 
+          className="py-6 px-6"
+          style={{ 
+            background: 'var(--bg-secondary)', 
+            borderTop: '1px solid var(--border)', 
+            borderBottom: '1px solid var(--border)' 
+          }}
+        >
+          <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-6 md:gap-12">
+            <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-tertiary)' }}>
+              <Eye className="w-4 h-4" style={{ color: 'var(--plasma-400)' }} />
+              <span>Agentes executando agora</span>
+            </div>
+            {agents.slice(0, 3).map((a) => (
+              <div key={a.name} className="flex items-center gap-2 text-sm">
                 <span 
-                  className="text-xs px-2 py-0.5 rounded-full font-medium"
-                  style={{ background: `${m.color}15`, color: m.color }}
-                >
-                  {m.tier}
-                </span>
+                  className="w-2 h-2 rounded-full animate-pulse" 
+                  style={{ background: 'var(--plasma-400)' }} 
+                  aria-hidden="true"
+                />
+                <span style={{ color: 'var(--text-secondary)' }}>{a.name}</span>
+                <span className="font-mono text-xs" style={{ color: 'var(--plasma-400)' }}>{a.tasks}</span>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA */}
-      <section className="py-24 px-6 relative overflow-hidden">
-        <div 
-          className="absolute inset-0"
-          style={{ background: 'linear-gradient(135deg, var(--neural-800), var(--electric-800))' }}
-        />
-        <div 
-          className="absolute inset-0 opacity-20"
-          style={{ 
-            background: 'radial-gradient(circle at 30% 50%, var(--neural-500) 0%, transparent 50%), radial-gradient(circle at 70% 50%, var(--electric-500) 0%, transparent 50%)' 
-          }}
-        />
-        <div className="max-w-3xl mx-auto text-center text-white relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Seus agentes estao prontos</h2>
-          <p className="text-xl mb-10 opacity-90">Comece gratis. Sem cartao de credito. Ativacao instantanea.</p>
-          <Link 
-            href="/dashboard" 
-            className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl font-bold text-lg transition-all hover:scale-105"
-            style={{ background: 'white', color: 'var(--neural-800)', boxShadow: '0 0 40px rgba(255,255,255,0.2)' }}
-          >
-            Ativar Meus Agentes
-            <Rocket className="w-6 h-6" />
-          </Link>
-        </div>
-      </section>
+        {/* Agents Preview */}
+        <section id="agents" className="py-24 px-6">
+          <div className="max-w-6xl mx-auto">
+            <AnimatedSection>
+              <div className="text-center mb-16">
+                <p className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--plasma-400)' }}>Seus Agentes</p>
+                <h2 className="text-3xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>Trabalhando para voce</h2>
+              </div>
+            </AnimatedSection>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {agents.map((agent, i) => (
+                <AnimatedSection key={agent.name} delay={i * 100}>
+                  <div 
+                    className="card p-6 group transition-all duration-200 hover:border-[var(--neural-500)] hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div 
+                        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110"
+                        style={{ 
+                          background: 'linear-gradient(135deg, var(--neural-600), var(--electric-600))'
+                        }}
+                      >
+                        <Bot className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{agent.name}</h3>
+                          <span 
+                            className="w-2 h-2 rounded-full" 
+                            style={{ background: 'var(--plasma-400)' }} 
+                            aria-label="Online"
+                          />
+                        </div>
+                        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{agent.desc}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Tarefas</p>
+                        <p className="font-semibold font-mono" style={{ color: 'var(--plasma-400)' }}>{agent.tasks}</p>
+                      </div>
+                    </div>
+                  </div>
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section className="py-24 px-6" style={{ background: 'var(--bg-secondary)' }}>
+          <div className="max-w-6xl mx-auto">
+            <AnimatedSection>
+              <div className="text-center mb-16">
+                <p className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--plasma-400)' }}>Como funciona</p>
+                <h2 className="text-3xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>Simples como conversar</h2>
+              </div>
+            </AnimatedSection>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {steps.map((step, i) => (
+                <AnimatedSection key={step.num} delay={i * 100}>
+                  <div className="text-center relative">
+                    {i < steps.length - 1 && (
+                      <div 
+                        className="hidden md:block absolute top-8 left-[60%] w-[80%] h-px"
+                        style={{ background: 'linear-gradient(90deg, var(--neural-500), transparent)' }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <div 
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 relative z-10 transition-transform duration-200 hover:scale-110"
+                      style={{ 
+                        background: 'var(--surface)', 
+                        border: '1px solid var(--neural-500)'
+                      }}
+                    >
+                      <step.icon className="w-7 h-7" style={{ color: 'var(--neural-400)' }} />
+                    </div>
+                    <p className="text-xs font-mono mb-2" style={{ color: 'var(--plasma-400)' }}>{step.num}</p>
+                    <h3 className="font-semibold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>{step.title}</h3>
+                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{step.desc}</p>
+                  </div>
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section id="features" className="py-24 px-6">
+          <div className="max-w-6xl mx-auto">
+            <AnimatedSection>
+              <div className="text-center mb-16">
+                <p className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--plasma-400)' }}>Poderes</p>
+                <h2 className="text-3xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>O que seus agentes podem fazer</h2>
+              </div>
+            </AnimatedSection>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {features.map((feat, i) => (
+                <AnimatedSection key={feat.title} delay={i * 80}>
+                  <div 
+                    className="card p-6 transition-all duration-200 group relative overflow-hidden hover:border-[var(--neural-500)] hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div 
+                      className="absolute top-0 right-0 w-40 h-40 opacity-0 group-hover:opacity-10 transition-opacity duration-200"
+                      style={{ background: `radial-gradient(circle, ${feat.color} 0%, transparent 70%)` }}
+                      aria-hidden="true"
+                    />
+                    <div 
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-transform duration-200 group-hover:scale-110 relative z-10"
+                      style={{ background: `${feat.color}15` }}
+                    >
+                      <feat.icon className="w-7 h-7" style={{ color: feat.color }} />
+                    </div>
+                    <h3 className="font-semibold text-xl mb-3 relative z-10" style={{ color: 'var(--text-primary)' }}>{feat.title}</h3>
+                    <p className="text-sm leading-relaxed relative z-10" style={{ color: 'var(--text-secondary)' }}>{feat.desc}</p>
+                  </div>
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing */}
+        <section id="pricing" className="py-24 px-6" style={{ background: 'var(--bg-secondary)' }}>
+          <div className="max-w-5xl mx-auto">
+            <AnimatedSection>
+              <div className="text-center mb-16">
+                <p className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--plasma-400)' }}>Planos</p>
+                <h2 className="text-3xl md:text-5xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Escolha seu motor de IA</h2>
+                <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Comece gratis. Evolua quando quiser.</p>
+              </div>
+            </AnimatedSection>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+              {plans.map((plan, i) => (
+                <AnimatedSection key={plan.name} delay={i * 150}>
+                  <div 
+                    className="relative rounded-2xl p-6 transition-all duration-200 hover:-translate-y-1"
+                    style={{ 
+                      background: 'var(--surface)',
+                      border: `2px solid ${plan.popular ? 'var(--neural-500)' : 'var(--border)'}`,
+                      boxShadow: plan.popular ? '0 0 40px var(--accent-glow)' : 'none'
+                    }}
+                  >
+                    {plan.popular && (
+                      <div 
+                        className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                        style={{ 
+                          background: 'var(--neural-600)', 
+                          color: 'white'
+                        }}
+                        aria-label="Plano mais popular"
+                      >
+                        MAIS POPULAR
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center gap-3 mb-6">
+                      <div 
+                        className="w-12 h-12 rounded-xl flex items-center justify-center"
+                        style={{ 
+                          background: `${plan.color}15`, 
+                          border: `1px solid ${plan.color}40` 
+                        }}
+                      >
+                        <plan.icon className="w-6 h-6" style={{ color: plan.color }} />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{plan.name}</h3>
+                        <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{plan.tagline}</p>
+                      </div>
+                    </div>
+
+                    <div className="mb-6">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>{plan.price}</span>
+                        <span className="text-sm" style={{ color: 'var(--text-tertiary)' }}>{plan.period}</span>
+                      </div>
+                      <div className="mt-2 flex items-center gap-2">
+                        <span 
+                          className="px-2 py-0.5 rounded text-xs font-mono font-bold"
+                          style={{ background: `${plan.color}15`, color: plan.color, border: `1px solid ${plan.color}40` }}
+                        >
+                          {plan.model}
+                        </span>
+                        <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{plan.modelDesc}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 mb-6">
+                      {plan.features.map((f, j) => (
+                        <div key={j} className="flex items-center gap-3">
+                          {f.included ? (
+                            <Check className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--plasma-400)' }} aria-hidden="true" />
+                          ) : (
+                            <X className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-tertiary)', opacity: 0.4 }} aria-hidden="true" />
+                          )}
+                          <span 
+                            className="text-sm" 
+                            style={{ color: f.included ? 'var(--text-secondary)' : 'var(--text-tertiary)', opacity: f.included ? 1 : 0.4 }}
+                          >
+                            {f.text}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Link href="/dashboard" className={`${plan.ctaStyle} w-full text-center`}>
+                      {plan.cta}
+                    </Link>
+                  </div>
+                </AnimatedSection>
+              ))}
+            </div>
+
+            <AnimatedSection delay={300}>
+              <div className="text-center mt-12">
+                <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
+                  Todos os planos incluem SSL, hospedagem e atualizacoes. Cancele quando quiser.
+                </p>
+              </div>
+            </AnimatedSection>
+          </div>
+        </section>
+
+        {/* AI Models */}
+        <section className="py-24 px-6">
+          <div className="max-w-6xl mx-auto">
+            <AnimatedSection>
+              <div className="text-center mb-16">
+                <p className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--plasma-400)' }}>Modelos de IA</p>
+                <h2 className="text-3xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>Potenciado pelos melhores</h2>
+              </div>
+            </AnimatedSection>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { name: 'GPT-5', provider: 'OpenAI', tier: 'Free', color: 'var(--plasma-500)' },
+                { name: 'Kimi K3', provider: 'Bluesminds', tier: 'Premium', color: 'var(--neural-500)' },
+                { name: 'Claude', provider: 'Anthropic', tier: 'Em breve', color: 'var(--electric-500)' },
+                { name: 'Gemini', provider: 'Google', tier: 'Em breve', color: 'var(--hot-500)' },
+              ].map((m, i) => (
+                <AnimatedSection key={m.name} delay={i * 100}>
+                  <div 
+                    className="card p-6 text-center transition-all duration-200 hover:border-[var(--neural-500)] hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div 
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-transform duration-200 hover:scale-110"
+                      style={{ background: `${m.color}15` }}
+                    >
+                      <Cpu className="w-7 h-7" style={{ color: m.color }} />
+                    </div>
+                    <h4 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{m.name}</h4>
+                    <p className="text-xs mb-2" style={{ color: 'var(--text-tertiary)' }}>{m.provider}</p>
+                    <span 
+                      className="text-xs px-2 py-0.5 rounded-full font-medium"
+                      style={{ background: `${m.color}15`, color: m.color }}
+                    >
+                      {m.tier}
+                    </span>
+                  </div>
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-24 px-6 relative overflow-hidden">
+          <div 
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(135deg, var(--neural-800), var(--electric-800))' }}
+          />
+          <div 
+            className="absolute inset-0 opacity-20"
+            style={{ 
+              background: 'radial-gradient(circle at 30% 50%, var(--neural-500) 0%, transparent 50%), radial-gradient(circle at 70% 50%, var(--electric-500) 0%, transparent 50%)' 
+            }}
+          />
+          <AnimatedSection>
+            <div className="max-w-3xl mx-auto text-center text-white relative z-10">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">Seus agentes estao prontos</h2>
+              <p className="text-xl mb-10 opacity-90">Comece gratis. Sem cartao de credito. Ativacao instantanea.</p>
+              <Link 
+                href="/dashboard" 
+                className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl font-bold text-lg transition-all duration-200 hover:scale-105 hover:shadow-xl"
+                style={{ background: 'white', color: 'var(--neural-800)' }}
+              >
+                Ativar Meus Agentes
+                <Rocket className="w-6 h-6" />
+              </Link>
+            </div>
+          </AnimatedSection>
+        </section>
+      </main>
 
       {/* Footer */}
       <footer className="py-10 px-6" style={{ borderTop: '1px solid var(--border)' }}>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6">
-              <img src="/logo.svg" alt="Open-Agents" className="w-full h-full" />
+              <img src="/logo.svg" alt="" className="w-full h-full" aria-hidden="true" />
             </div>
-            <span className="font-semibold text-gradient">Open-Agents</span>
+            <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>Open-Agents</span>
           </div>
           <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>2026 Open-Agents. Agentes trabalhando 24/7.</p>
           <div className="flex items-center gap-6 text-sm" style={{ color: 'var(--text-tertiary)' }}>
