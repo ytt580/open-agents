@@ -132,7 +132,7 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
               className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all hover:opacity-80"
               style={{ background: 'var(--fg)', color: 'white', minHeight: '42px' }}
             >
-              R$ 10/mes
+              R$ 49/mes
             </button>
           </div>
         )}

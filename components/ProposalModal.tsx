@@ -62,7 +62,7 @@ Segue proposta para criação do seu novo site.
 📌 SITE ORIGINAL: ${scrapedSite?.url || 'N/A'}
 📌 TECNOLOGIA: Next.js 14 + Tailwind CSS
 📌 PRAZO: 48h após aprovação
-📌 VALOR: R$ 99 (plano Premium - Fable 5)
+📌 VALOR: R$ 49 (plano Premium - Fable 5)
 
 ${mensagemExtra}
 
@@ -115,7 +115,7 @@ Equipe Open-Agents
         </div>
         <div>
           <p className="text-xs text-gray-500">Valor</p>
-          <p className="font-medium text-green-700">R$ 99 (Fable 5 Premium)</p>
+          <p className="font-medium text-green-700">R$ 49 (Fable 5 Premium)</p>
         </div>
         <div>
           <p className="text-xs text-gray-500">Prazo</p>

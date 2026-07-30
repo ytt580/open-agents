@@ -192,7 +192,7 @@ export function SiteBuilder({
           <FolderCog className="w-6 h-6 text-gray-600" />
           <div>
             <h3 className="font-semibold text-gray-900">Construtor de Site Next.js (Fable 5)</h3>
-            <p className="text-sm text-gray-500">Geração única via prompt completo • R$ 99/site</p>
+            <p className="text-sm text-gray-500">Geração única via prompt completo • R$ 49/site</p>
           </div>
         </div>
         <div className="flex items-center gap-2">

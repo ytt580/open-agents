@@ -316,7 +316,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className="mb-6">
-                  <span className="text-5xl font-black text-white">R$ 10</span>
+                  <span className="text-5xl font-black text-white">R$ 49</span>
                   <span className="text-sm ml-1" style={{ color: 'var(--fg-muted)' }}>/mes</span>
                 </div>
                 <div className="px-4 py-2.5 rounded-xl mb-6 text-sm font-bold" style={{ background: 'rgba(249, 115, 22, 0.1)', color: 'var(--orange)' }}>

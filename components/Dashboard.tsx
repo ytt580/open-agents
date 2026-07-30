@@ -224,7 +224,7 @@ export function Dashboard({ onNavigate, onSelectFlow, onNewFlow, flows }: Dashbo
               </div>
               <div>
                 <h3 className="font-bold text-lg" style={{ color: 'var(--fg)' }}>Upgrade para Premium</h3>
-                <p className="text-base" style={{ color: 'var(--fg-muted)' }}>Puter.js, 500+ modelos IA, R$10/mes</p>
+                <p className="text-base" style={{ color: 'var(--fg-muted)' }}>Puter.js, 500+ modelos IA, R$49/mes</p>
               </div>
             </div>
             <button className="btn-primary flex-shrink-0" aria-label="Ver planos premium">

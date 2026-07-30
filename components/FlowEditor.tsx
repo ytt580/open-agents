@@ -321,7 +321,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       const decision = modelRouter.route(userInput, { objective: userInput, isNewSite: true })
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(), tipo: 'ai',
-        conteudo: `🔄 roteando para **Fable 5** (Premium R$ 99)\n\n${decision.reason}\n\nAbrindo construtor de site Next.js...`,
+        conteudo: `🔄 roteando para **Fable 5** (Premium R$ 49)\n\n${decision.reason}\n\nAbrindo construtor de site Next.js...`,
         timestamp: new Date()
       }])
       setTimeout(() => setShowSiteBuilder(true), 500)
@@ -840,7 +840,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                   
                   <div className="flex items-center justify-between px-3 py-1.5 mb-1">
                     <p className="text-xs font-semibold" style={{ color: 'var(--fg)' }}>Premium</p>
-                    <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: 'var(--bg-muted)', color: 'var(--fg)' }}>R$10/mes</span>
+                    <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: 'var(--bg-muted)', color: 'var(--fg)' }}>R$49/mes</span>
                   </div>
                   {premiumModels.map(model => {
                     const isLocked = currentPlan === 'free' && model.premium
@@ -1082,7 +1082,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="w-full max-w-5xl max-h-[90vh] overflow-auto rounded-2xl shadow-2xl">
             <div className="flex items-center justify-between p-3 bg-white border-b border-gray-200 rounded-t-2xl">
-              <span className="text-sm font-semibold text-gray-900">Construtor de Site - Fable 5 Premium (R$ 99)</span>
+              <span className="text-sm font-semibold text-gray-900">Construtor de Site - Fable 5 Premium (R$ 49)</span>
               <button 
                 onClick={() => setShowSiteBuilder(false)}
                 className="p-1.5 hover:bg-gray-100 rounded-lg transition"
@@ -1136,7 +1136,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               Os modelos de IA avancados como Kimi K3, MiniMax e outros estao disponiveis no plano Premium.
             </p>
             <div className="p-4 rounded-xl mb-6" style={{ background: 'var(--bg-muted)', border: '1px solid var(--border)' }}>
-              <p className="text-3xl font-bold mb-1" style={{ color: 'var(--fg)' }}>R$ 10<span className="text-sm font-normal" style={{ color: 'var(--fg-muted)' }}>/mes</span></p>
+              <p className="text-3xl font-bold mb-1" style={{ color: 'var(--fg)' }}>R$ 49<span className="text-sm font-normal" style={{ color: 'var(--fg-muted)' }}>/mes</span></p>
               <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Acesso ilimitado a todos os modelos</p>
             </div>
             <div className="flex gap-3">

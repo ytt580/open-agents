@@ -79,7 +79,7 @@ Segue proposta para criação do seu novo site profissional.
 📍 Site Original: ${dados?.original?.url || 'N/A'}
 📍 Tecnologia: Next.js 14 + Tailwind CSS
 📍 Prazo: 48h após aprovação
-📍 Valor: R$ 99 (plano Premium - Fable 5)
+📍 Valor: R$ 49 (plano Premium - Fable 5)
 
 ${formData.mensagem || ''}
 
@@ -177,7 +177,7 @@ Equipe Open-Agents`,
           <div className="p-3 rounded-xl bg-gray-50 border border-gray-200">
             <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Modelo</p>
             <p className="font-semibold text-sm mt-0.5">Fable 5 Premium</p>
-            <p className="text-[10px] text-gray-400">R$ 99</p>
+            <p className="text-[10px] text-gray-400">R$ 49</p>
           </div>
           <div className="p-3 rounded-xl bg-gray-50 border border-gray-200">
             <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Arquivos</p>
@@ -353,7 +353,7 @@ Equipe Open-Agents`,
                 <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div><span className="text-gray-500">Site:</span> <span className="font-medium">{dados.original.title}</span></div>
-                    <div><span className="text-gray-500">Valor:</span> <span className="font-medium text-green-700">R$ 99</span></div>
+                    <div><span className="text-gray-500">Valor:</span> <span className="font-medium text-green-700">R$ 49</span></div>
                     <div><span className="text-gray-500">Prazo:</span> <span className="font-medium">48h</span></div>
                     <div><span className="text-gray-500">Arquivos:</span> <span className="font-medium">{Object.keys(dados.gerado.files).length}</span></div>
                   </div>
