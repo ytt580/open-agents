@@ -126,13 +126,13 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
               <span className="text-sm font-semibold" style={{ color: 'var(--fg)' }}>Premium</span>
             </div>
             <p className="text-sm mb-3" style={{ color: 'var(--fg-muted)' }}>
-              Fable 5, gerador de sites Next.js
+              Puter.js, 500+ modelos IA
             </p>
             <button 
               className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all hover:opacity-80"
               style={{ background: 'var(--fg)', color: 'white', minHeight: '42px' }}
             >
-              R$ 99/site
+              R$ 10/mes
             </button>
           </div>
         )}

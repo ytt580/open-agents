@@ -70,43 +70,47 @@ export function SkillsSelector({ onSelect, onClose }: SkillsSelectorProps) {
   })
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}>
-      <div className="w-full max-w-xl max-h-[75vh] rounded-xl overflow-hidden flex flex-col" style={{ background: 'var(--bg-alt)', border: '1px solid var(--border)', boxShadow: '0 0 40px var(--accent-glow)' }}>
-        <div className="p-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--accent-glow)' }}>
-              <Puzzle className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
+      <div className="w-full max-w-xl max-h-[75vh] rounded-2xl overflow-hidden flex flex-col" style={{ background: 'var(--bg)', border: '1px solid var(--border)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
+        {/* Header */}
+        <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'var(--bg-muted)' }}>
+              <Puzzle className="w-5 h-5" style={{ color: 'var(--fg)' }} />
             </div>
             <div>
-              <h3 className="font-semibold text-sm" style={{ color: 'var(--fg)' }}>Skills Disponiveis</h3>
-              <p className="text-[10px]" style={{ color: 'var(--fg-subtle)' }}>{skills.length} skills para automatizar</p>
+              <h3 className="font-bold text-base" style={{ color: 'var(--fg)' }}>Skills Disponiveis</h3>
+              <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>{skills.length} skills para automatizar</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--bg-alt)]" style={{ color: 'var(--fg-subtle)' }}>
-            <X className="w-4 h-4" />
+          <button onClick={onClose} className="p-2 rounded-lg transition-colors" style={{ color: 'var(--fg-muted)' }}>
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-3" style={{ borderBottom: '1px solid var(--border)' }}>
+        {/* Search + Filters */}
+        <div className="p-4" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'var(--fg-subtle)' }} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--fg-muted)' }} />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar skill..."
-              className="input-field text-xs pl-8"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm outline-none transition-colors"
+              style={{ background: 'var(--bg-muted)', color: 'var(--fg)', border: '1px solid var(--border)' }}
             />
           </div>
-          <div className="flex gap-1 mt-2">
+          <div className="flex gap-2 mt-3">
             {categorias.map(cat => (
               <button
                 key={cat.id}
                 onClick={() => setFilter(cat.id)}
-                className="px-2.5 py-1 rounded-md text-[10px] font-medium transition-all"
+                className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
                 style={{ 
-                  background: filter === cat.id ? 'var(--accent)' : 'var(--bg-muted)',
-                  color: filter === cat.id ? 'white' : 'var(--fg-faint)',
+                  background: filter === cat.id ? 'var(--fg)' : 'var(--bg-muted)',
+                  color: filter === cat.id ? 'white' : 'var(--fg-muted)',
+                  border: '1px solid ' + (filter === cat.id ? 'var(--fg)' : 'var(--border)')
                 }}
               >
                 {cat.label}
@@ -115,29 +119,35 @@ export function SkillsSelector({ onSelect, onClose }: SkillsSelectorProps) {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
+        {/* Skills List */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {filtered.map(skill => {
             const Icon = skill.icone
             return (
               <button
                 key={skill.id}
                 onClick={() => { onSelect(skill); onClose() }}
-                className="w-full p-3 rounded-lg text-left transition-all duration-200 hover:border-[var(--violet-500)] flex items-start gap-3"
-                style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}
+                className="w-full p-4 rounded-xl text-left transition-all duration-200 flex items-start gap-3 hover:shadow-sm"
+                style={{ border: '1px solid var(--border)', background: 'var(--bg)' }}
               >
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'var(--accent-glow)' }}>
-                  <Icon className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bg-muted)' }}>
+                  <Icon className="w-5 h-5" style={{ color: 'var(--fg)' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-xs" style={{ color: 'var(--fg)' }}>{skill.nome}</p>
-                  <p className="text-[10px] mt-0.5 line-clamp-2" style={{ color: 'var(--fg-faint)' }}>{skill.descricao}</p>
+                  <p className="font-semibold text-sm" style={{ color: 'var(--fg)' }}>{skill.nome}</p>
+                  <p className="text-xs mt-0.5 line-clamp-2" style={{ color: 'var(--fg-muted)' }}>{skill.descricao}</p>
                 </div>
-                <span className="text-[9px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ background: 'var(--bg-muted)', color: 'var(--fg-subtle)' }}>
+                <span className="text-[10px] px-2 py-1 rounded-md font-medium flex-shrink-0" style={{ background: 'var(--bg-muted)', color: 'var(--fg-muted)' }}>
                   {skill.categoria}
                 </span>
               </button>
             )
           })}
+          {filtered.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Nenhuma skill encontrada</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

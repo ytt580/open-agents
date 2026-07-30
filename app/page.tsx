@@ -289,7 +289,7 @@ export default function LandingPage() {
                 style={{ background: 'var(--fg)', border: '1.5px solid var(--fg)', boxShadow: '0 8px 40px rgba(0,0,0,0.15)' }}>
                 <div className="absolute -top-3.5 left-8 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white"
                   style={{ background: 'linear-gradient(135deg, var(--orange), var(--red))' }}>
-                  Gerador de Sites
+                  Mais Popular
                 </div>
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(249, 115, 22, 0.15)' }}>
@@ -297,18 +297,18 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h3 className="text-2xl font-black text-white">Premium</h3>
-                    <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Fable 5 — Site Builder</p>
+                    <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Puter.js — 500+ modelos IA</p>
                   </div>
                 </div>
                 <div className="mb-6">
-                  <span className="text-5xl font-black text-white">R$ 99</span>
-                  <span className="text-sm ml-1" style={{ color: 'var(--fg-muted)' }}>por site</span>
+                  <span className="text-5xl font-black text-white">R$ 10</span>
+                  <span className="text-sm ml-1" style={{ color: 'var(--fg-muted)' }}>/mes</span>
                 </div>
                 <div className="px-4 py-2.5 rounded-xl mb-6 text-sm font-bold" style={{ background: 'rgba(249, 115, 22, 0.1)', color: 'var(--orange)' }}>
-                  Motor: <span className="text-white">Fable 5</span> — Next.js 14
+                  Motor: <span className="text-white">Puter.js</span> — 500+ modelos
                 </div>
                 <div className="space-y-3 mb-8">
-                  {['Projeto Next.js completo', 'App Router + Tailwind', 'Componentes profissionais', 'Deploy instantaneo', 'Proposta automatica', 'Comparacao visual'].map(f => (
+                  {['GPT-5.3 Codex, GPT-5.2, Claude Opus', 'Gemini Pro, Grok 3, DeepSeek V4', 'Agentes ilimitados', 'Scraping + Email + WhatsApp'].map(f => (
                     <div key={f} className="flex items-center gap-3">
                       <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(249, 115, 22, 0.15)' }}>
                         <svg className="w-3 h-3" style={{ color: 'var(--orange)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
@@ -319,7 +319,7 @@ export default function LandingPage() {
                 </div>
                 <Link href="/dashboard" className="block w-full text-center py-4 rounded-2xl font-bold text-base text-white transition-all hover:scale-[1.02]"
                   style={{ background: 'linear-gradient(135deg, var(--orange), var(--red))' }}>
-                  Criar Meu Site
+                  Ativar Premium
                 </Link>
               </div>
             </Reveal>
