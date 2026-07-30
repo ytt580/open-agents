@@ -38,6 +38,24 @@ function ensurePuter(): void {
   if (!(window as any).puter) throw new Error('Puter.js not loaded. Add <script src="https://js.puter.com/v2/"></script> to your HTML.')
 }
 
+const VISION_MODELS = new Set([
+  'gpt-4o', 'gpt-4o-mini', 'gpt-5-nano', 'gpt-5.2', 'gpt-5.2-pro',
+  'claude-sonnet-4-6', 'claude-opus-4-8',
+  'gemini-2.5-flash', 'gemini-3-flash', 'gemini-3-pro', 'gemini-3.1-pro',
+  'nvidia/nemotron-3-nano-omni',
+  'z-ai/glm-5v-turbo',
+])
+
+export function modelSupportsVision(modelId: string): boolean {
+  const base = modelId.includes('/') ? modelId.split('/').pop()! : modelId
+  return VISION_MODELS.has(base) || VISION_MODELS.has(modelId)
+}
+
+export function getVisionFallback(modelId: string): string {
+  if (modelSupportsVision(modelId)) return modelId
+  return 'gpt-4o'
+}
+
 // ─── AI CHAT ──────────────────────────────────────────
 
 export async function chatAI(
@@ -80,7 +98,7 @@ Seja objetiva e profissional. Responda em portugues.`
     const response = await puter.ai.chat(formattedMessages, {
       model,
       temperature: options.temperature ?? 0.7,
-      max_tokens: options.max_tokens ?? 1000,
+      max_tokens: options.max_tokens ?? 4000,
     })
 
     const content = response?.message?.content || response?.message || String(response) || ''

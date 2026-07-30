@@ -8,7 +8,7 @@ import {
   Paperclip, File, X, Puzzle, Sparkles, Lock, Crown,
   Settings, Eye, AlertTriangle, Shield, Pause, Image as ImageIcon, Volume2
 } from 'lucide-react'
-import { chatAI, generateImage, textToSpeech } from '@/lib/puter-ai'
+import { chatAI, generateImage, textToSpeech, imageToText, getVisionFallback } from '@/lib/puter-ai'
 import { SkillsSelector } from './SkillsSelector'
 import { SiteBuilder } from './SiteBuilder'
 import { Flow } from '@/app/dashboard/page'
@@ -36,6 +36,7 @@ interface Message {
   conteudo: string
   timestamp: Date
   files?: string[]
+  images?: { name: string; mime: string; data: string }[]
 }
 
 interface ExecutionLog {
@@ -108,7 +109,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   const [expandedStep, setExpandedStep] = useState<string | null>(null)
   const [executing, setExecuting] = useState(false)
   const [executionLogs, setExecutionLogs] = useState<ExecutionLog[]>([])
-  const [attachedFiles, setAttachedFiles] = useState<string[]>([])
+  const [attachedFiles, setAttachedFiles] = useState<{ name: string; mime: string; data: string }[]>([])
   const [showSkills, setShowSkills] = useState(false)
   const [selectedModel, setSelectedModel] = useState('gpt-4o-mini')
   const [showModelMenu, setShowModelMenu] = useState(false)
@@ -217,16 +218,39 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
     return newSteps
   }
 
-  const callAI = async (userInput: string, history: Message[]): Promise<string> => {
+  const callAI = async (userInput: string, history: Message[], attachedImages?: { name: string; mime: string; data: string }[]): Promise<string> => {
     setApiError(null)
     try {
+      let finalInput = userInput
+      let model = selectedModel
+
+      if (attachedImages && attachedImages.length > 0) {
+        const { getVisionFallback } = await import('@/lib/puter-ai')
+        const fallback = getVisionFallback(model)
+        if (fallback !== model) model = fallback
+
+        try {
+          const imageDescriptions: string[] = []
+          for (const img of attachedImages) {
+            const dataUrl = `data:${img.mime};base64,${img.data}`
+            const desc = await imageToText(dataUrl)
+            imageDescriptions.push(`[Imagem "${img.name}": ${desc}]`)
+          }
+          if (imageDescriptions.length > 0) {
+            finalInput = userInput + '\n\n' + imageDescriptions.join('\n')
+          }
+        } catch {
+          finalInput = userInput + '\n\n[Usuario enviou ' + attachedImages.length + ' imagem(ns) - nao foi possivel analisar]'
+        }
+      }
+
       const apiMessages = history.slice(-10).map(m => ({
         role: m.tipo === 'user' ? 'user' as const : 'assistant' as const,
         content: m.conteudo
       }))
-      apiMessages.push({ role: 'user', content: userInput })
+      apiMessages.push({ role: 'user', content: finalInput })
 
-      const data = await chatAI(apiMessages, { model: selectedModel })
+      const data = await chatAI(apiMessages, { model })
       setRetryCount(0)
       return data.content || 'Desculpe, nao consegui processar.'
     } catch (error) {
@@ -243,10 +267,12 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return
 
+    const currentImages = attachedFiles.length > 0 ? [...attachedFiles] : []
     const userMessage: Message = {
       id: Date.now().toString(), tipo: 'user', conteudo: inputValue,
       timestamp: new Date(),
-      files: attachedFiles.length > 0 ? [...attachedFiles] : undefined
+      images: currentImages.length > 0 ? currentImages.map(f => ({ name: f.name, mime: f.mime, data: f.data })) : undefined,
+      files: currentImages.length > 0 ? currentImages.map(f => f.name) : undefined
     }
 
     setMessages(prev => [...prev, userMessage])
@@ -333,7 +359,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       }, 1000)
     } else {
       // Generic message - use AI to respond and ask what they want
-      const aiResponse = await callAI(userInput, [...messages, userMessage])
+      const aiResponse = await callAI(userInput, [...messages, userMessage], currentImages.length > 0 ? currentImages : undefined)
       const processedResponse = await processAIResponse(aiResponse)
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(), tipo: 'ai', conteudo: processedResponse,
@@ -345,15 +371,24 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
   const handleFileAttach = () => fileInputRef.current?.click()
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (files) {
-      const names = Array.from(files).map(f => f.name)
-      setAttachedFiles(prev => [...prev, ...names])
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files
+    if (!fileList) return
+    const newFiles: { name: string; mime: string; data: string }[] = []
+    for (let i = 0; i < fileList.length; i++) {
+      const f = fileList[i]
+      if (!f.type.startsWith('image/')) continue
+      const buf = await f.arrayBuffer()
+      const bytes = new Uint8Array(buf)
+      let binary = ''
+      for (let j = 0; j < bytes.length; j++) binary += String.fromCharCode(bytes[j])
+      const data = btoa(binary)
+      newFiles.push({ name: f.name, mime: f.type, data })
     }
+    if (newFiles.length > 0) setAttachedFiles(prev => [...prev, ...newFiles])
   }
 
-  const removeFile = (name: string) => setAttachedFiles(prev => prev.filter(f => f !== name))
+  const removeFile = (name: string) => setAttachedFiles(prev => prev.filter(f => f.name !== name))
 
   const removeStep = (id: string) => setSteps(prev => prev.filter(s => s.id !== id))
 
@@ -506,17 +541,41 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
   const freeModels = [
     { id: 'gpt-4o-mini', name: 'GPT-4o Mini', desc: 'Rapido e economico', free: true },
-    { id: 'gpt-4o', name: 'GPT-4o', desc: 'Inteligente', free: true },
-    { id: 'claude-sonnet-4-6', name: 'Claude Sonnet', desc: 'Analitico', free: true },
-    { id: 'gemini-2.5-flash', name: 'Gemini Flash', desc: 'Rapido', free: true },
+    { id: 'gpt-4o', name: 'GPT-4o', desc: 'Inteligente + visao', free: true },
+    { id: 'claude-sonnet-4-6', name: 'Claude Sonnet', desc: 'Analitico + visao', free: true },
+    { id: 'gemini-2.5-flash', name: 'Gemini Flash', desc: 'Rapido + visao', free: true },
+    { id: 'nvidia/nemotron-3-super', name: 'Nemotron 3 Super', desc: 'NVIDIA 120B', free: true },
+    { id: 'nvidia/nemotron-3-nano-omni', name: 'Nemotron Nano Omni', desc: 'NVIDIA multimodal', free: true },
+    { id: 'z-ai/glm-4.7-flash', name: 'GLM 4.7 Flash', desc: 'Z.AI rapido', free: true },
+    { id: 'z-ai/glm-5-turbo', name: 'GLM 5 Turbo', desc: 'Z.AI turbo', free: true },
+    { id: 'deepseek/deepseek-v4-flash', name: 'DeepSeek V4 Flash', desc: 'DeepSeek rapido', free: true },
+    { id: 'deepseek/deepseek-v3.2', name: 'DeepSeek V3.2', desc: 'DeepSeek geral', free: true },
   ]
 
   const premiumModels = [
-    { id: 'gpt-5-nano', name: 'GPT-5 Nano', desc: 'Mais avancado', premium: true },
+    { id: 'gpt-5-nano', name: 'GPT-5 Nano', desc: 'Avancado', premium: true },
+    { id: 'openai/gpt-5.3-codex', name: 'GPT-5.3 Codex', desc: 'Codificacao agentiva', premium: true },
+    { id: 'openai/gpt-5.2', name: 'GPT-5.2', desc: 'Trabalho intelectual', premium: true },
+    { id: 'openai/gpt-5.2-pro', name: 'GPT-5.2 Pro', desc: 'Raciocinio profundo', premium: true },
+    { id: 'openai/gpt-5.1', name: 'GPT-5.1', desc: 'Adaptativo', premium: true },
+    { id: 'openai/gpt-5.1-codex-max', name: 'GPT-5.1 Codex Max', desc: 'Codificacao longa', premium: true },
     { id: 'claude-opus-4-8', name: 'Claude Opus', desc: 'Premium', premium: true },
     { id: 'grok-3', name: 'Grok 3', desc: 'xAI', premium: true },
     { id: 'deepseek/deepseek-r1', name: 'DeepSeek R1', desc: 'Raciocinio', premium: true },
+    { id: 'deepseek/deepseek-v4-pro', name: 'DeepSeek V4 Pro', desc: '1.6T params', premium: true },
     { id: 'mistralai/mistral-large-latest', name: 'Mistral Large', desc: 'Avancado', premium: true },
+    { id: 'nvidia/nemotron-3-ultra-550b', name: 'Nemotron Ultra 550B', desc: 'NVIDIA topo', premium: true },
+    { id: 'z-ai/glm-5.2', name: 'GLM 5.2', desc: 'Z.AI 6a gen', premium: true },
+    { id: 'z-ai/glm-5.1', name: 'GLM 5.1', desc: 'Z.AI raciocinio', premium: true },
+    { id: 'z-ai/glm-5v-turbo', name: 'GLM 5V Turbo', desc: 'Z.AI multimodal', premium: true },
+    { id: 'kwaivgi/kling-2.1-master', name: 'Kling 2.1 Master', desc: 'Video 1080p', premium: true },
+    { id: 'kwaivgi/kling-2.1-standard', name: 'Kling 2.1 Padrao', desc: 'Video 720p', premium: true },
+    { id: 'kwaivgi/kling-2.1-pro', name: 'Kling 2.1 Pro', desc: 'Video 1080p pro', premium: true },
+    { id: 'google/gemini-3.1-pro', name: 'Gemini 3.1 Pro', desc: 'Google raciocinio', premium: true },
+    { id: 'google/gemini-3-flash', name: 'Gemini 3 Flash', desc: 'Google rapido', premium: true },
+    { id: 'google/gemini-3-pro', name: 'Gemini 3 Pro', desc: 'Google inteligente', premium: true },
+    { id: 'google/imagen-4.0', name: 'Imagen 4', desc: 'Google imagem', premium: true },
+    { id: 'google/veo-3.0', name: 'Veo 3', desc: 'Google video', premium: true },
   ]
 
   return (
@@ -853,6 +912,13 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                 border: message.tipo === 'user' ? 'none' : message.tipo === 'system' ? '1px solid #bbf7d0' : '1px solid var(--border)',
               }}>
                 <p className="text-base whitespace-pre-line leading-relaxed">{message.conteudo}</p>
+                {message.images && message.images.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {message.images.map((img, i) => (
+                      <img key={i} src={`data:${img.mime};base64,${img.data}`} alt={img.name} className="max-w-[200px] max-h-[200px] rounded-lg object-cover border" style={{ borderColor: 'var(--border)' }} />
+                    ))}
+                  </div>
+                )}
                 {message.files && message.files.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {message.files.map((f, i) => (
@@ -897,8 +963,9 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           <div className="px-4 py-2 flex flex-wrap gap-2" style={{ borderTop: '1px solid var(--border)' }}>
             {attachedFiles.map((f, i) => (
               <span key={i} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-muted)', color: 'var(--fg)' }}>
-                <File className="w-3 h-3" />{f}
-                <button onClick={() => removeFile(f)} className="ml-0.5 hover:opacity-70"><X className="w-3 h-3" /></button>
+                <img src={`data:${f.mime};base64,${f.data}`} className="w-5 h-5 rounded object-cover" />
+                {f.name}
+                <button onClick={() => removeFile(f.name)} className="ml-0.5 hover:opacity-70"><X className="w-3 h-3" /></button>
               </span>
             ))}
           </div>
