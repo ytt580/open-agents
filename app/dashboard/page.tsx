@@ -100,7 +100,7 @@ export default function DashboardPage() {
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
-      <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-72'}`}>
         {renderPage()}
       </main>
       <HITLSystem onApprove={handleHITLApprove} onReject={handleHITLReject} />

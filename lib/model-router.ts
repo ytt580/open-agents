@@ -11,7 +11,7 @@ export interface ModelConfig {
 export const MODEL_CONFIGS: Record<ModelType, ModelConfig> = {
   github: {
     type: 'github',
-    name: 'GitHub AI (GPT-4o)',
+    name: 'GitHub AI (24 modelos gratis)',
     cost: 'free',
     maxTokens: 128000,
     capabilities: ['chat', 'code', 'analysis', 'modifications', 'scraping', 'email', 'planning'],
@@ -25,17 +25,17 @@ export const MODEL_CONFIGS: Record<ModelType, ModelConfig> = {
   },
   'puter-free': {
     type: 'puter-free',
-    name: 'Puter Free (GPT-4o Mini, Claude Sonnet, Gemini Flash)',
+    name: 'Puter.js Free (GPT-4o, Claude Sonnet, Gemini Flash)',
     cost: 'free',
     maxTokens: 128000,
     capabilities: ['chat', 'code', 'analysis'],
   },
   'puter-premium': {
     type: 'puter-premium',
-    name: 'Puter Premium (GPT-5 Nano, Claude Opus, Grok 3, DeepSeek R1, Mistral Large)',
+    name: 'Puter.js + Cloudflare (15 modelos premium)',
     cost: 'premium',
     maxTokens: 200000,
-    capabilities: ['chat', 'code', 'analysis', 'reasoning'],
+    capabilities: ['chat', 'code', 'analysis', 'reasoning', 'image-gen', 'video'],
   },
 };
 

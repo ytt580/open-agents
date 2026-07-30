@@ -158,23 +158,42 @@ export function BrowserView() {
         {/* Connection Status */}
         <div className="p-4" style={{ borderBottom: '1px solid var(--border)' }}>
           {mode === 'browserclaw' && (
-            <div className="flex items-center gap-3 p-4 rounded-xl" style={{ 
-              background: browserclawConnected ? 'rgba(52, 211, 153, 0.08)' : 'rgba(244, 63, 94, 0.08)',
-              border: `1px solid ${browserclawConnected ? 'rgba(52, 211, 153, 0.2)' : 'rgba(244, 63, 94, 0.2)'}`
-            }}>
-              {browserclawConnected ? (
-                <Wifi className="w-5 h-5" style={{ color: 'var(--green)' }} />
-              ) : (
-                <WifiOff className="w-5 h-5" style={{ color: 'var(--red)' }} />
-              )}
-              <div className="flex-1">
-                <p className="text-sm font-bold" style={{ color: browserclawConnected ? 'var(--green)' : 'var(--red)' }}>
-                  {browserclawConnected ? 'BrowserClaw Conectado' : 'BrowserClaw Off'}
-                </p>
-                <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
-                  {browserclawConnected ? 'Sessoes autenticadas disponiveis' : 'Porta 9222 nao encontrada'}
-                </p>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-4 rounded-xl" style={{ 
+                background: browserclawConnected ? 'rgba(52, 211, 153, 0.08)' : 'rgba(244, 63, 94, 0.08)',
+                border: `1px solid ${browserclawConnected ? 'rgba(52, 211, 153, 0.2)' : 'rgba(244, 63, 94, 0.2)'}`
+              }}>
+                {browserclawConnected ? (
+                  <Wifi className="w-5 h-5" style={{ color: 'var(--green)' }} />
+                ) : (
+                  <WifiOff className="w-5 h-5" style={{ color: 'var(--red)' }} />
+                )}
+                <div className="flex-1">
+                  <p className="text-sm font-bold" style={{ color: browserclawConnected ? 'var(--green)' : 'var(--red)' }}>
+                    {browserclawConnected ? 'BrowserClaw Conectado' : 'BrowserClaw Off'}
+                  </p>
+                  <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
+                    {browserclawConnected ? 'Sessoes autenticadas disponiveis' : 'Porta 9222 nao encontrada'}
+                  </p>
+                </div>
               </div>
+              {!browserclawConnected && (
+                <div className="p-3 rounded-xl text-xs space-y-2" style={{ 
+                  background: 'var(--bg-muted)', 
+                  border: '1px solid var(--border)',
+                  color: 'var(--fg-muted)'
+                }}>
+                  <p className="font-semibold" style={{ color: 'var(--fg)' }}>Para ativar o BrowserClaw:</p>
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>Fechhe todos os Chrome abertos</li>
+                    <li>Abra o terminal e execute:</li>
+                  </ol>
+                  <code className="block p-2 rounded-lg text-xs" style={{ background: 'var(--bg)', color: 'var(--green)', wordBreak: 'break-all' }}>
+                    chrome.exe --remote-debugging-port=9222
+                  </code>
+                  <p>Usara seus logins salvos (LinkedIn, CRM, etc.)</p>
+                </div>
+              )}
             </div>
           )}
           
