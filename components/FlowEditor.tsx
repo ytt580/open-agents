@@ -6,10 +6,11 @@ import {
   ChevronDown, ChevronRight, Loader2, CheckCircle,
   Clock, Zap, Globe, Code, Mail, Search, MessageSquare,
   Paperclip, File, X, Puzzle, Sparkles, Lock, Crown,
-  Settings, Eye
+  Settings, Eye, AlertTriangle, Shield, Pause
 } from 'lucide-react'
 import { SkillsSelector } from './SkillsSelector'
 import { Flow } from '@/app/dashboard/page'
+import { detectDangerousAction, type HITLActionType } from './HITLSystem'
 
 interface FlowEditorProps {
   flowId: string
@@ -113,6 +114,11 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([])
   const [showCheckpoints, setShowCheckpoints] = useState(false)
+  const [hitlPending, setHitlPending] = useState<{ step: Step; actionType: HITLActionType; resolve: (approved: boolean) => void } | null>(null)
+  const [hitlLog, setHitlLog] = useState<{ step: string; actionType: HITLActionType; status: 'approved' | 'rejected'; timestamp: Date }[]>([])
+  const [showHitlLog, setShowHitlLog] = useState(false)
+  const [captureTree, setCaptureTree] = useState(false)
+  const [accessTree, setAccessTree] = useState<string | null>(null)
   const currentPlan = 'free'
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -303,6 +309,25 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
   const toggleStep = (id: string) => setSteps(prev => prev.map(s => s.id === id ? { ...s, ativo: !s.ativo } : s))
 
+  const requestHITLApproval = (step: Step, actionType: HITLActionType): Promise<boolean> => {
+    return new Promise((resolve) => {
+      setHitlPending({ step, actionType, resolve })
+    })
+  }
+
+  const handleHITLDecision = (approved: boolean) => {
+    if (hitlPending) {
+      setHitlLog(prev => [...prev, {
+        step: hitlPending.step.nome,
+        actionType: hitlPending.actionType,
+        status: approved ? 'approved' : 'rejected',
+        timestamp: new Date()
+      }])
+      hitlPending.resolve(approved)
+      setHitlPending(null)
+    }
+  }
+
   const executeFlow = async () => {
     if (steps.length === 0 || executing) return
     setExecuting(true)
@@ -312,6 +337,17 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
     for (let i = 0; i < steps.length; i++) {
       if (!steps[i].ativo) continue
+
+      const dangerType = detectDangerousAction(steps[i].nome, steps[i].descricao)
+      if (dangerType) {
+        setExecutionLogs(prev => prev.map((log, idx) => idx === i ? { ...log, status: 'running', message: 'Aguardando aprovacao HITL...' } : log))
+        const approved = await requestHITLApproval(steps[i], dangerType)
+        if (!approved) {
+          setExecutionLogs(prev => prev.map((log, idx) => idx === i ? { ...log, status: 'error', message: 'Rejeitado pelo usuario' } : log))
+          continue
+        }
+      }
+
       setExecutionLogs(prev => prev.map((log, idx) => idx === i ? { ...log, status: 'running', message: 'Executando...' } : log))
       await new Promise(r => setTimeout(r, 2000))
       setExecutionLogs(prev => prev.map((log, idx) => idx === i ? { ...log, status: 'done', message: 'Concluido!' } : log))
@@ -364,6 +400,51 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
     return response
   }
 
+  const captureAccessibilityTree = async () => {
+    setCaptureTree(true)
+    setAccessTree(null)
+    try {
+      const res = await fetch('http://localhost:9222/json')
+      if (!res.ok) throw new Error('BrowserClaw nao encontrado')
+      const tabs = await res.json()
+      if (tabs.length === 0) throw new Error('Nenhuma aba aberta')
+      const ws = new WebSocket(tabs[0].webSocketDebuggerUrl)
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ id: 1, method: 'Accessibility.getFullAXTree' }))
+      }
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        if (data.id === 1 && data.result && data.result.nodes) {
+          const tree = data.result.nodes
+            .filter((n: any) => n.role && n.role.value !== 'none' && n.name && n.name.value)
+            .slice(0, 50)
+            .map((n: any) => `[${n.role.value}] ${n.name.value}${n.children ? ' (expandir)' : ''}`)
+            .join('\n')
+          setAccessTree(tree || 'Arvore vazia')
+          setMessages(prev => [...prev, {
+            id: Date.now().toString(), tipo: 'system',
+            conteudo: `Accessibility Tree capturado! ${tree.split('\n').length} elementos semanticos encontrados. A IA pode usar isto para navegar sem screenshots.`,
+            timestamp: new Date()
+          }])
+        }
+        ws.close()
+      }
+      ws.onerror = () => {
+        setAccessTree('Erro ao conectar ao WebSocket')
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Erro desconhecido'
+      setAccessTree(`Erro: ${msg}`)
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(), tipo: 'ai',
+        conteudo: `Nao foi possivel capturar a arvore de acessibilidade. Verifique se o BrowserClaw esta rodando (localhost:9222). Erro: ${msg}`,
+        timestamp: new Date()
+      }])
+    } finally {
+      setCaptureTree(false)
+    }
+  }
+
   const freeModels = [
     { id: 'gpt-4o-mini', name: 'GPT-4o Mini', desc: 'Rapido e economico', free: true },
     { id: 'gpt-4o', name: 'GPT-4o', desc: 'Inteligente', free: true },
@@ -402,6 +483,28 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
             {checkpoints.length > 0 && (
               <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full text-[9px] flex items-center justify-center font-bold" style={{ background: 'var(--emerald-500)', color: 'white' }}>
                 {checkpoints.length}
+              </span>
+            )}
+          </button>
+          <button 
+            onClick={captureAccessibilityTree}
+            disabled={captureTree}
+            className="p-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]"
+            style={{ color: accessTree ? 'var(--cyan-400)' : 'var(--text-muted)' }}
+            title="Capturar Accessibility Tree (BrowserClaw)"
+          >
+            {captureTree ? <Loader2 className="w-4 h-4 animate-spin" /> : <Eye className="w-4 h-4" />}
+          </button>
+          <button 
+            onClick={() => setShowHitlLog(!showHitlLog)}
+            className="p-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)] relative"
+            style={{ color: hitlLog.length > 0 ? 'var(--rose-400)' : 'var(--text-muted)' }}
+            title="Historico de aprovacoes HITL"
+          >
+            <Shield className="w-4 h-4" />
+            {hitlLog.length > 0 && (
+              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full text-[9px] flex items-center justify-center font-bold" style={{ background: 'var(--rose-500)', color: 'white' }}>
+                {hitlLog.length}
               </span>
             )}
           </button>
@@ -838,6 +941,120 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               </a>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* HITL Approval Modal */}
+      {hitlPending && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)' }}>
+          <div className="card w-full max-w-md" style={{ 
+            boxShadow: '0 0 40px rgba(244, 63, 94, 0.15)',
+            border: '1.5px solid var(--rose-400)'
+          }}>
+            <div className="p-4" style={{ borderBottom: '1px solid var(--border)' }}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(244, 63, 94, 0.08)' }}>
+                  <AlertTriangle className="w-5 h-5" style={{ color: 'var(--rose-400)' }} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
+                    Aprovacao Necessaria (HITL)
+                  </h3>
+                  <p className="text-[10px]" style={{ color: 'var(--rose-400)' }}>
+                    Acao potencialmente perigosa detectada
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="p-3 rounded-lg" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+                <p className="text-[10px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Etapa</p>
+                <p className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>{hitlPending.step.nome}</p>
+              </div>
+              <div className="p-3 rounded-lg" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+                <p className="text-[10px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Descricao</p>
+                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{hitlPending.step.descricao}</p>
+              </div>
+              <div className="p-3 rounded-lg" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+                <p className="text-[10px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Tipo de risco</p>
+                <p className="text-xs font-semibold" style={{ color: 'var(--rose-40)' }}>{hitlPending.actionType.replace('_', ' ').toUpperCase()}</p>
+              </div>
+            </div>
+            <div className="p-4 flex gap-2" style={{ borderTop: '1px solid var(--border)' }}>
+              <button 
+                onClick={() => handleHITLDecision(false)}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-medium transition-all"
+                style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--rose-400)', border: '1px solid rgba(244, 63, 94, 0.2)' }}
+              >
+                <X className="w-3.5 h-3.5" />
+                Rejeitar
+              </button>
+              <button 
+                onClick={() => handleHITLDecision(true)}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-medium transition-all"
+                style={{ background: 'var(--emerald-500)', color: 'white' }}
+              >
+                <CheckCircle className="w-3.5 h-3.5" />
+                Aprovar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* HITL Log Modal */}
+      {showHitlLog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
+          <div className="card w-full max-w-lg max-h-[80vh] flex flex-col">
+            <div className="p-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
+                <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Historico de Aprovacoes</h3>
+              </div>
+              <button onClick={() => setShowHitlLog(false)} className="text-xs" style={{ color: 'var(--text-muted)' }}>Fechar</button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-3 space-y-2">
+              {hitlLog.length === 0 ? (
+                <p className="text-center text-xs py-8" style={{ color: 'var(--text-muted)' }}>Nenhuma aprovacao registrada</p>
+              ) : (
+                hitlLog.map((entry, i) => (
+                  <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg" style={{ background: 'var(--surface)' }}>
+                    <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: entry.status === 'approved' ? 'rgba(52, 211, 153, 0.1)' : 'rgba(244, 63, 94, 0.1)' }}>
+                      {entry.status === 'approved' ? <CheckCircle className="w-4 h-4" style={{ color: 'var(--emerald-400)' }} /> : <X className="w-4 h-4" style={{ color: 'var(--rose-400)' }} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate" style={{ color: 'var(--text-primary)' }}>{entry.step}</p>
+                      <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{entry.actionType.replace('_', ' ')} - {entry.timestamp.toLocaleTimeString('pt-BR')}</p>
+                    </div>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded" style={{
+                      background: entry.status === 'approved' ? 'rgba(52, 211, 153, 0.1)' : 'rgba(244, 63, 94, 0.1)',
+                      color: entry.status === 'approved' ? 'var(--emerald-400)' : 'var(--rose-400)'
+                    }}>
+                      {entry.status === 'approved' ? 'Aprovado' : 'Rejeitado'}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Accessibility Tree Panel */}
+      {accessTree && (
+        <div className="fixed bottom-4 left-4 z-40 w-96 max-h-64 rounded-lg overflow-hidden" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', boxShadow: '0 10px 40px rgba(0,0,0,0.4)' }}>
+          <div className="p-2.5 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
+            <div className="flex items-center gap-2">
+              <Eye className="w-3.5 h-3.5" style={{ color: 'var(--cyan-400)' }} />
+              <span className="text-[10px] font-medium" style={{ color: 'var(--text-primary)' }}>Accessibility Tree</span>
+            </div>
+            <button onClick={() => setAccessTree(null)} className="p-0.5 rounded hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-muted)' }}>
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+          <pre className="p-3 text-[10px] font-mono overflow-y-auto max-h-48" style={{ color: 'var(--text-secondary)' }}>
+            {accessTree}
+          </pre>
         </div>
       )}
     </div>

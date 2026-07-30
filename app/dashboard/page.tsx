@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Sidebar } from '@/components/Sidebar'
 import { Dashboard } from '@/components/Dashboard'
@@ -9,6 +9,7 @@ import { BrowserView } from '@/components/BrowserView'
 import { SkillsManager } from '@/components/SkillsManager'
 import { ApiManager } from '@/components/ApiManager'
 import { Scheduler } from '@/components/Scheduler'
+import { HITLSystem } from '@/components/HITLSystem'
 import { Zap, ArrowLeft } from 'lucide-react'
 
 export interface Flow {
@@ -59,6 +60,14 @@ export default function DashboardPage() {
     setCurrentPage('dashboard')
   }
 
+  const handleHITLApprove = useCallback((actionId: string) => {
+    console.log('HITL approved:', actionId)
+  }, [])
+
+  const handleHITLReject = useCallback((actionId: string) => {
+    console.log('HITL rejected:', actionId)
+  }, [])
+
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
@@ -97,6 +106,7 @@ export default function DashboardPage() {
       <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
         {renderPage()}
       </main>
+      <HITLSystem onApprove={handleHITLApprove} onReject={handleHITLReject} />
     </div>
   )
 }
