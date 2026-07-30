@@ -89,6 +89,8 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   const [showSkills, setShowSkills] = useState(false)
   const [selectedModel, setSelectedModel] = useState('moonshotai/kimi-k2.6')
   const [showModelMenu, setShowModelMenu] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -151,6 +153,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   }
 
   const callAI = async (userInput: string, history: Message[]): Promise<string> => {
+    setApiError(null)
     try {
       const apiMessages = history.slice(-10).map(m => ({
         role: m.tipo === 'user' ? 'user' : 'assistant',
@@ -164,11 +167,25 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         body: JSON.stringify({ messages: apiMessages, model: selectedModel })
       })
 
-      if (!res.ok) throw new Error('API error')
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        const errorMsg = errorData.error || `Erro ${res.status}: ${res.statusText}`
+        throw new Error(errorMsg)
+      }
+      
       const data = await res.json()
+      setRetryCount(0)
       return data.content || 'Desculpe, nao consegui processar.'
-    } catch {
-      return 'Erro ao conectar com IA. Tente novamente.'
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro desconhecido'
+      setApiError(message)
+      
+      if (retryCount < 2) {
+        setRetryCount(prev => prev + 1)
+        return `Erro de conexao (tentativa ${retryCount + 1}/3). Verifique sua conexao e tente novamente.`
+      }
+      
+      return 'Erro ao conectar com a IA. Verifique sua conexao e tente novamente.'
     }
   }
 
@@ -301,11 +318,22 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {steps.length === 0 ? (
             <div className="text-center py-8">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'var(--accent-glow)' }}>
+              <div 
+                className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
+                style={{ background: 'var(--accent-glow)', border: '1px dashed var(--accent)' }}
+              >
                 <Plus className="w-6 h-6" style={{ color: 'var(--accent)' }} />
               </div>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Nenhuma etapa ainda</p>
-              <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>Descreva seu fluxo no chat</p>
+              <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nenhuma etapa ainda</p>
+              <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
+                Descreva seu fluxo no chat ao lado
+              </p>
+              <div className="mt-4 p-3 rounded-lg text-left text-xs" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                <p className="font-medium mb-1">Exemplos:</p>
+                <p>&bull; &quot;Busque empresas no Google Maps&quot;</p>
+                <p>&bull; &quot;Scraping de sites e criar proposta&quot;</p>
+                <p>&bull; &quot;Criar site melhorado e publicar&quot;</p>
+              </div>
             </div>
           ) : (
             steps.map((step, index) => {
@@ -316,8 +344,17 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               return (
                 <div 
                   key={step.id}
-                  className="card p-4 transition-all duration-200"
+                  className="card p-4 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
                   style={!step.ativo ? { opacity: 0.5 } : isExpanded ? { borderColor: 'var(--accent)', boxShadow: '0 0 15px var(--accent-glow)' } : {}}
+                  tabIndex={0}
+                  role="button"
+                  aria-expanded={isExpanded}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setExpandedStep(isExpanded ? null : step.id)
+                    }
+                  }}
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" 
@@ -435,11 +472,21 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                     <button
                       key={model.id}
                       onClick={() => { setSelectedModel(model.id); setShowModelMenu(false) }}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') setShowModelMenu(false)
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          setSelectedModel(model.id)
+                          setShowModelMenu(false)
+                        }
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
                       style={{ 
                         background: selectedModel === model.id ? 'var(--accent-glow)' : 'transparent',
                         color: selectedModel === model.id ? 'var(--accent)' : 'var(--text-primary)'
                       }}
+                      aria-selected={selectedModel === model.id}
+                      role="option"
                     >
                       <Sparkles className="w-4 h-4" />
                       <div>
@@ -455,6 +502,45 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          {apiError && (
+            <div 
+              className="flex items-center gap-3 p-3 rounded-xl text-sm"
+              style={{ 
+                background: 'rgba(239, 68, 68, 0.1)', 
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                color: 'var(--hot-400)'
+              }}
+              role="alert"
+            >
+              <span>Erro: {apiError}</span>
+              <button 
+                onClick={() => setApiError(null)}
+                className="ml-auto p-1 rounded hover:bg-white/10"
+                aria-label="Fechar erro"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+          
+          {messages.length === 1 && !isTyping && (
+            <div className="text-center py-8">
+              <div 
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                style={{ background: 'var(--accent-glow)', border: '1px solid var(--accent)' }}
+              >
+                <Bot className="w-8 h-8" style={{ color: 'var(--accent)' }} />
+              </div>
+              <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+                Como posso ajudar?
+              </h3>
+              <p className="text-sm max-w-md mx-auto" style={{ color: 'var(--text-secondary)' }}>
+                Descreva o fluxo de automacao que voce quer criar. Posso fazer busca de leads, 
+                scraping, analise com IA, criacao de sites e muito mais.
+              </p>
+            </div>
+          )}
+          
           {messages.map((message) => (
             <div key={message.id} className={`flex gap-3 ${message.tipo === 'user' ? 'justify-end' : 'justify-start'}`}>
               {message.tipo === 'ai' && (
@@ -532,44 +618,66 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
         <div className="p-4" style={{ borderTop: '1px solid var(--border-subtle)', background: 'var(--surface)' }}>
           <div className="flex gap-3">
-            <button onClick={() => setShowSkills(true)} className="p-3 rounded-xl transition-all hover:scale-105" style={{ color: 'var(--accent)', border: '1px solid var(--accent)', background: 'var(--accent-glow)', boxShadow: '0 0 15px var(--accent-glow)' }}>
+            <button 
+              onClick={() => setShowSkills(true)} 
+              className="p-3 rounded-xl transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              style={{ color: 'var(--accent)', border: '1px solid var(--accent)', background: 'var(--accent-glow)', boxShadow: '0 0 15px var(--accent-glow)' }}
+              aria-label="Abrir seletor de skills"
+            >
               <Puzzle className="w-5 h-5" />
             </button>
-            <button onClick={handleFileAttach} className="p-3 rounded-xl transition-all hover:scale-105" style={{ color: 'var(--text-tertiary)', border: '1px solid var(--border)' }}>
+            <button 
+              onClick={handleFileAttach} 
+              className="p-3 rounded-xl transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              style={{ color: 'var(--text-tertiary)', border: '1px solid var(--border)' }}
+              aria-label="Anexar arquivo"
+            >
               <Paperclip className="w-5 h-5" />
             </button>
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
               placeholder={steps.length === 0 ? "Descreva o fluxo que quer criar..." : "Mande um prompt para executar..."}
-              className="input-field flex-1"
+              className="input-field flex-1 focus:ring-2 focus:ring-[var(--accent)] focus:border-[var(--accent)]"
+              aria-label="Mensagem para o assistente"
+              maxLength={2000}
             />
-            <button onClick={handleSendMessage} disabled={!inputValue.trim() || isTyping} className="btn-primary disabled:opacity-50">
+            <button 
+              onClick={handleSendMessage} 
+              disabled={!inputValue.trim() || isTyping} 
+              className="btn-primary disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
+              aria-label={isTyping ? "Enviando..." : "Enviar mensagem"}
+            >
               {isTyping ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
             </button>
           </div>
-          <div className="flex gap-2 mt-2">
-            {steps.length === 0 ? (
-              <>
-                <button onClick={() => setInputValue('Busque empresas no Google Maps, faca scraping, crie proposta e envie por email')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
-                  Fluxo completo de prospeccao
-                </button>
-                <button onClick={() => setInputValue('Pesquise leads, analise com IA, crie site melhorado e publique')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
-                  Criar e publicar sites
-                </button>
-              </>
-            ) : (
-              <>
-                <button onClick={() => setInputValue('20 empresas com site feio em Sao Paulo')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
-                  20 empresas com site feio
-                </button>
-                <button onClick={() => setInputValue('10 clinicas 5 estrelas sem site no RJ')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
-                  10 clinicas sem site
-                </button>
-              </>
-            )}
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex gap-2">
+              {steps.length === 0 ? (
+                <>
+                  <button onClick={() => setInputValue('Busque empresas no Google Maps, faca scraping, crie proposta e envie por email')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                    Fluxo completo de prospeccao
+                  </button>
+                  <button onClick={() => setInputValue('Pesquise leads, analise com IA, crie site melhorado e publique')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                    Criar e publicar sites
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => setInputValue('20 empresas com site feio em Sao Paulo')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                    20 empresas com site feio
+                  </button>
+                  <button onClick={() => setInputValue('10 clinicas 5 estrelas sem site no RJ')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-tertiary)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                    10 clinicas sem site
+                  </button>
+                </>
+              )}
+            </div>
+            <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+              {inputValue.length}/2000
+            </span>
           </div>
         </div>
       </div>
