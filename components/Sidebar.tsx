@@ -1,7 +1,7 @@
 'use client'
 
 import { 
-  LayoutDashboard, GitBranch, Globe, Puzzle, Key,
+  LayoutDashboard, GitBranch, Globe, Puzzle,
   ChevronLeft, ChevronRight, Plus, Clock,
   Crown, Zap
 } from 'lucide-react'
@@ -21,7 +21,6 @@ const menuItems = [
   { id: 'browser', icon: Globe, label: 'Navegador' },
   { id: 'skills', icon: Puzzle, label: 'Skills' },
   { id: 'scheduler', icon: Clock, label: 'Agendador' },
-  { id: 'api', icon: Key, label: 'APIs' },
 ]
 
 export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggleCollapse }: SidebarProps) {
