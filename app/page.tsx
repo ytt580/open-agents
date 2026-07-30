@@ -32,19 +32,19 @@ function Reveal({ children, className = '', delay = 0 }: { children: React.React
 }
 
 const capabilities = [
-  { icon: Search, label: 'Caca Leads', desc: 'Google Maps, LinkedIn, qualquer site', gradient: 'linear-gradient(135deg, #f97316, #ef4444)' },
-  { icon: Globe, label: 'Scraping Neural', desc: 'Extrai dados com IA de qualquer pagina', gradient: 'linear-gradient(135deg, #06b6d4, #3b82f6)' },
-  { icon: Code, label: 'Cria Sites', desc: 'Sites profissionais em minutos', gradient: 'linear-gradient(135deg, #8b5cf6, #d946ef)' },
-  { icon: Mail, label: 'Email Autonomo', desc: 'Propostas personalizadas enviadas', gradient: 'linear-gradient(135deg, #10b981, #06b6d4)' },
-  { icon: Clock, label: '24/7 Ativo', desc: 'Agentes rodam sem parar', gradient: 'linear-gradient(135deg, #f59e0b, #f97316)' },
-  { icon: Brain, label: 'IA Avancada', desc: 'GPT-4o, Kimi K3, Claude, Gemini', gradient: 'linear-gradient(135deg, #ec4899, #8b5cf6)' },
+  { icon: Search, label: 'Caca Leads', desc: 'Google Maps, LinkedIn, qualquer site' },
+  { icon: Globe, label: 'Scraping Neural', desc: 'Extrai dados com IA de qualquer pagina' },
+  { icon: Code, label: 'Cria Sites', desc: 'Sites profissionais em minutos' },
+  { icon: Mail, label: 'Email Autonomo', desc: 'Propostas personalizadas enviadas' },
+  { icon: Clock, label: '24/7 Ativo', desc: 'Agentes rodam sem parar' },
+  { icon: Brain, label: 'IA Avancada', desc: 'GPT-4o, Kimi K3, Claude, Gemini' },
 ]
 
 const agents = [
-  { name: 'Prospeccao', tasks: '1.2K', color: '#f97316', ring: 'rgba(249, 115, 22, 0.2)' },
-  { name: 'Scraping', tasks: '890', color: '#06b6d4', ring: 'rgba(6, 182, 212, 0.2)' },
-  { name: 'Design', tasks: '650', color: '#8b5cf6', ring: 'rgba(139, 92, 246, 0.2)' },
-  { name: 'Outreach', tasks: '2.1K', color: '#10b981', ring: 'rgba(16, 185, 129, 0.2)' },
+  { name: 'Prospeccao', tasks: '1.2K' },
+  { name: 'Scraping', tasks: '890' },
+  { name: 'Design', tasks: '650' },
+  { name: 'Outreach', tasks: '2.1K' },
 ]
 
 export default function LandingPage() {
@@ -52,25 +52,25 @@ export default function LandingPage() {
   useEffect(() => setMounted(true), [])
 
   return (
-    <div className="min-h-screen" style={{ background: '#fafaf9', color: '#1c1917' }}>
+    <div className="min-h-screen" style={{ background: 'var(--bg)', color: 'var(--fg)' }}>
       
       {/* ============ NAV ============ */}
-      <nav className="fixed top-0 w-full z-50" style={{ background: 'rgba(250, 250, 249, 0.8)', backdropFilter: 'blur(20px)', borderBottom: '1px solid #e7e5e4' }}>
+      <nav className="fixed top-0 w-full z-50" style={{ background: 'rgba(250, 250, 249, 0.8)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #f97316, #ef4444)' }}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--orange), var(--red))' }}>
               <Zap className="w-4 h-4 text-white" strokeWidth={3} />
             </div>
-            <span className="font-black text-lg tracking-tight" style={{ color: '#1c1917' }}>Open-Agents</span>
+            <span className="font-black text-lg tracking-tight" style={{ color: 'var(--fg)' }}>Open-Agents</span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-semibold" style={{ color: '#78716c' }}>
-            <a href="#features" className="hover:text-[#1c1917] transition-colors">Features</a>
-            <a href="#agents" className="hover:text-[#1c1917] transition-colors">Agentes</a>
-            <a href="#pricing" className="hover:text-[#1c1917] transition-colors">Planos</a>
+          <div className="hidden md:flex items-center gap-8 text-sm font-semibold" style={{ color: 'var(--fg-muted)' }}>
+            <a href="#features" className="hover:text-[var(--fg)] transition-colors">Features</a>
+            <a href="#agents" className="hover:text-[var(--fg)] transition-colors">Agentes</a>
+            <a href="#pricing" className="hover:text-[var(--fg)] transition-colors">Planos</a>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-sm font-bold hidden md:block" style={{ color: '#78716c' }}>Entrar</Link>
-            <Link href="/dashboard" className="text-sm font-bold px-5 py-2.5 rounded-xl text-white transition-all hover:scale-[1.03]" style={{ background: '#1c1917' }}>
+            <Link href="/dashboard" className="text-sm font-bold hidden md:block" style={{ color: 'var(--fg-muted)' }}>Entrar</Link>
+            <Link href="/dashboard" className="text-sm font-bold px-5 py-2.5 rounded-xl text-white transition-all hover:scale-[1.03] hover:shadow-lg" style={{ background: 'var(--fg)' }}>
               Comecar Gratis
             </Link>
           </div>
@@ -80,11 +80,11 @@ export default function LandingPage() {
       {/* ============ HERO — Clean, not generic ============ */}
       <section className="pt-28 pb-20 md:pt-36 md:pb-28 px-6 relative overflow-hidden">
         {/* Subtle grid pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, #1c1917 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, var(--fg) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
         
         <div className="max-w-6xl mx-auto relative z-10">
           <Reveal>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 text-sm font-bold" style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' }}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 text-sm font-bold" style={{ background: 'var(--orange-bg)', color: 'var(--orange)', border: '1px solid var(--orange-bg)' }}>
               <Sparkles className="w-4 h-4" />
               Agentes de IA que trabalham por voce
             </div>
@@ -95,7 +95,7 @@ export default function LandingPage() {
               Automatize
               <br />
               <span style={{ 
-                background: 'linear-gradient(135deg, #f97316, #ef4444, #ec4899)', 
+                background: 'linear-gradient(135deg, var(--orange), var(--red), var(--purple))', 
                 WebkitBackgroundClip: 'text', 
                 WebkitTextFillColor: 'transparent' 
               }}>qualquer fluxo</span>
@@ -105,9 +105,9 @@ export default function LandingPage() {
           </Reveal>
           
           <Reveal delay={160}>
-            <p className="text-lg md:text-xl mt-8 max-w-2xl leading-relaxed font-medium" style={{ color: '#78716c' }}>
+            <p className="text-lg md:text-xl mt-8 max-w-2xl leading-relaxed font-medium" style={{ color: 'var(--fg-muted)' }}>
               Seus agentes buscam leads, criam sites, enviam propostas e fecham negocios.
-              <span className="font-bold" style={{ color: '#1c1917' }}> Voce so define o objetivo.</span>
+              <span className="font-bold" style={{ color: 'var(--fg)' }}> Voce so define o objetivo.</span>
             </p>
           </Reveal>
           
@@ -115,13 +115,13 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-start gap-4 mt-10">
               <Link href="/dashboard" 
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base text-white transition-all hover:scale-[1.03] hover:shadow-xl"
-                style={{ background: '#1c1917' }}>
+                style={{ background: 'var(--fg)' }}>
                 Criar Primeiro Agente
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <a href="#features" 
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base transition-all hover:scale-[1.03]"
-                style={{ background: 'white', color: '#1c1917', border: '1.5px solid #d6d3d1' }}>
+                style={{ background: 'var(--bg)', color: 'var(--fg)', border: '1.5px solid var(--border)' }}>
                 Ver como funciona
               </a>
             </div>
@@ -129,43 +129,38 @@ export default function LandingPage() {
 
           {/* Live ticker */}
           <Reveal delay={400}>
-            <div className="mt-16 flex flex-wrap items-center gap-6 text-sm font-semibold" style={{ color: '#a8a29e' }}>
+            <div className="mt-16 flex flex-wrap items-center gap-6 text-sm font-semibold" style={{ color: 'var(--fg-muted)' }}>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 10.847 agentes ativos agora
               </div>
-              <span style={{ color: '#d6d3d1' }}>|</span>
+              <span style={{ color: 'var(--border)' }}>|</span>
               <div>2.5M tarefas executadas</div>
-              <span style={{ color: '#d6d3d1' }}>|</span>
+              <span style={{ color: 'var(--border)' }}>|</span>
               <div>99.9% uptime</div>
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* ============ WHAT IT DOES — Horizontal scroll cards ============ */}
-      <section id="features" className="py-20 md:py-28 px-6" style={{ background: '#1c1917' }}>
+      <section id="features" className="py-20 md:py-28 px-6" style={{ background: 'var(--bg-subtle)' }}>
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <p className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#f97316' }}>Seus agentes fazem</p>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-16">
-              Tudo que voce precisa.
-              <br />
-              <span style={{ color: '#78716c' }}>Nada que voce nao precisa.</span>
+            <p className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--fg-muted)' }}>Seus agentes fazem</p>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-16" style={{ color: 'var(--fg)' }}>
+              Tudo que voce precisa.<br/>
+              <span style={{ color: 'var(--fg-muted)' }}>Nada que voce nao precisa.</span>
             </h2>
           </Reveal>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {capabilities.map((cap, i) => (
               <Reveal key={cap.label} delay={i * 60}>
-                <div className="group p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 cursor-default"
-                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
-                    style={{ background: cap.gradient }}>
-                    <cap.icon className="w-6 h-6 text-white" />
+                <div className="group p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 cursor-default" style={{ background: 'var(--bg)', border: '1px solid var(--border)' }}>
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110" style={{ background: 'var(--bg-muted)' }}>
+                    <cap.icon className="w-6 h-6" style={{ color: 'var(--fg)' }} />
                   </div>
-                  <h3 className="font-bold text-lg text-white mb-1">{cap.label}</h3>
-                  <p className="text-sm" style={{ color: '#78716c' }}>{cap.desc}</p>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--fg)' }}>{cap.label}</h3>
+                  <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>{cap.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -177,7 +172,7 @@ export default function LandingPage() {
       <section id="agents" className="py-20 md:py-28 px-6">
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <p className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#06b6d4' }}>Ao vivo</p>
+            <p className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--cyan)' }}>Ao vivo</p>
             <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-16" style={{ color: '#1c1917' }}>
               Seus agentes trabalhando agora.
             </h2>
@@ -186,21 +181,20 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {agents.map((agent, i) => (
               <Reveal key={agent.name} delay={i * 80}>
-                <div className="flex items-center gap-5 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
-                  style={{ background: 'white', border: '1px solid #e7e5e4', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                <div className="flex items-center gap-5 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-0.5" style={{ background: 'var(--bg)', border: '1px solid var(--border)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
                   <div className="relative">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: agent.ring }}>
-                      <Bot className="w-7 h-7" style={{ color: agent.color }} />
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'var(--bg-muted)' }}>
+                      <Bot className="w-7 h-7" style={{ color: 'var(--fg)' }} />
                     </div>
-                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white" style={{ background: agent.color }} />
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-[var(--bg)]" style={{ background: 'var(--accent)' }} />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg" style={{ color: '#1c1917' }}>Agente de {agent.name}</h3>
-                    <p className="text-sm" style={{ color: '#78716c' }}>Executando tarefas automaticamente</p>
+                    <h3 className="font-bold text-lg" style={{ color: 'var(--fg)' }}>Agente de {agent.name}</h3>
+                    <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Executando tarefas automaticamente</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs font-semibold uppercase" style={{ color: '#a8a29e' }}>Tarefas</p>
-                    <p className="text-2xl font-black" style={{ color: agent.color }}>{agent.tasks}</p>
+                    <p className="text-xs font-semibold uppercase" style={{ color: 'var(--fg-muted)' }}>Tarefas</p>
+                    <p className="text-2xl font-black" style={{ color: 'var(--accent)' }}>{agent.tasks}</p>
                   </div>
                 </div>
               </Reveal>
@@ -210,27 +204,26 @@ export default function LandingPage() {
       </section>
 
       {/* ============ HOW IT WORKS — Bold numbered steps ============ */}
-      <section className="py-20 md:py-28 px-6" style={{ background: '#f5f5f4' }}>
+      <section className="py-20 md:py-28 px-6" style={{ background: 'var(--bg-subtle)', color: 'var(--fg)' }}>
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <p className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: '#8b5cf6' }}>Como funciona</p>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-16" style={{ color: '#1c1917' }}>
+            <p className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--accent-secondary)' }}>Como funciona</p>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-16" style={{ color: 'var(--fg)' }}>
               Simples como conversar.
             </h2>
           </Reveal>
-
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { num: '01', title: 'Defina o objetivo', desc: 'Converse com o agente e descreva o que quer fazer', color: '#f97316' },
-              { num: '02', title: 'Ative o agente', desc: 'O agente cria o plano e comeca a executar', color: '#8b5cf6' },
-              { num: '03', title: 'Acompanhe', desc: 'Veja cada acao sendo tomada em tempo real', color: '#10b981' },
+              { num: '01', title: 'Defina o objetivo', desc: 'Converse com o agente e descreva o que quer fazer', color: 'var(--orange)' },
+              { num: '02', title: 'Ative o agente', desc: 'O agente cria o plano e comeca a executar', color: 'var(--accent)' },
+              { num: '03', title: 'Acompanhe', desc: 'Veja cada acao sendo tomada em tempo real', color: 'var(--green)' },
             ].map((step, i) => (
               <Reveal key={step.num} delay={i * 100}>
-                <div className="p-8 rounded-3xl transition-all duration-300 hover:-translate-y-1"
-                  style={{ background: 'white', border: '1px solid #e7e5e4', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                <div className="p-8 rounded-3xl transition-all duration-300 hover:-translate-y-1" style={{ background: 'var(--bg)', border: '1px solid var(--border)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
                   <span className="text-6xl font-black" style={{ color: step.color, opacity: 0.15 }}>{step.num}</span>
-                  <h3 className="text-2xl font-black mt-4 mb-2" style={{ color: '#1c1917' }}>{step.title}</h3>
-                  <p className="text-base" style={{ color: '#78716c' }}>{step.desc}</p>
+                  <h3 className="text-2xl font-black mt-4 mb-2" style={{ color: 'var(--fg)' }}>{step.title}</h3>
+                  <p className="text-base" style={{ color: 'var(--fg-muted)' }}>{step.desc}</p>
                 </div>
               </Reveal>
             ))}

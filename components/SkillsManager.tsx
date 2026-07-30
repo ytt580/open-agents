@@ -17,12 +17,12 @@ interface Skill {
 }
 
 const categorias = {
-  scraping: { label: 'Scraping', icon: Search, cor: 'var(--emerald-400)', bg: 'rgba(52, 211, 153, 0.08)' },
-  analise: { label: 'Analise', icon: Code2, cor: 'var(--violet-400)', bg: 'var(--accent-glow)' },
-  criacao: { label: 'Criacao', icon: Zap, cor: 'var(--cyan-400)', bg: 'rgba(34, 211, 238, 0.08)' },
+  scraping: { label: 'Scraping', icon: Search, cor: 'var(--green)', bg: 'rgba(52, 211, 153, 0.08)' },
+  analise: { label: 'Analise', icon: Code2, cor: 'var(--accent)', bg: 'var(--accent-glow)' },
+  criacao: { label: 'Criacao', icon: Zap, cor: 'var(--cyan)', bg: 'rgba(34, 211, 238, 0.08)' },
   envio: { label: 'Envio', icon: Mail, cor: 'var(--rose-400)', bg: 'rgba(244, 63, 94, 0.08)' },
   navegacao: { label: 'Navegacao', icon: Globe, cor: 'var(--violet-300)', bg: 'var(--accent-glow)' },
-  custom: { label: 'Custom', icon: Settings, cor: 'var(--text-secondary)', bg: 'var(--bg-secondary)' },
+  custom: { label: 'Custom', icon: Settings, cor: 'var(--text-secondary)', bg: 'var(--bg-alt)' },
 }
 
 const defaultSkills: Skill[] = [
@@ -76,11 +76,11 @@ export function SkillsManager() {
       <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'var(--accent-glow)' }}>
-            <FileCode className="w-5 h-5" style={{ color: 'var(--violet-400)' }} />
+            <FileCode className="w-5 h-5" style={{ color: 'var(--accent)' }} />
           </div>
           <div>
-            <h1 className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>Skills</h1>
-            <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{skills.length} skills - {skills.filter(s => s.ativo).length} ativas</p>
+            <h1 className="text-base font-bold" style={{ color: 'var(--fg)' }}>Skills</h1>
+            <p className="text-[10px]" style={{ color: 'var(--fg-subtle)' }}>{skills.length} skills - {skills.filter(s => s.ativo).length} ativas</p>
           </div>
         </div>
         <button onClick={handleNew} className="btn-primary text-xs py-2 px-3">
@@ -97,8 +97,8 @@ export function SkillsManager() {
               onClick={() => setFilter(cat)}
               className="px-2.5 py-1 rounded-md text-[10px] font-medium transition-all"
               style={{
-                background: filter === cat ? 'var(--violet-600)' : 'var(--bg-secondary)',
-                color: filter === cat ? 'white' : 'var(--text-muted)',
+                background: filter === cat ? 'var(--accent)' : 'var(--bg-alt)',
+                color: filter === cat ? 'white' : 'var(--fg-subtle)',
               }}
             >
               {cat === 'all' ? 'Todas' : categorias[cat as keyof typeof categorias].label}
@@ -111,8 +111,8 @@ export function SkillsManager() {
         {filteredSkills.length === 0 ? (
           <div className="text-center py-12">
             <FileCode className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--border)' }} />
-            <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Nenhuma skill encontrada</h3>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Crie sua primeira skill ou ajuste os filtros</p>
+            <h3 className="text-sm font-semibold" style={{ color: 'var(--fg)' }}>Nenhuma skill encontrada</h3>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--fg-subtle)' }}>Crie sua primeira skill ou ajuste os filtros</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -127,7 +127,7 @@ export function SkillsManager() {
                       <Icon className="w-4 h-4" style={{ color: cat.cor }} />
                     </div>
                     <div className="flex items-center gap-0.5">
-                      <button onClick={() => handleEdit(skill)} className="p-1 rounded hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }} title="Editar">
+                      <button onClick={() => handleEdit(skill)} className="p-1 rounded hover:bg-[var(--bg-alt)]" style={{ color: 'var(--fg-subtle)' }} title="Editar">
                         <Edit3 className="w-3 h-3" />
                       </button>
                       <button
@@ -138,31 +138,31 @@ export function SkillsManager() {
                       >
                         <div className="w-3.5 h-3.5 bg-white rounded-full absolute top-0.5 transition-transform" style={{ transform: `translateX(${skill.ativo ? '16px' : '2px'})` }} />
                       </button>
-                      <button onClick={() => handleDelete(skill.id)} className="p-1 rounded hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }} title="Excluir">
+                      <button onClick={() => handleDelete(skill.id)} className="p-1 rounded hover:bg-[var(--bg-alt)]" style={{ color: 'var(--fg-subtle)' }} title="Excluir">
                         <Trash2 className="w-3 h-3" />
                       </button>
                     </div>
                   </div>
 
-                  <h3 className="font-semibold text-xs mb-0.5" style={{ color: 'var(--text-primary)' }}>{skill.nome}</h3>
-                  <p className="text-[10px] mb-2 line-clamp-2" style={{ color: 'var(--text-muted)' }}>{skill.descricao}</p>
+                  <h3 className="font-semibold text-xs mb-0.5" style={{ color: 'var(--fg)' }}>{skill.nome}</h3>
+                  <p className="text-[10px] mb-2 line-clamp-2" style={{ color: 'var(--fg-subtle)' }}>{skill.descricao}</p>
 
                   <div className="flex items-center gap-1.5 mb-2">
                     <span className="px-1.5 py-0.5 rounded text-[9px] font-medium" style={{ background: cat.bg, color: cat.cor }}>{cat.label}</span>
-                    <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>{skill.uso} usos</span>
+                    <span className="text-[9px]" style={{ color: 'var(--fg-subtle)' }}>{skill.uso} usos</span>
                   </div>
 
-                  <div className="rounded-lg p-2 max-h-28 overflow-y-auto" style={{ background: 'var(--bg-secondary)' }}>
-                    <pre className="text-[9px] font-mono overflow-x-auto" style={{ color: 'var(--text-muted)' }}>
+                  <div className="rounded-lg p-2 max-h-28 overflow-y-auto" style={{ background: 'var(--bg-alt)' }}>
+                    <pre className="text-[9px] font-mono overflow-x-auto" style={{ color: 'var(--fg-subtle)' }}>
                       {skill.codigo.substring(0, 300)}{skill.codigo.length > 300 ? '...' : ''}
                     </pre>
                   </div>
 
                   <div className="flex items-center gap-1.5 mt-2.5 pt-2.5" style={{ borderTop: '1px solid var(--border)' }}>
-                    <button className="flex-1 py-1.5 rounded-md text-[10px] transition-colors flex items-center justify-center gap-1 hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-muted)' }}>
+                    <button className="flex-1 py-1.5 rounded-md text-[10px] transition-colors flex items-center justify-center gap-1 hover:bg-[var(--bg-alt)]" style={{ background: 'var(--bg-alt)', color: 'var(--fg-subtle)' }}>
                       <Copy className="w-3 h-3" />Copiar
                     </button>
-                    <button className="flex-1 py-1.5 rounded-md text-[10px] transition-colors flex items-center justify-center gap-1" style={{ background: 'var(--accent-glow)', color: 'var(--violet-400)' }}>
+                    <button className="flex-1 py-1.5 rounded-md text-[10px] transition-colors flex items-center justify-center gap-1" style={{ background: 'var(--accent-glow)', color: 'var(--accent)' }}>
                       <Play className="w-3 h-3" />Testar
                     </button>
                   </div>
@@ -177,27 +177,27 @@ export function SkillsManager() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
           <div className="card w-full max-w-2xl max-h-[85vh] flex flex-col" style={{ boxShadow: '0 0 40px var(--accent-glow)' }}>
             <div className="p-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
-              <h2 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{editingSkill ? 'Editar Skill' : 'Nova Skill'}</h2>
-              <button onClick={() => { setShowModal(false); setEditingSkill(null); }} className="p-1 rounded hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }}>
+              <h2 className="text-sm font-bold" style={{ color: 'var(--fg)' }}>{editingSkill ? 'Editar Skill' : 'Nova Skill'}</h2>
+              <button onClick={() => { setShowModal(false); setEditingSkill(null); }} className="p-1 rounded hover:bg-[var(--bg-alt)]" style={{ color: 'var(--fg-subtle)' }}>
                 <ChevronDown className="w-4 h-4" />
               </button>
             </div>
             
             <div className="flex-1 overflow-y-auto p-3 space-y-3">
               <div>
-                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--text-tertiary)' }}>Nome</label>
+                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--fg-faint)' }}>Nome</label>
                 <input type="text" value={editingSkill?.nome || newSkill.nome}
                   onChange={(e) => editingSkill ? setEditingSkill({...editingSkill, nome: e.target.value}) : setNewSkill({...newSkill, nome: e.target.value})}
                   className="input-field text-xs" placeholder="Ex: Meu Scraper Personalizado" />
               </div>
               <div>
-                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--text-tertiary)' }}>Descricao</label>
+                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--fg-faint)' }}>Descricao</label>
                 <textarea value={editingSkill?.descricao || newSkill.descricao} rows={2}
                   onChange={(e) => editingSkill ? setEditingSkill({...editingSkill, descricao: e.target.value}) : setNewSkill({...newSkill, descricao: e.target.value})}
                   className="input-field text-xs resize-none" placeholder="O que esta skill faz..." />
               </div>
               <div>
-                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--text-tertiary)' }}>Categoria</label>
+                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--fg-faint)' }}>Categoria</label>
                 <div className="flex gap-1.5 flex-wrap">
                   {(['scraping', 'analise', 'criacao', 'envio', 'navegacao', 'custom'] as const).map((catKey) => {
                     const catData = categorias[catKey]
@@ -210,7 +210,7 @@ export function SkillsManager() {
                         style={{
                           borderColor: isSelected ? 'var(--violet-500)' : 'var(--border)',
                           background: isSelected ? 'var(--accent-glow)' : 'transparent',
-                          color: isSelected ? 'var(--violet-400)' : 'var(--text-muted)',
+                          color: isSelected ? 'var(--accent)' : 'var(--fg-subtle)',
                         }}>
                         <Icon className="w-3 h-3" />{catData.label}
                       </button>
@@ -219,7 +219,7 @@ export function SkillsManager() {
                 </div>
               </div>
               <div>
-                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--text-tertiary)' }}>Codigo (JavaScript/TypeScript)</label>
+                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--fg-faint)' }}>Codigo (JavaScript/TypeScript)</label>
                 <textarea value={editingSkill?.codigo || newSkill.codigo} rows={12}
                   onChange={(e) => editingSkill ? setEditingSkill({...editingSkill, codigo: e.target.value}) : setNewSkill({...newSkill, codigo: e.target.value})}
                   className="input-field text-[10px] font-mono resize-none" placeholder="// Sua funcao async aqui" spellCheck={false} />

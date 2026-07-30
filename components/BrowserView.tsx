@@ -128,24 +128,24 @@ export function BrowserView() {
   }
 
   return (
-    <div className="flex h-screen" style={{ background: 'var(--bg-void)' }}>
+    <div className="flex h-screen" style={{ background: 'var(--bg-subtle)' }}>
       {/* Sidebar */}
-      <div className="w-80 flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
+      <div className="w-80 flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--bg)' }}>
         {/* Mode Selector */}
         <div className="p-4" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="flex gap-2">
             {([
-              { id: 'standard' as const, label: 'Standard', icon: Globe, color: 'var(--violet-500)' },
-              { id: 'browserclaw' as const, label: 'BrowserClaw', icon: Monitor, color: 'var(--emerald-500)' },
-              { id: 'rtrvr' as const, label: 'rtrvr.ai', icon: Zap, color: 'var(--cyan-500)' },
+              { id: 'standard' as const, label: 'Standard', icon: Globe, color: 'var(--fg)' },
+              { id: 'browserclaw' as const, label: 'BrowserClaw', icon: Monitor, color: 'var(--green)' },
+              { id: 'rtrvr' as const, label: 'rtrvr.ai', icon: Zap, color: 'var(--blue)' },
             ]).map(m => (
               <button
                 key={m.id}
                 onClick={() => setMode(m.id)}
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all"
                 style={{
-                  background: mode === m.id ? m.color : 'var(--bg-secondary)',
-                  color: mode === m.id ? 'white' : 'var(--text-muted)'
+                  background: mode === m.id ? m.color : 'var(--bg-muted)',
+                  color: mode === m.id ? 'white' : 'var(--fg-muted)'
                 }}
               >
                 <m.icon className="w-4 h-4" />
@@ -163,15 +163,15 @@ export function BrowserView() {
               border: `1px solid ${browserclawConnected ? 'rgba(52, 211, 153, 0.2)' : 'rgba(244, 63, 94, 0.2)'}`
             }}>
               {browserclawConnected ? (
-                <Wifi className="w-5 h-5" style={{ color: 'var(--emerald-400)' }} />
+                <Wifi className="w-5 h-5" style={{ color: 'var(--green)' }} />
               ) : (
-                <WifiOff className="w-5 h-5" style={{ color: 'var(--rose-400)' }} />
+                <WifiOff className="w-5 h-5" style={{ color: 'var(--red)' }} />
               )}
               <div className="flex-1">
-                <p className="text-sm font-bold" style={{ color: browserclawConnected ? 'var(--emerald-400)' : 'var(--rose-400)' }}>
+                <p className="text-sm font-bold" style={{ color: browserclawConnected ? 'var(--green)' : 'var(--red)' }}>
                   {browserclawConnected ? 'BrowserClaw Conectado' : 'BrowserClaw Off'}
                 </p>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
                   {browserclawConnected ? 'Sessoes autenticadas disponiveis' : 'Porta 9222 nao encontrada'}
                 </p>
               </div>
@@ -183,12 +183,12 @@ export function BrowserView() {
               background: rtrvrApiKey ? 'rgba(34, 211, 238, 0.08)' : 'rgba(251, 191, 36, 0.08)',
               border: `1px solid ${rtrvrApiKey ? 'rgba(34, 211, 238, 0.2)' : 'rgba(251, 191, 36, 0.2)'}`
             }}>
-              <Zap className="w-5 h-5" style={{ color: rtrvrApiKey ? 'var(--cyan-400)' : 'var(--amber-400)' }} />
+              <Zap className="w-5 h-5" style={{ color: rtrvrApiKey ? 'var(--blue)' : 'var(--orange)' }} />
               <div className="flex-1">
-                <p className="text-sm font-bold" style={{ color: rtrvrApiKey ? 'var(--cyan-400)' : 'var(--amber-400)' }}>
+                <p className="text-sm font-bold" style={{ color: rtrvrApiKey ? 'var(--blue)' : 'var(--orange)' }}>
                   {rtrvrApiKey ? 'rtrvr.ai Ativo' : 'rtrvr.ai Nao Configurado'}
                 </p>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
                   {rtrvrApiKey ? `${rtrvrTabs.length}/${rtrvrMaxTabs} abas ativas` : 'Configure sua API key'}
                 </p>
               </div>
@@ -203,10 +203,10 @@ export function BrowserView() {
               background: 'rgba(249, 115, 22, 0.08)',
               border: '1px solid rgba(249, 115, 22, 0.2)'
             }}>
-              <Globe className="w-5 h-5" style={{ color: 'var(--violet-400)' }} />
+              <Globe className="w-5 h-5" style={{ color: 'var(--fg)' }} />
               <div>
-                <p className="text-sm font-bold" style={{ color: 'var(--violet-400)' }}>Navegador Standard</p>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Abre sites na sua aba do navegador</p>
+                <p className="text-sm font-bold" style={{ color: 'var(--fg)' }}>Navegador Standard</p>
+                <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>Abre sites na sua aba do navegador</p>
               </div>
             </div>
           )}
@@ -215,7 +215,7 @@ export function BrowserView() {
         {/* URL Input */}
         <div className="p-4" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-muted)' }} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--fg-muted)' }} />
             <input
               type="text"
               value={url}
@@ -231,8 +231,8 @@ export function BrowserView() {
         {/* Saved Sites */}
         <div className="p-4" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Sites Salvos</h3>
-            <button onClick={() => setShowAddSite(!showAddSite)} className="btn-icon" style={{ width: '36px', height: '36px', color: 'var(--violet-400)' }}>
+            <h3 className="text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--fg-muted)' }}>Sites Salvos</h3>
+            <button onClick={() => setShowAddSite(!showAddSite)} className="btn-icon" style={{ width: '36px', height: '36px', color: 'var(--fg)' }}>
               <Plus className="w-4 h-4" />
             </button>
           </div>
@@ -251,9 +251,9 @@ export function BrowserView() {
               const Icon = site.icon
               return (
                 <div key={site.url} className="flex items-center gap-2 group">
-                  <button onClick={() => openUrl(site.url)} className="flex-1 flex items-center gap-3 p-3 rounded-xl text-left transition-all hover:border-[var(--violet-500)]" style={{ border: '1px solid var(--border)' }}>
-                    <Icon className="w-5 h-5" style={{ color: 'var(--cyan-400)' }} />
-                    <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{site.nome}</span>
+                  <button onClick={() => openUrl(site.url)} className="flex-1 flex items-center gap-3 p-3 rounded-xl text-left transition-all hover:border-[var(--fg)]" style={{ border: '1px solid var(--border)' }}>
+                    <Icon className="w-5 h-5" style={{ color: 'var(--blue)' }} />
+                    <span className="text-sm font-semibold" style={{ color: 'var(--fg)' }}>{site.nome}</span>
                   </button>
                   <button onClick={() => setSites(prev => prev.filter(s => s.url !== site.url))} className="btn-icon opacity-0 group-hover:opacity-100" style={{ width: '32px', height: '32px' }}>
                     <Trash2 className="w-3.5 h-3.5" />
@@ -266,15 +266,15 @@ export function BrowserView() {
 
         {/* History */}
         <div className="flex-1 overflow-y-auto p-4">
-          <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: 'var(--text-muted)' }}>Historico</h3>
+          <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: 'var(--fg-muted)' }}>Historico</h3>
           {history.length === 0 ? (
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Nenhum site visitado</p>
+            <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Nenhum site visitado</p>
           ) : (
             <div className="space-y-1">
               {history.map((h, i) => (
-                <button key={i} onClick={() => openUrl(h)} className="w-full flex items-center gap-2 p-2.5 rounded-lg text-left hover:bg-[var(--surface-hover)]">
-                  <Clock className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
-                  <span className="text-sm truncate" style={{ color: 'var(--text-tertiary)' }}>{h}</span>
+                <button key={i} onClick={() => openUrl(h)} className="w-full flex items-center gap-2 p-2.5 rounded-lg text-left hover:bg-[var(--bg-inset)]">
+                  <Clock className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--fg-muted)' }} />
+                  <span className="text-sm truncate" style={{ color: 'var(--fg-muted)' }}>{h}</span>
                 </button>
               ))}
             </div>
@@ -283,24 +283,24 @@ export function BrowserView() {
       </div>
 
       {/* Main Area */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8" style={{ background: 'var(--bg-secondary)' }}>
+      <div className="flex-1 flex flex-col items-center justify-center p-8" style={{ background: 'var(--bg-muted)' }}>
         <div className="text-center max-w-lg">
           <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ 
             background: mode === 'browserclaw' ? 'rgba(52, 211, 153, 0.1)' : 
                         mode === 'rtrvr' ? 'rgba(6, 182, 212, 0.1)' : 'rgba(249, 115, 22, 0.1)'
           }}>
             {mode === 'browserclaw' ? (
-              <Monitor className="w-10 h-10" style={{ color: 'var(--emerald-400)' }} />
+              <Monitor className="w-10 h-10" style={{ color: 'var(--green)' }} />
             ) : mode === 'rtrvr' ? (
-              <Zap className="w-10 h-10" style={{ color: 'var(--cyan-400)' }} />
+              <Zap className="w-10 h-10" style={{ color: 'var(--blue)' }} />
             ) : (
-              <Globe className="w-10 h-10" style={{ color: 'var(--violet-400)' }} />
+              <Globe className="w-10 h-10" style={{ color: 'var(--fg)' }} />
             )}
           </div>
-          <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--fg)' }}>
             {mode === 'browserclaw' ? 'BrowserClaw' : mode === 'rtrvr' ? 'rtrvr.ai' : 'Navegador'}
           </h2>
-          <p className="text-base mb-6" style={{ color: 'var(--text-tertiary)' }}>
+          <p className="text-base mb-6" style={{ color: 'var(--fg-muted)' }}>
             {mode === 'browserclaw' 
               ? 'Acesse sites com suas sessoes ja autenticadas'
               : mode === 'rtrvr'
@@ -309,52 +309,52 @@ export function BrowserView() {
           </p>
           
           <div className="card p-5 text-left">
-            <p className="text-sm font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
+            <p className="text-sm font-bold mb-3" style={{ color: 'var(--fg)' }}>
               {mode === 'browserclaw' ? 'Como funciona:' : mode === 'rtrvr' ? 'Recursos:' : 'Como usar:'}
             </p>
-            <ul className="space-y-3 text-sm" style={{ color: 'var(--text-tertiary)' }}>
+            <ul className="space-y-3 text-sm" style={{ color: 'var(--fg-muted)' }}>
               {mode === 'browserclaw' ? (
                 <>
                   <li className="flex items-start gap-3">
-                    <Shield className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--emerald-400)' }} />
+                    <Shield className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--green)' }} />
                     <span>Usa seus logins salvos (LinkedIn, CRM, SEO)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <Monitor className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--emerald-400)' }} />
+                    <Monitor className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--green)' }} />
                     <span>Executa na sua maquina local</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <Eye className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--emerald-400)' }} />
+                    <Eye className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--green)' }} />
                     <span>Gravacao de sessao para auditoria</span>
                   </li>
                 </>
               ) : mode === 'rtrvr' ? (
                 <>
                   <li className="flex items-start gap-3">
-                    <Zap className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--cyan-400)' }} />
+                    <Zap className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--blue)' }} />
                     <span>Multi-aba simultaneas (ate {rtrvrMaxTabs})</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <RefreshCw className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--cyan-400)' }} />
+                    <RefreshCw className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--blue)' }} />
                     <span>Smart DOM Trees (baixo custo de tokens)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-lg font-bold" style={{ color: 'var(--cyan-400)' }}>$</span>
+                    <span className="text-lg font-bold" style={{ color: 'var(--blue)' }}>$</span>
                     <span>Gemini Flash - $0.12 por tarefa</span>
                   </li>
                 </>
               ) : (
                 <>
                   <li className="flex items-start gap-3">
-                    <span className="text-lg font-bold" style={{ color: 'var(--violet-400)' }}>1.</span>
+                    <span className="text-lg font-bold" style={{ color: 'var(--fg)' }}>1.</span>
                     <span>Digite uma URL no campo de busca</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-lg font-bold" style={{ color: 'var(--cyan-400)' }}>2.</span>
+                    <span className="text-lg font-bold" style={{ color: 'var(--blue)' }}>2.</span>
                     <span>O site abre na sua aba do navegador</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-lg font-bold" style={{ color: 'var(--emerald-400)' }}>3.</span>
+                    <span className="text-lg font-bold" style={{ color: 'var(--green)' }}>3.</span>
                     <span>Use o Copilot para automatizar acoes</span>
                   </li>
                 </>
@@ -369,22 +369,22 @@ export function BrowserView() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
           <div className="card w-full max-w-md">
             <div className="p-5 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
-              <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Configurar rtrvr.ai</h3>
+              <h3 className="font-bold text-lg" style={{ color: 'var(--fg)' }}>Configurar rtrvr.ai</h3>
               <button onClick={() => setShowRtrvrConfig(false)} className="btn-icon" style={{ width: '36px', height: '36px' }}>
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>API Key (Gemini Flash)</label>
+                <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--fg-secondary)' }}>API Key (Gemini Flash)</label>
                 <input type="password" value={rtrvrApiKey} onChange={(e) => setRtrvrApiKey(e.target.value)} className="input-field text-sm" placeholder="Cole sua API key..." />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>Max Abas Simultaneas</label>
+                <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--fg-secondary)' }}>Max Abas Simultaneas</label>
                 <input type="number" value={rtrvrMaxTabs} onChange={(e) => setRtrvrMaxTabs(parseInt(e.target.value) || 10)} className="input-field text-sm" min={1} max={20} />
               </div>
               <div className="p-3 rounded-xl" style={{ background: 'rgba(34, 211, 238, 0.08)', border: '1px solid rgba(34, 211, 238, 0.2)' }}>
-                <p className="text-sm" style={{ color: 'var(--cyan-400)' }}>
+                <p className="text-sm" style={{ color: 'var(--blue)' }}>
                   <strong>Custo estimado:</strong> ~$0.12 por tarefa automatizada
                 </p>
               </div>

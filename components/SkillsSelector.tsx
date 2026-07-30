@@ -71,25 +71,25 @@ export function SkillsSelector({ onSelect, onClose }: SkillsSelectorProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}>
-      <div className="w-full max-w-xl max-h-[75vh] rounded-xl overflow-hidden flex flex-col" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', boxShadow: '0 0 40px var(--accent-glow)' }}>
+      <div className="w-full max-w-xl max-h-[75vh] rounded-xl overflow-hidden flex flex-col" style={{ background: 'var(--bg-alt)', border: '1px solid var(--border)', boxShadow: '0 0 40px var(--accent-glow)' }}>
         <div className="p-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--accent-glow)' }}>
-              <Puzzle className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
+              <Puzzle className="w-4 h-4" style={{ color: 'var(--accent)' }} />
             </div>
             <div>
-              <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Skills Disponiveis</h3>
-              <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{skills.length} skills para automatizar</p>
+              <h3 className="font-semibold text-sm" style={{ color: 'var(--fg)' }}>Skills Disponiveis</h3>
+              <p className="text-[10px]" style={{ color: 'var(--fg-subtle)' }}>{skills.length} skills para automatizar</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }}>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--bg-alt)]" style={{ color: 'var(--fg-subtle)' }}>
             <X className="w-4 h-4" />
           </button>
         </div>
 
         <div className="p-3" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'var(--text-muted)' }} />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'var(--fg-subtle)' }} />
             <input
               type="text"
               value={search}
@@ -105,8 +105,8 @@ export function SkillsSelector({ onSelect, onClose }: SkillsSelectorProps) {
                 onClick={() => setFilter(cat.id)}
                 className="px-2.5 py-1 rounded-md text-[10px] font-medium transition-all"
                 style={{ 
-                  background: filter === cat.id ? 'var(--violet-600)' : 'var(--bg-tertiary)',
-                  color: filter === cat.id ? 'white' : 'var(--text-tertiary)',
+                  background: filter === cat.id ? 'var(--accent)' : 'var(--bg-muted)',
+                  color: filter === cat.id ? 'white' : 'var(--fg-faint)',
                 }}
               >
                 {cat.label}
@@ -126,13 +126,13 @@ export function SkillsSelector({ onSelect, onClose }: SkillsSelectorProps) {
                 style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}
               >
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'var(--accent-glow)' }}>
-                  <Icon className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
+                  <Icon className="w-4 h-4" style={{ color: 'var(--accent)' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-xs" style={{ color: 'var(--text-primary)' }}>{skill.nome}</p>
-                  <p className="text-[10px] mt-0.5 line-clamp-2" style={{ color: 'var(--text-tertiary)' }}>{skill.descricao}</p>
+                  <p className="font-semibold text-xs" style={{ color: 'var(--fg)' }}>{skill.nome}</p>
+                  <p className="text-[10px] mt-0.5 line-clamp-2" style={{ color: 'var(--fg-faint)' }}>{skill.descricao}</p>
                 </div>
-                <span className="text-[9px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}>
+                <span className="text-[9px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ background: 'var(--bg-muted)', color: 'var(--fg-subtle)' }}>
                   {skill.categoria}
                 </span>
               </button>

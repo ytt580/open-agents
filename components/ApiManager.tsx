@@ -10,7 +10,7 @@ import {
 interface ApiKey {
   id: string
   nome: string
-  provedor: 'openai' | 'anthropic' | 'google' | 'modal' | 'github' | 'outro'
+  provedor: 'openai' | 'anthropic' | 'google' | 'outro'
   chave: string
   ativo: boolean
   usoHoje: number
@@ -18,12 +18,10 @@ interface ApiKey {
 }
 
 const provedores = {
-  openai: { label: 'OpenAI (GPT-4/5)', icon: Bot, cor: 'var(--emerald-400)', bg: 'rgba(52, 211, 153, 0.08)', url: 'https://platform.openai.com/api-keys' },
-  anthropic: { label: 'Anthropic (Claude)', icon: Bot, cor: 'var(--violet-400)', bg: 'var(--accent-glow)', url: 'https://console.anthropic.com/' },
-  google: { label: 'Google (Gemini)', icon: Globe, cor: 'var(--cyan-400)', bg: 'rgba(34, 211, 238, 0.08)', url: 'https://aistudio.google.com/apikey' },
-  modal: { label: 'Bluesminds (Kimi K3)', icon: Zap, cor: 'var(--rose-400)', bg: 'rgba(244, 63, 94, 0.08)', url: '' },
-  github: { label: 'GitHub (GPT-4o)', icon: Bot, cor: 'var(--violet-400)', bg: 'var(--accent-glow)', url: 'https://github.com/settings/tokens' },
-  outro: { label: 'Outro', icon: Key, cor: 'var(--text-secondary)', bg: 'var(--bg-secondary)', url: '' },
+  openai: { label: 'OpenAI (GPT-4/5)', icon: Bot, cor: 'var(--green)', bg: 'rgba(52, 211, 153, 0.08)', url: 'https://platform.openai.com/api-keys' },
+  anthropic: { label: 'Anthropic (Claude)', icon: Bot, cor: 'var(--cyan)', bg: 'rgba(34, 211, 238, 0.08)', url: 'https://console.anthropic.com/' },
+  google: { label: 'Google (Gemini)', icon: Globe, cor: 'var(--blue)', bg: 'rgba(59, 130, 246, 0.08)', url: 'https://aistudio.google.com/apikey' },
+  outro: { label: 'Outro', icon: Key, cor: 'var(--fg-muted)', bg: 'var(--bg-alt)', url: '' },
 }
 
 const STORAGE_KEY = 'open-agents-api-keys'
@@ -35,7 +33,7 @@ function loadKeys(): ApiKey[] {
     if (stored) return JSON.parse(stored)
   } catch {}
   return [
-    { id: '1', nome: 'Bluesminds Kimi K3', provedor: 'modal', chave: 'sk-kHPpzsSnsB3qFGzLHc5faG2KDkOfXY16U7rTnzNDvIMiuc1l', ativo: true, usoHoje: 0, limiteDiario: 600 },
+    { id: '1', nome: 'OpenAI GPT-4/5', provedor: 'openai', chave: '', ativo: true, usoHoje: 0, limiteDiario: 100 },
   ]
 }
 
@@ -86,7 +84,7 @@ export function ApiManager() {
       <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(244, 63, 94, 0.08)' }}>
-            <Key className="w-5 h-5" style={{ color: 'var(--rose-400)' }} />
+            <Key className="w-5 h-5" style={{ color: 'var(--red)' }} />
           </div>
           <div>
             <h1 className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>APIs de IA</h1>
@@ -101,8 +99,8 @@ export function ApiManager() {
 
       <div className="px-4 py-2" style={{ borderBottom: '1px solid rgba(52, 211, 153, 0.15)', background: 'rgba(52, 211, 153, 0.03)' }}>
         <div className="flex items-start gap-2 p-2.5 rounded-lg" style={{ background: 'rgba(52, 211, 153, 0.04)', border: '1px solid rgba(52, 211, 153, 0.12)' }}>
-          <AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: 'var(--emerald-400)' }} />
-          <p className="text-[10px]" style={{ color: 'var(--emerald-400)' }}>
+          <AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: 'var(--green)' }} />
+          <p className="text-[10px]" style={{ color: 'var(--green)' }}>
             <strong>Salvo automaticamente:</strong> Chaves persistem no navegador. Para producao, use variaveis de ambiente no servidor.
           </p>
         </div>
@@ -123,7 +121,7 @@ export function ApiManager() {
               const showKey = showKeys[key.id]
               
               return (
-                <div key={key.id} className="card p-3.5 transition-all duration-200 hover:border-[var(--violet-500)]">
+                <div key={key.id} className="card p-3.5 transition-all duration-200 hover:border-[var(--accent)]">
                   <div className="flex items-start gap-3">
                     <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: prov.bg }}>
                       <Icon className="w-4 h-4" style={{ color: prov.cor }} />
@@ -133,7 +131,7 @@ export function ApiManager() {
                         <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>{key.nome}</h3>
                         <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{
                           background: key.ativo ? 'rgba(52, 211, 153, 0.1)' : 'var(--bg-secondary)',
-                          color: key.ativo ? 'var(--emerald-400)' : 'var(--text-muted)'
+                          color: key.ativo ? 'var(--green)' : 'var(--text-muted)'
                         }}>
                           {key.ativo ? 'Ativa' : 'Inativa'}
                         </span>
@@ -151,7 +149,7 @@ export function ApiManager() {
                           {showKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                         </button>
                         <button onClick={() => handleCopy(key.chave, key.id)} className="p-0.5 hover:opacity-70" style={{ color: 'var(--text-muted)' }}>
-                          {copiedId === key.id ? <Check className="w-3 h-3" style={{ color: 'var(--emerald-400)' }} /> : <Copy className="w-3 h-3" />}
+                          {copiedId === key.id ? <Check className="w-3 h-3" style={{ color: 'var(--green)' }} /> : <Copy className="w-3 h-3" />}
                         </button>
                       </div>
 
@@ -159,7 +157,7 @@ export function ApiManager() {
                         <span>Uso: <strong style={{ color: 'var(--text-primary)' }}>{key.usoHoje}</strong>/{key.limiteDiario}</span>
                         <div className="flex-1 max-w-[200px] h-1 rounded-full overflow-hidden" style={{ background: 'var(--bg-secondary)' }}>
                           <div className="h-full rounded-full" style={{ 
-                            background: 'linear-gradient(90deg, var(--violet-500), var(--cyan-500))', 
+                            background: 'linear-gradient(90deg, var(--accent), var(--cyan))', 
                             width: `${Math.min((key.usoHoje / key.limiteDiario) * 100, 100)}%` 
                           }} />
                         </div>
@@ -168,7 +166,7 @@ export function ApiManager() {
 
                     <div className="flex items-center gap-0.5 flex-shrink-0">
                       <button onClick={() => setKeys(prev => prev.map(k => k.id === key.id ? {...k, ativo: !k.ativo} : k))} className="p-1.5 rounded hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }} title={key.ativo ? 'Desativar' : 'Ativar'}>
-                        {key.ativo ? <Zap className="w-3.5 h-3.5" style={{ color: 'var(--emerald-400)' }} /> : <Zap className="w-3.5 h-3.5" />}
+                        {key.ativo ? <Zap className="w-3.5 h-3.5" style={{ color: 'var(--green)' }} /> : <Zap className="w-3.5 h-3.5" />}
                       </button>
                       <button onClick={() => handleEdit(key)} className="p-1.5 rounded hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }} title="Editar">
                         <Edit3 className="w-3.5 h-3.5" />
@@ -205,9 +203,9 @@ export function ApiManager() {
                     const Icon = prov.icon
                     return (
                       <button key={p} onClick={() => setForm({...form, provedor: p})} className="flex items-center gap-1.5 p-2 rounded-lg border transition-all text-left" style={{
-                        borderColor: form.provedor === p ? 'var(--violet-500)' : 'var(--border)',
+                        borderColor: form.provedor === p ? 'var(--accent)' : 'var(--border)',
                         background: form.provedor === p ? 'var(--accent-glow)' : 'transparent',
-                        color: form.provedor === p ? 'var(--violet-400)' : 'var(--text-muted)',
+                        color: form.provedor === p ? 'var(--accent)' : 'var(--text-muted)',
                       }}>
                         <Icon className="w-3 h-3 flex-shrink-0" />
                         <span className="text-[10px]">{prov.label}</span>
@@ -221,7 +219,7 @@ export function ApiManager() {
                 <input type="password" value={form.chave} onChange={(e) => setForm({...form, chave: e.target.value})} className="input-field text-xs font-mono" placeholder="sk-..." />
               </div>
               {provedores[form.provedor].url && (
-                <a href={provedores[form.provedor].url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] hover:opacity-70" style={{ color: 'var(--violet-400)' }}>
+                <a href={provedores[form.provedor].url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] hover:opacity-70" style={{ color: 'var(--accent)' }}>
                   <ExternalLink className="w-3 h-3" />
                   Obter API key em {provedores[form.provedor].label}
                 </a>

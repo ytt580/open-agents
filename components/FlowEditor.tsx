@@ -10,8 +10,10 @@ import {
 } from 'lucide-react'
 import { chatAI, generateImage, textToSpeech } from '@/lib/puter-ai'
 import { SkillsSelector } from './SkillsSelector'
+import { SiteBuilder } from './SiteBuilder'
 import { Flow } from '@/app/dashboard/page'
 import { detectDangerousAction, type HITLActionType } from './HITLSystem'
+import { modelRouter } from '@/lib/model-router'
 
 interface FlowEditorProps {
   flowId: string
@@ -120,6 +122,9 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   const [showHitlLog, setShowHitlLog] = useState(false)
   const [captureTree, setCaptureTree] = useState(false)
   const [accessTree, setAccessTree] = useState<string | null>(null)
+  const [showSiteBuilder, setShowSiteBuilder] = useState(false)
+  const [scrapedData, setScrapedData] = useState<Record<string, unknown> | null>(null)
+  const [generatedProject, setGeneratedProject] = useState<{ files: Record<string, string>; instructions: string; deployNotes: string } | null>(null)
   const currentPlan = 'free'
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -285,10 +290,23 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       }
     }
     
+    // Route to Fable 5 for site creation
+    if (lower.includes('criar site') || lower.includes('repagina') || lower.includes('repaginar') || lower.includes('redesign')) {
+      const decision = modelRouter.route(userInput, { objective: userInput, isNewSite: true })
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(), tipo: 'ai',
+        conteudo: `🔄 roteando para **Fable 5** (Premium R$ 99)\n\n${decision.reason}\n\nAbrindo construtor de site Next.js...`,
+        timestamp: new Date()
+      }])
+      setTimeout(() => setShowSiteBuilder(true), 500)
+      setIsTyping(false)
+      return
+    }
+
     // Only create flow when user gives SPECIFIC automation instructions
     // NOT for generic messages like "oi", "quero criar fluxo", "o que voce faz"
     const specificActions = ['busque', 'busca', 'scraping', 'scrape', 'extrair', 'enviar email', 'enviar proposta', 'enviar whatsapp', 
-      'criar site', 'repagina', 'repaginar', 'redesign', 'publicar site', 'maps do google', 'google maps']
+      'maps do google', 'google maps']
     const hasSpecificAction = specificActions.some(action => lower.includes(action))
     
     // Also match if user mentions specific business context + action verb
@@ -466,12 +484,21 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Erro desconhecido'
-      setAccessTree(`Erro: ${msg}`)
-      setMessages(prev => [...prev, {
-        id: Date.now().toString(), tipo: 'ai',
-        conteudo: `Nao foi possivel capturar a arvore de acessibilidade. Verifique se o BrowserClaw esta rodando (localhost:9222). Erro: ${msg}`,
-        timestamp: new Date()
-      }])
+      const isNetworkError = msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('ECONNREFUSED')
+      if (isNetworkError) {
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(), tipo: 'system',
+          conteudo: `BrowserClaw nao detectado. Para usar a Accessibility Tree, inicie o BrowserClaw na porta 9222.`,
+          timestamp: new Date()
+        }])
+      } else {
+        setAccessTree(`Erro: ${msg}`)
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(), tipo: 'ai',
+          conteudo: `Nao foi possivel capturar a arvore de acessibilidade. Erro: ${msg}`,
+          timestamp: new Date()
+        }])
+      }
     } finally {
       setCaptureTree(false)
     }
@@ -493,28 +520,28 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   ]
 
   return (
-    <div className="flex h-screen" style={{ background: 'var(--bg-void)' }}>
+    <div className="flex h-screen" style={{ background: 'var(--bg)' }}>
       <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} />
 
       {/* Steps Panel */}
-      <div className="w-96 flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
-        <div className="p-4 flex items-center gap-3" style={{ borderBottom: '1px solid var(--border)' }}>
-          <button onClick={onBack} className="btn-icon" style={{ width: '40px', height: '40px' }}>
+      <div className="w-[420px] flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--bg)' }}>
+        <div className="p-5 flex items-center gap-3" style={{ borderBottom: '1px solid var(--border)' }}>
+          <button onClick={onBack} className="btn-icon">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1 min-w-0">
-            <h2 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Meu Fluxo</h2>
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{steps.length} etapas</p>
+            <h2 className="font-bold text-xl" style={{ color: 'var(--fg)' }}>Meu Fluxo</h2>
+            <p className="text-base" style={{ color: 'var(--fg-muted)' }}>{steps.length} etapas</p>
           </div>
           <button 
             onClick={() => setShowCheckpoints(!showCheckpoints)}
             className="btn-icon relative"
-            style={{ color: checkpoints.length > 0 ? 'var(--emerald-400)' : 'var(--text-muted)' }}
+            style={{ color: checkpoints.length > 0 ? 'var(--green)' : 'var(--fg-muted)' }}
             title="Historico de checkpoints"
           >
             <Clock className="w-5 h-5" />
             {checkpoints.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold" style={{ background: 'var(--emerald-500)', color: 'white' }}>
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold" style={{ background: 'var(--green)', color: 'white' }}>
                 {checkpoints.length}
               </span>
             )}
@@ -523,7 +550,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
             onClick={captureAccessibilityTree}
             disabled={captureTree}
             className="btn-icon"
-            style={{ color: accessTree ? 'var(--cyan-400)' : 'var(--text-muted)' }}
+            style={{ color: accessTree ? 'var(--blue)' : 'var(--fg-muted)' }}
             title="Capturar Accessibility Tree (BrowserClaw)"
           >
             {captureTree ? <Loader2 className="w-5 h-5 animate-spin" /> : <Eye className="w-5 h-5" />}
@@ -531,12 +558,12 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           <button 
             onClick={() => setShowHitlLog(!showHitlLog)}
             className="btn-icon relative"
-            style={{ color: hitlLog.length > 0 ? 'var(--rose-400)' : 'var(--text-muted)' }}
+            style={{ color: hitlLog.length > 0 ? 'var(--red)' : 'var(--fg-muted)' }}
             title="Historico de aprovacoes HITL"
           >
             <Shield className="w-5 h-5" />
             {hitlLog.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold" style={{ background: 'var(--rose-500)', color: 'white' }}>
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold" style={{ background: 'var(--red)', color: 'white' }}>
                 {hitlLog.length}
               </span>
             )}
@@ -545,15 +572,15 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
         {/* Checkpoints Panel */}
         {showCheckpoints && (
-          <div className="p-4 space-y-3" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-secondary)' }}>
+          <div className="p-4 space-y-3" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-muted)' }}>
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Historico</h3>
+              <h3 className="text-sm font-semibold" style={{ color: 'var(--fg)' }}>Historico</h3>
               <button 
                 onClick={() => { if (steps.length > 0) createCheckpoint('Checkpoint manual') }}
                 className="text-xs px-3 py-1.5 rounded-lg transition-colors"
                 style={{ 
-                  background: steps.length > 0 ? 'var(--accent-glow)' : 'var(--bg-tertiary)',
-                  color: steps.length > 0 ? 'var(--violet-400)' : 'var(--text-muted)'
+                  background: steps.length > 0 ? 'var(--bg-muted)' : 'var(--bg-inset)',
+                  color: steps.length > 0 ? 'var(--fg)' : 'var(--fg-muted)'
                 }}
                 disabled={steps.length === 0}
               >
@@ -561,18 +588,18 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               </button>
             </div>
             {checkpoints.length === 0 ? (
-              <p className="text-sm text-center py-4" style={{ color: 'var(--text-muted)' }}>Nenhum checkpoint salvo</p>
+              <p className="text-sm text-center py-4" style={{ color: 'var(--fg-muted)' }}>Nenhum checkpoint salvo</p>
             ) : (
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {checkpoints.map((cp) => (
-                  <div key={cp.id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--surface)' }}>
+                  <div key={cp.id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--bg-muted)' }}>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{cp.nome}</p>
-                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                      <p className="text-sm font-semibold truncate" style={{ color: 'var(--fg)' }}>{cp.nome}</p>
+                      <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>
                         {cp.steps.length} etapas - {cp.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
-                    <button onClick={() => restoreCheckpoint(cp.id)} className="text-xs px-2.5 py-1.5 rounded-lg font-semibold" style={{ background: 'var(--emerald-500)', color: 'white' }}>
+                    <button onClick={() => restoreCheckpoint(cp.id)} className="text-xs px-2.5 py-1.5 rounded-lg font-semibold" style={{ background: 'var(--green)', color: 'white' }}>
                       Restaurar
                     </button>
                     <button onClick={() => deleteCheckpoint(cp.id)} className="btn-icon" style={{ width: '32px', height: '32px' }}>
@@ -588,12 +615,12 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {steps.length === 0 ? (
             <div className="text-center py-8">
-              <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px dashed var(--violet-500)' }}>
-                <Plus className="w-7 h-7" style={{ color: 'var(--violet-400)' }} />
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-muted)', border: '1px dashed var(--fg)' }}>
+                <Plus className="w-7 h-7" style={{ color: 'var(--fg)' }} />
               </div>
-              <p className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>Nenhuma etapa ainda</p>
-              <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Descreva seu fluxo no chat ao lado</p>
-              <div className="mt-4 p-3 rounded-xl text-left text-sm" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+              <p className="text-base font-semibold" style={{ color: 'var(--fg)' }}>Nenhuma etapa ainda</p>
+              <p className="text-sm mt-1" style={{ color: 'var(--fg-muted)' }}>Descreva seu fluxo no chat ao lado</p>
+              <div className="mt-4 p-3 rounded-xl text-left text-sm" style={{ background: 'var(--bg-muted)', color: 'var(--fg-muted)' }}>
                 <p className="font-semibold mb-2">Exemplos:</p>
                 <p>&bull; &quot;Busque empresas no Google Maps&quot;</p>
                 <p>&bull; &quot;Scraping de sites e criar proposta&quot;</p>
@@ -609,8 +636,8 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               return (
                 <div 
                   key={step.id}
-                  className="card p-4 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--violet-500)]"
-                  style={!step.ativo ? { opacity: 0.5 } : isExpanded ? { borderColor: 'var(--violet-500)' } : {}}
+                  className="card p-4 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--fg)]"
+                  style={!step.ativo ? { opacity: 0.5 } : isExpanded ? { borderColor: 'var(--fg)' } : {}}
                   tabIndex={0}
                   role="button"
                   aria-expanded={isExpanded}
@@ -622,17 +649,17 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                   }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'var(--accent-glow)', color: 'var(--violet-400)' }}>
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'var(--bg-muted)', color: 'var(--fg)' }}>
                       {index + 1}
                     </div>
                     
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: step.ativo ? 'var(--accent-glow)' : 'var(--bg-secondary)' }}>
-                      <Icon className="w-5 h-5" style={{ color: step.ativo ? 'var(--violet-400)' : 'var(--text-muted)' }} />
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: step.ativo ? 'var(--bg-muted)' : 'var(--bg-muted)' }}>
+                      <Icon className="w-5 h-5" style={{ color: step.ativo ? 'var(--fg)' : 'var(--fg-muted)' }} />
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-base truncate" style={{ color: 'var(--text-primary)' }}>{step.nome}</p>
-                      <p className="text-sm truncate" style={{ color: 'var(--text-muted)' }}>{step.descricao}</p>
+                      <p className="font-semibold text-base truncate" style={{ color: 'var(--fg)' }}>{step.nome}</p>
+                      <p className="text-base truncate" style={{ color: 'var(--fg-muted)' }}>{step.descricao}</p>
                     </div>
 
                     <div className="flex items-center gap-1">
@@ -649,11 +676,11 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                   {isExpanded && (
                     <div className="mt-4 pt-4 space-y-3" style={{ borderTop: '1px solid var(--border)' }}>
                       <div>
-                        <label className="text-sm block mb-1" style={{ color: 'var(--text-muted)' }}>Nome</label>
+                        <label className="text-sm block mb-1" style={{ color: 'var(--fg-muted)' }}>Nome</label>
                         <input type="text" value={step.nome} className="input-field text-sm" readOnly />
                       </div>
                       <div>
-                        <label className="text-sm block mb-1" style={{ color: 'var(--text-muted)' }}>Descricao</label>
+                        <label className="text-sm block mb-1" style={{ color: 'var(--fg-muted)' }}>Descricao</label>
                         <textarea value={step.descricao} rows={2} className="input-field text-sm resize-none" readOnly />
                       </div>
                     </div>
@@ -669,10 +696,10 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
             <div className="space-y-2">
               {executionLogs.map((log, i) => (
                 <div key={i} className="flex items-center gap-2.5 text-sm">
-                  {log.status === 'running' && <Loader2 className="w-4 h-4 animate-spin" style={{ color: 'var(--violet-400)' }} />}
-                  {log.status === 'done' && <CheckCircle className="w-4 h-4" style={{ color: 'var(--emerald-400)' }} />}
-                  {log.status === 'pending' && <Clock className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />}
-                  <span style={{ color: log.status === 'done' ? 'var(--emerald-400)' : 'var(--text-secondary)' }}>{log.step}</span>
+                  {log.status === 'running' && <Loader2 className="w-4 h-4 animate-spin" style={{ color: 'var(--fg)' }} />}
+                  {log.status === 'done' && <CheckCircle className="w-4 h-4" style={{ color: 'var(--green)' }} />}
+                  {log.status === 'pending' && <Clock className="w-4 h-4" style={{ color: 'var(--fg-muted)' }} />}
+                  <span style={{ color: log.status === 'done' ? 'var(--green)' : 'var(--fg-secondary)' }}>{log.step}</span>
                 </div>
               ))}
             </div>
@@ -686,16 +713,16 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       </div>
 
       {/* Chat Panel */}
-      <div className="flex-1 flex flex-col" style={{ background: 'var(--bg-void)' }}>
-        <div className="p-4 flex items-center gap-4" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #f97316, #ef4444)' }}>
+      <div className="flex-1 flex flex-col" style={{ background: 'var(--bg-subtle)' }}>
+        <div className="p-5 flex items-center gap-4" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'var(--fg)' }}>
             <Bot className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Assistente de Fluxo</h3>
+            <h3 className="font-bold text-xl" style={{ color: 'var(--fg)' }}>Assistente de Fluxo</h3>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--emerald-400)' }} />
-              <span className="text-sm" style={{ color: 'var(--text-muted)' }}>IA Ativa</span>
+              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--green)' }} />
+              <span className="text-sm" style={{ color: 'var(--fg-muted)' }}>IA Ativa</span>
             </div>
           </div>
           
@@ -705,27 +732,27 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               onClick={() => setShowModelMenu(!showModelMenu)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-sm font-semibold"
               style={{ 
-                background: 'var(--accent-glow)', 
+                background: 'var(--bg-muted)', 
                 border: '1px solid rgba(249, 115, 22, 0.2)',
               }}
             >
-              <Sparkles className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
-              <span style={{ color: 'var(--violet-400)' }}>
+              <Sparkles className="w-4 h-4" style={{ color: 'var(--fg)' }} />
+              <span style={{ color: 'var(--fg)' }}>
                 {selectedModel.split('/').pop()?.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
               </span>
-              <ChevronDown className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
+              <ChevronDown className="w-4 h-4" style={{ color: 'var(--fg)' }} />
             </button>
             
             {showModelMenu && (
               <div className="absolute right-0 top-full mt-2 w-64 rounded-xl overflow-hidden z-50" style={{ 
-                background: 'var(--bg-secondary)', 
+                background: 'var(--bg-muted)', 
                 border: '1px solid var(--border)',
                 boxShadow: '0 12px 48px rgba(0,0,0,0.5)'
               }}>
                 <div className="p-2 max-h-80 overflow-y-auto">
                   <div className="flex items-center justify-between px-3 py-1.5 mb-1">
-                    <p className="text-xs font-semibold" style={{ color: 'var(--emerald-400)' }}>Free</p>
-                    <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: 'rgba(52, 211, 153, 0.1)', color: 'var(--emerald-400)' }}>R$0</span>
+                    <p className="text-xs font-semibold" style={{ color: 'var(--green)' }}>Free</p>
+                    <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: 'rgba(52, 211, 153, 0.1)', color: 'var(--green)' }}>R$0</span>
                   </div>
                   {freeModels.map(model => (
                     <button
@@ -734,12 +761,12 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors"
                       style={{ 
                         background: selectedModel === model.id ? 'rgba(52, 211, 153, 0.1)' : 'transparent',
-                        color: selectedModel === model.id ? 'var(--emerald-400)' : 'var(--text-primary)'
+                        color: selectedModel === model.id ? 'var(--green)' : 'var(--fg)'
                       }}
                     >
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold">{model.name}</p>
-                        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{model.desc}</p>
+                        <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>{model.desc}</p>
                       </div>
                     </button>
                   ))}
@@ -747,8 +774,8 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                   <div className="my-2 border-t" style={{ borderColor: 'var(--border)' }} />
                   
                   <div className="flex items-center justify-between px-3 py-1.5 mb-1">
-                    <p className="text-xs font-semibold" style={{ color: 'var(--violet-400)' }}>Premium</p>
-                    <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: 'var(--accent-glow)', color: 'var(--violet-400)' }}>R$10/mes</span>
+                    <p className="text-xs font-semibold" style={{ color: 'var(--fg)' }}>Premium</p>
+                    <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: 'var(--bg-muted)', color: 'var(--fg)' }}>R$10/mes</span>
                   </div>
                   {premiumModels.map(model => {
                     const isLocked = currentPlan === 'free' && model.premium
@@ -761,16 +788,16 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                         }}
                         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors"
                         style={{ 
-                          background: selectedModel === model.id ? 'var(--accent-glow)' : 'transparent',
-                          color: selectedModel === model.id ? 'var(--violet-400)' : isLocked ? 'var(--text-muted)' : 'var(--text-primary)',
+                          background: selectedModel === model.id ? 'var(--bg-muted)' : 'transparent',
+                          color: selectedModel === model.id ? 'var(--fg)' : isLocked ? 'var(--fg-muted)' : 'var(--fg)',
                           opacity: isLocked ? 0.5 : 1
                         }}
                       >
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold">{model.name}</p>
-                          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{model.desc}</p>
+                          <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>{model.desc}</p>
                         </div>
-                        {isLocked && <Lock className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--violet-400)' }} />}
+                        {isLocked && <Lock className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--fg)' }} />}
                       </button>
                     )
                   })}
@@ -784,7 +811,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           {apiError && (
             <div 
               className="flex items-center gap-3 p-3 rounded-xl text-sm"
-              style={{ background: 'rgba(244, 63, 94, 0.08)', border: '1px solid rgba(244, 63, 94, 0.2)', color: 'var(--rose-400)' }}
+              style={{ background: 'rgba(244, 63, 94, 0.08)', border: '1px solid rgba(244, 63, 94, 0.2)', color: 'var(--red)' }}
               role="alert"
             >
               <span>Erro: {apiError}</span>
@@ -796,11 +823,11 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           
           {messages.length === 1 && !isTyping && (
             <div className="text-center py-8">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px solid rgba(249, 115, 22, 0.2)' }}>
-                <Bot className="w-8 h-8" style={{ color: 'var(--violet-400)' }} />
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-muted)', border: '1px solid rgba(249, 115, 22, 0.2)' }}>
+                <Bot className="w-8 h-8" style={{ color: 'var(--fg)' }} />
               </div>
-              <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Como posso ajudar?</h3>
-              <p className="text-sm max-w-lg mx-auto" style={{ color: 'var(--text-tertiary)' }}>
+              <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--fg)' }}>Como posso ajudar?</h3>
+              <p className="text-base max-w-lg mx-auto" style={{ color: 'var(--fg-muted)' }}>
                 Descreva o fluxo de automacao que voce quer criar. Posso fazer busca de leads, 
                 scraping, analise com IA, criacao de sites e muito mais.
               </p>
@@ -816,16 +843,16 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               )}
               {message.tipo === 'system' && (
                 <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(52, 211, 153, 0.1)' }}>
-                  <Zap className="w-4.5 h-4.5" style={{ color: 'var(--emerald-400)' }} />
+                  <Zap className="w-4.5 h-4.5" style={{ color: 'var(--green)' }} />
                 </div>
               )}
               
               <div className="max-w-[75%] rounded-2xl px-4 py-3" style={{ 
-                background: message.tipo === 'user' ? '#1c1917' : message.tipo === 'system' ? '#f0fdf4' : 'var(--surface)',
-                color: message.tipo === 'user' ? 'white' : 'var(--text-primary)',
+                background: message.tipo === 'user' ? '#1c1917' : message.tipo === 'system' ? '#f0fdf4' : 'var(--bg-muted)',
+                color: message.tipo === 'user' ? 'white' : 'var(--fg)',
                 border: message.tipo === 'user' ? 'none' : message.tipo === 'system' ? '1px solid #bbf7d0' : '1px solid var(--border)',
               }}>
-                <p className="text-sm whitespace-pre-line leading-relaxed">{message.conteudo}</p>
+                <p className="text-base whitespace-pre-line leading-relaxed">{message.conteudo}</p>
                 {message.files && message.files.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {message.files.map((f, i) => (
@@ -841,8 +868,8 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               </div>
 
               {message.tipo === 'user' && (
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bg-secondary)' }}>
-                  <User className="w-4.5 h-4.5" style={{ color: 'var(--text-tertiary)' }} />
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bg-muted)' }}>
+                  <User className="w-4.5 h-4.5" style={{ color: 'var(--fg-muted)' }} />
                 </div>
               )}
             </div>
@@ -853,7 +880,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #f97316, #ef4444)' }}>
                 <Bot className="w-4.5 h-4.5 text-white" />
               </div>
-              <div className="rounded-2xl px-4 py-3" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
+              <div className="rounded-2xl px-4 py-3" style={{ background: 'var(--bg-muted)', border: '1px solid var(--border)' }}>
                 <div className="flex gap-1.5">
                   <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#f97316', animationDelay: '0ms' }} />
                   <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#ef4444', animationDelay: '150ms' }} />
@@ -869,7 +896,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         {attachedFiles.length > 0 && (
           <div className="px-4 py-2 flex flex-wrap gap-2" style={{ borderTop: '1px solid var(--border)' }}>
             {attachedFiles.map((f, i) => (
-              <span key={i} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--accent-glow)', color: 'var(--violet-400)' }}>
+              <span key={i} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--bg-muted)', color: 'var(--fg)' }}>
                 <File className="w-3 h-3" />{f}
                 <button onClick={() => removeFile(f)} className="ml-0.5 hover:opacity-70"><X className="w-3 h-3" /></button>
               </span>
@@ -877,12 +904,12 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           </div>
         )}
 
-        <div className="p-4" style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
+        <div className="p-4" style={{ borderTop: '1px solid var(--border)', background: 'var(--bg)' }}>
           <div className="flex gap-3">
             <button 
               onClick={() => setShowSkills(true)} 
               className="btn-icon"
-              style={{ color: 'var(--violet-400)', border: '1px solid rgba(249, 115, 22, 0.2)', background: 'var(--accent-glow)' }}
+              style={{ color: 'var(--fg)', border: '1px solid rgba(249, 115, 22, 0.2)', background: 'var(--bg-muted)' }}
               aria-label="Abrir seletor de skills"
             >
               <Puzzle className="w-5 h-5" />
@@ -929,7 +956,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
               placeholder={steps.length === 0 ? "Descreva o fluxo que quer criar..." : "Mande um prompt para executar..."}
-              className="input-field flex-1 text-sm"
+              className="input-field flex-1"
               aria-label="Mensagem para o assistente"
               maxLength={2000}
             />
@@ -946,25 +973,25 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
             <div className="flex gap-2">
               {steps.length === 0 ? (
                 <>
-                  <button onClick={() => setInputValue('Busque empresas no Google Maps, faca scraping, crie proposta e envie por email')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+                  <button onClick={() => setInputValue('Busque empresas no Google Maps, faca scraping, crie proposta e envie por email')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-inset)]" style={{ background: 'var(--bg-muted)', color: 'var(--fg-muted)' }}>
                     Fluxo completo
                   </button>
-                  <button onClick={() => setInputValue('Pesquise leads, analise com IA, crie site melhorado e publique')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+                  <button onClick={() => setInputValue('Pesquise leads, analise com IA, crie site melhorado e publique')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-inset)]" style={{ background: 'var(--bg-muted)', color: 'var(--fg-muted)' }}>
                     Criar sites
                   </button>
                 </>
               ) : (
                 <>
-                  <button onClick={() => setInputValue('20 empresas com site feio em Sao Paulo')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+                  <button onClick={() => setInputValue('20 empresas com site feio em Sao Paulo')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-inset)]" style={{ background: 'var(--bg-muted)', color: 'var(--fg-muted)' }}>
                     20 empresas SP
                   </button>
-                  <button onClick={() => setInputValue('10 clinicas 5 estrelas sem site no RJ')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+                  <button onClick={() => setInputValue('10 clinicas 5 estrelas sem site no RJ')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-inset)]" style={{ background: 'var(--bg-muted)', color: 'var(--fg-muted)' }}>
                     10 clinicas RJ
                   </button>
                 </>
               )}
             </div>
-            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+            <span className="text-xs" style={{ color: 'var(--fg-muted)' }}>
               {inputValue.length}/2000
             </span>
           </div>
@@ -978,19 +1005,66 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         />
       )}
 
+      {showSiteBuilder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="w-full max-w-5xl max-h-[90vh] overflow-auto rounded-2xl shadow-2xl">
+            <div className="flex items-center justify-between p-3 bg-white border-b border-gray-200 rounded-t-2xl">
+              <span className="text-sm font-semibold text-gray-900">Construtor de Site - Fable 5 Premium (R$ 99)</span>
+              <button 
+                onClick={() => setShowSiteBuilder(false)}
+                className="p-1.5 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-4 h-4 text-gray-400" />
+              </button>
+            </div>
+            <SiteBuilder
+              objective={inputValue || 'Criar site profissional'}
+              onSiteGenerated={(project) => setGeneratedProject(project)}
+            />
+          </div>
+        </div>
+      )}
+
+      {generatedProject && !showSiteBuilder && (
+        <div className="fixed bottom-6 right-6 z-40 flex gap-2">
+          <button
+            onClick={() => {
+              const data = { gerado: JSON.stringify(generatedProject) }
+              const params = new URLSearchParams()
+              if (scrapedData) params.set('original', encodeURIComponent(JSON.stringify(scrapedData)))
+              params.set('gerado', encodeURIComponent(JSON.stringify(generatedProject)))
+              window.open(`/comparacao?${params.toString()}`, '_blank')
+            }}
+            className="flex items-center gap-2 px-5 py-3 bg-green-600 text-white rounded-xl font-medium shadow-lg hover:bg-green-700 transition"
+          >
+            <Eye className="w-4 h-4" />
+            Ver Proposta (Comparação)
+          </button>
+          {generatedProject && (
+            <button
+              onClick={() => setShowSiteBuilder(true)}
+              className="flex items-center gap-2 px-4 py-3 bg-white text-gray-700 rounded-xl font-medium shadow-lg border border-gray-200 hover:bg-gray-50 transition"
+            >
+              <Code className="w-4 h-4" />
+              Ver Código
+            </button>
+          )}
+        </div>
+      )}
+
       {showUpgradeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
-          <div className="card w-full max-w-md p-8 text-center" style={{ boxShadow: '0 0 50px var(--accent-glow)' }}>
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px solid rgba(249, 115, 22, 0.2)' }}>
-              <Crown className="w-8 h-8" style={{ color: 'var(--violet-400)' }} />
+          <div className="card w-full max-w-md p-8 text-center" style={{ boxShadow: '0 0 50px var(--bg-muted)' }}>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--bg-muted)', border: '1px solid rgba(249, 115, 22, 0.2)' }}>
+              <Crown className="w-8 h-8" style={{ color: 'var(--fg)' }} />
             </div>
-            <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Upgrade para Premium</h2>
-            <p className="text-sm mb-6" style={{ color: 'var(--text-tertiary)' }}>
+            <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--fg)' }}>Upgrade para Premium</h2>
+            <p className="text-sm mb-6" style={{ color: 'var(--fg-muted)' }}>
               Os modelos de IA avancados como Kimi K3, MiniMax e outros estao disponiveis no plano Premium.
             </p>
-            <div className="p-4 rounded-xl mb-6" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-              <p className="text-3xl font-bold mb-1" style={{ color: 'var(--violet-400)' }}>R$ 10<span className="text-sm font-normal" style={{ color: 'var(--text-muted)' }}>/mes</span></p>
-              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Acesso ilimitado a todos os modelos</p>
+            <div className="p-4 rounded-xl mb-6" style={{ background: 'var(--bg-muted)', border: '1px solid var(--border)' }}>
+              <p className="text-3xl font-bold mb-1" style={{ color: 'var(--fg)' }}>R$ 10<span className="text-sm font-normal" style={{ color: 'var(--fg-muted)' }}>/mes</span></p>
+              <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Acesso ilimitado a todos os modelos</p>
             </div>
             <div className="flex gap-3">
               <button onClick={() => setShowUpgradeModal(false)} className="btn-secondary flex-1 text-sm">
@@ -1010,42 +1084,42 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)' }}>
           <div className="card w-full max-w-lg" style={{ 
             boxShadow: '0 0 50px rgba(244, 63, 94, 0.15)',
-            border: '1.5px solid var(--rose-400)'
+            border: '1.5px solid var(--red)'
           }}>
             <div className="p-5" style={{ borderBottom: '1px solid var(--border)' }}>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(244, 63, 94, 0.1)' }}>
-                  <AlertTriangle className="w-6 h-6" style={{ color: 'var(--rose-400)' }} />
+                  <AlertTriangle className="w-6 h-6" style={{ color: 'var(--red)' }} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>
+                  <h3 className="font-bold text-lg" style={{ color: 'var(--fg)' }}>
                     Aprovacao Necessaria (HITL)
                   </h3>
-                  <p className="text-sm" style={{ color: 'var(--rose-400)' }}>
+                  <p className="text-sm" style={{ color: 'var(--red)' }}>
                     Acao potencialmente perigosa detectada
                   </p>
                 </div>
               </div>
             </div>
             <div className="p-5 space-y-4">
-              <div className="p-4 rounded-xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-                <p className="text-sm font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Etapa</p>
-                <p className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>{hitlPending.step.nome}</p>
+              <div className="p-4 rounded-xl" style={{ background: 'var(--bg-muted)', border: '1px solid var(--border)' }}>
+                <p className="text-sm font-medium mb-1" style={{ color: 'var(--fg-muted)' }}>Etapa</p>
+                <p className="text-base font-bold" style={{ color: 'var(--fg)' }}>{hitlPending.step.nome}</p>
               </div>
-              <div className="p-4 rounded-xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-                <p className="text-sm font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Descricao</p>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{hitlPending.step.descricao}</p>
+              <div className="p-4 rounded-xl" style={{ background: 'var(--bg-muted)', border: '1px solid var(--border)' }}>
+                <p className="text-sm font-medium mb-1" style={{ color: 'var(--fg-muted)' }}>Descricao</p>
+                <p className="text-sm" style={{ color: 'var(--fg-secondary)' }}>{hitlPending.step.descricao}</p>
               </div>
-              <div className="p-4 rounded-xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-                <p className="text-sm font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Tipo de risco</p>
-                <p className="text-base font-bold" style={{ color: 'var(--rose-400)' }}>{hitlPending.actionType.replace('_', ' ').toUpperCase()}</p>
+              <div className="p-4 rounded-xl" style={{ background: 'var(--bg-muted)', border: '1px solid var(--border)' }}>
+                <p className="text-sm font-medium mb-1" style={{ color: 'var(--fg-muted)' }}>Tipo de risco</p>
+                <p className="text-base font-bold" style={{ color: 'var(--red)' }}>{hitlPending.actionType.replace('_', ' ').toUpperCase()}</p>
               </div>
             </div>
             <div className="p-5 flex gap-3" style={{ borderTop: '1px solid var(--border)' }}>
               <button 
                 onClick={() => handleHITLDecision(false)}
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all"
-                style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--rose-400)', border: '1px solid rgba(244, 63, 94, 0.2)' }}
+                style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--red)', border: '1px solid rgba(244, 63, 94, 0.2)' }}
               >
                 <X className="w-4 h-4" />
                 Rejeitar
@@ -1053,7 +1127,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               <button 
                 onClick={() => handleHITLDecision(true)}
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all"
-                style={{ background: 'var(--emerald-500)', color: 'white' }}
+                style={{ background: 'var(--green)', color: 'white' }}
               >
                 <CheckCircle className="w-4 h-4" />
                 Aprovar
@@ -1069,27 +1143,27 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           <div className="card w-full max-w-lg max-h-[80vh] flex flex-col">
             <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
               <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5" style={{ color: 'var(--violet-400)' }} />
-                <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Historico de Aprovacoes</h3>
+                <Shield className="w-5 h-5" style={{ color: 'var(--fg)' }} />
+                <h3 className="font-bold text-lg" style={{ color: 'var(--fg)' }}>Historico de Aprovacoes</h3>
               </div>
-              <button onClick={() => setShowHitlLog(false)} className="text-sm" style={{ color: 'var(--text-muted)' }}>Fechar</button>
+              <button onClick={() => setShowHitlLog(false)} className="text-sm" style={{ color: 'var(--fg-muted)' }}>Fechar</button>
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {hitlLog.length === 0 ? (
-                <p className="text-center text-sm py-10" style={{ color: 'var(--text-muted)' }}>Nenhuma aprovacao registrada</p>
+                <p className="text-center text-sm py-10" style={{ color: 'var(--fg-muted)' }}>Nenhuma aprovacao registrada</p>
               ) : (
                 hitlLog.map((entry, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--surface)' }}>
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--bg-muted)' }}>
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: entry.status === 'approved' ? 'rgba(52, 211, 153, 0.1)' : 'rgba(244, 63, 94, 0.1)' }}>
-                      {entry.status === 'approved' ? <CheckCircle className="w-5 h-5" style={{ color: 'var(--emerald-400)' }} /> : <X className="w-5 h-5" style={{ color: 'var(--rose-400)' }} />}
+                      {entry.status === 'approved' ? <CheckCircle className="w-5 h-5" style={{ color: 'var(--green)' }} /> : <X className="w-5 h-5" style={{ color: 'var(--red)' }} />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{entry.step}</p>
-                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{entry.actionType.replace('_', ' ')} - {entry.timestamp.toLocaleTimeString('pt-BR')}</p>
+                      <p className="text-sm font-semibold truncate" style={{ color: 'var(--fg)' }}>{entry.step}</p>
+                      <p className="text-xs" style={{ color: 'var(--fg-muted)' }}>{entry.actionType.replace('_', ' ')} - {entry.timestamp.toLocaleTimeString('pt-BR')}</p>
                     </div>
                     <span className="text-xs px-2 py-1 rounded-lg" style={{
                       background: entry.status === 'approved' ? 'rgba(52, 211, 153, 0.1)' : 'rgba(244, 63, 94, 0.1)',
-                      color: entry.status === 'approved' ? 'var(--emerald-400)' : 'var(--rose-400)'
+                      color: entry.status === 'approved' ? 'var(--green)' : 'var(--red)'
                     }}>
                       {entry.status === 'approved' ? 'Aprovado' : 'Rejeitado'}
                     </span>
@@ -1103,17 +1177,17 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
       {/* Accessibility Tree Panel */}
       {accessTree && (
-        <div className="fixed bottom-4 left-4 z-40 w-[480px] max-h-80 rounded-xl overflow-hidden" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', boxShadow: '0 12px 48px rgba(0,0,0,0.4)' }}>
+        <div className="fixed bottom-4 left-4 z-40 w-[480px] max-h-80 rounded-xl overflow-hidden" style={{ background: 'var(--bg-muted)', border: '1px solid var(--border)', boxShadow: '0 12px 48px rgba(0,0,0,0.4)' }}>
           <div className="p-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
             <div className="flex items-center gap-2">
-              <Eye className="w-4 h-4" style={{ color: 'var(--cyan-400)' }} />
-              <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Accessibility Tree</span>
+              <Eye className="w-4 h-4" style={{ color: 'var(--blue)' }} />
+              <span className="text-sm font-semibold" style={{ color: 'var(--fg)' }}>Accessibility Tree</span>
             </div>
             <button onClick={() => setAccessTree(null)} className="btn-icon" style={{ width: '32px', height: '32px' }}>
               <X className="w-4 h-4" />
             </button>
           </div>
-          <pre className="p-4 text-sm font-mono overflow-y-auto max-h-60" style={{ color: 'var(--text-secondary)' }}>
+          <pre className="p-4 text-sm font-mono overflow-y-auto max-h-60" style={{ color: 'var(--fg-secondary)' }}>
             {accessTree}
           </pre>
         </div>
