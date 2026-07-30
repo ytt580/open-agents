@@ -6,6 +6,7 @@ import {
   Crown, Zap
 } from 'lucide-react'
 import { clsx } from 'clsx'
+import { LoginButton } from './LoginButton'
 
 interface SidebarProps {
   currentPage: string
@@ -132,6 +133,13 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
             >
               Upgrade
             </button>
+          </div>
+        )}
+
+        {/* Auth */}
+        {!collapsed && (
+          <div className="px-3 mb-3">
+            <LoginButton />
           </div>
         )}
 

@@ -7,7 +7,6 @@ import { Dashboard } from '@/components/Dashboard'
 import { FlowEditor } from '@/components/FlowEditor'
 import { BrowserView } from '@/components/BrowserView'
 import { SkillsManager } from '@/components/SkillsManager'
-import { ApiManager } from '@/components/ApiManager'
 import { Scheduler } from '@/components/Scheduler'
 import { HITLSystem } from '@/components/HITLSystem'
 import { Zap, ArrowLeft } from 'lucide-react'
@@ -82,8 +81,6 @@ export default function DashboardPage() {
         return <BrowserView />
       case 'skills':
         return <SkillsManager />
-      case 'api':
-        return <ApiManager />
       case 'scheduler':
         return <Scheduler />
       default:

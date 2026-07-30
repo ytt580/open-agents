@@ -6,8 +6,9 @@ import {
   ChevronDown, ChevronRight, Loader2, CheckCircle,
   Clock, Zap, Globe, Code, Mail, Search, MessageSquare,
   Paperclip, File, X, Puzzle, Sparkles, Lock, Crown,
-  Settings, Eye, AlertTriangle, Shield, Pause
+  Settings, Eye, AlertTriangle, Shield, Pause, Image as ImageIcon, Volume2
 } from 'lucide-react'
+import { chatAI, generateImage, textToSpeech } from '@/lib/puter-ai'
 import { SkillsSelector } from './SkillsSelector'
 import { Flow } from '@/app/dashboard/page'
 import { detectDangerousAction, type HITLActionType } from './HITLSystem'
@@ -215,23 +216,12 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
     setApiError(null)
     try {
       const apiMessages = history.slice(-10).map(m => ({
-        role: m.tipo === 'user' ? 'user' : 'assistant',
+        role: m.tipo === 'user' ? 'user' as const : 'assistant' as const,
         content: m.conteudo
       }))
       apiMessages.push({ role: 'user', content: userInput })
 
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, model: selectedModel })
-      })
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}))
-        throw new Error(errorData.error || `Erro ${res.status}: ${res.statusText}`)
-      }
-      
-      const data = await res.json()
+      const data = await chatAI(apiMessages, { model: selectedModel })
       setRetryCount(0)
       return data.content || 'Desculpe, nao consegui processar.'
     } catch (error) {
@@ -241,7 +231,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         setRetryCount(prev => prev + 1)
         return `Erro de conexao (tentativa ${retryCount + 1}/3). Verifique sua conexao e tente novamente.`
       }
-      return 'Erro ao conectar com a IA. Verifique sua conexao e tente novamente.'
+      return 'Erro ao conectar com a IA. Verifique se voce esta logado no Puter.'
     }
   }
 
@@ -261,6 +251,39 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
     setIsTyping(true)
 
     const lower = userInput.toLowerCase()
+    
+    // Handle /img command for image generation
+    if (userInput.startsWith('/img ')) {
+      const imgPrompt = userInput.slice(5).trim()
+      if (imgPrompt) {
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(), tipo: 'user',
+          conteudo: `Gerar imagem: ${imgPrompt}`,
+          timestamp: new Date()
+        }])
+        try {
+          const imageUrl = await generateImage(imgPrompt)
+          setMessages(prev => [...prev, {
+            id: (Date.now() + 1).toString(), tipo: 'ai',
+            conteudo: `Imagem gerada com sucesso!`,
+            timestamp: new Date()
+          }])
+          // Store image URL for display
+          setMessages(prev => {
+            const updated = [...prev]
+            updated[updated.length - 1] = {
+              ...updated[updated.length - 1],
+              conteudo: `Imagem gerada: ${imageUrl}`
+            }
+            return updated
+          })
+        } catch (err) {
+          setApiError(err instanceof Error ? err.message : 'Erro ao gerar imagem')
+        }
+        setIsTyping(false)
+        return
+      }
+    }
     
     // Only create flow when user gives SPECIFIC automation instructions
     // NOT for generic messages like "oi", "quero criar fluxo", "o que voce faz"
@@ -457,15 +480,16 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   const freeModels = [
     { id: 'gpt-4o-mini', name: 'GPT-4o Mini', desc: 'Rapido e economico', free: true },
     { id: 'gpt-4o', name: 'GPT-4o', desc: 'Inteligente', free: true },
-    { id: 'o3-mini', name: 'O3 Mini', desc: 'Raciocinio avancado', free: true },
+    { id: 'claude-sonnet-4-6', name: 'Claude Sonnet', desc: 'Analitico', free: true },
+    { id: 'gemini-2.5-flash', name: 'Gemini Flash', desc: 'Rapido', free: true },
   ]
 
   const premiumModels = [
-    { id: 'moonshotai/kimi-k2.6', name: 'Kimi K3', desc: 'Mais inteligente', premium: true },
-    { id: 'minimaxai/minimax-m2.7', name: 'MiniMax M2.7', desc: 'Equilibrado', premium: true },
-    { id: 'google/gemma-3-12b-it', name: 'Gemma 4', desc: 'Rapido', premium: true },
-    { id: 'meta/llama2-70b', name: 'Llama 2 70B', desc: 'Avancado', premium: true },
-    { id: 'mistralai/mistral-7b-instruct', name: 'Mistral 7B', desc: 'Leve', premium: true },
+    { id: 'gpt-5-nano', name: 'GPT-5 Nano', desc: 'Mais avancado', premium: true },
+    { id: 'claude-opus-4-8', name: 'Claude Opus', desc: 'Premium', premium: true },
+    { id: 'grok-3', name: 'Grok 3', desc: 'xAI', premium: true },
+    { id: 'deepseek/deepseek-r1', name: 'DeepSeek R1', desc: 'Raciocinio', premium: true },
+    { id: 'mistralai/mistral-large-latest', name: 'Mistral Large', desc: 'Avancado', premium: true },
   ]
 
   return (
@@ -869,6 +893,35 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               aria-label="Anexar arquivo"
             >
               <Paperclip className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => setInputValue('/img ')}
+              className="btn-icon"
+              style={{ color: '#8b5cf6' }}
+              aria-label="Gerar imagem com IA"
+              title="Gerar imagem (digite o prompt depois de /img)"
+            >
+              <ImageIcon className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={async () => {
+                if (!inputValue.trim()) return
+                setIsTyping(true)
+                try {
+                  const audio = await textToSpeech(inputValue)
+                  audio.play()
+                } catch (err) {
+                  setApiError(err instanceof Error ? err.message : 'Erro ao gerar audio')
+                } finally {
+                  setIsTyping(false)
+                }
+              }}
+              className="btn-icon"
+              style={{ color: '#06b6d4' }}
+              aria-label="Converter texto em fala"
+              title="Converter texto em fala"
+            >
+              <Volume2 className="w-5 h-5" />
             </button>
             <input
               type="text"
