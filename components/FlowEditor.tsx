@@ -130,7 +130,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
     } else {
       setMessages([{
         id: '1', tipo: 'ai',
-        conteudo: 'Ola! Sou sua assistente de automacao. Descreva o fluxo que voce quer criar.\n\nExemplos:\n- "Busque empresas no Google Maps, faca scraping do site, crie uma proposta e envie por email"\n- "Pesquise leads, analise com IA, crie site melhorado e publique"\n\nO que voce quer automatizar?',
+        conteudo: 'Ola! Sou sua assistente de automacao.\n\nPara criar um fluxo, me diga o que voce quer fazer:\n\n- "Busque 20 clinicas sem site no Rio de Janeiro"\n- "Scraping de empresas de ar condicionado em SP"\n- "Pesquise leads e envie proposta por email"\n- "Crie um site melhorado para uma padaria"\n\nOu pergunte qualquer coisa sobre automacao!',
         timestamp: new Date()
       }])
     }
@@ -261,11 +261,19 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
     setIsTyping(true)
 
     const lower = userInput.toLowerCase()
-    const isCreatingFlow = lower.includes('fluxo') || lower.includes('automatizar') || 
-      lower.includes('busque') || lower.includes('scraping') || lower.includes('criar site') ||
-      lower.includes('enviar') || lower.includes('proposta') || lower.includes('repagina') ||
-      lower.includes('maps') || lower.includes('google') || lower.includes('leads') ||
-      lower.includes('empresa') || lower.includes('negocio')
+    
+    // Only create flow when user gives SPECIFIC automation instructions
+    // NOT for generic messages like "oi", "quero criar fluxo", "o que voce faz"
+    const specificActions = ['busque', 'busca', 'scraping', 'scrape', 'extrair', 'enviar email', 'enviar proposta', 'enviar whatsapp', 
+      'criar site', 'repagina', 'repaginar', 'redesign', 'publicar site', 'maps do google', 'google maps']
+    const hasSpecificAction = specificActions.some(action => lower.includes(action))
+    
+    // Also match if user mentions specific business context + action verb
+    const businessContext = ['empresa', 'clinica', 'escritorio', 'loja', 'restaurante', 'salao', 'academia', 'escola']
+    const actionVerbs = ['procurar', 'encontrar', 'pesquisar', 'buscar', 'analisar', 'melhorar', 'criar', 'enviar']
+    const hasBusinessContext = businessContext.some(ctx => lower.includes(ctx)) && actionVerbs.some(verb => lower.includes(verb))
+    
+    const isCreatingFlow = hasSpecificAction || hasBusinessContext
 
     if (isCreatingFlow && steps.length > 0) createCheckpoint('Antes de modificar fluxo')
 
@@ -283,6 +291,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         setIsTyping(false)
       }, 1000)
     } else {
+      // Generic message - use AI to respond and ask what they want
       const aiResponse = await callAI(userInput, [...messages, userMessage])
       const processedResponse = await processAIResponse(aiResponse)
       setMessages(prev => [...prev, {
