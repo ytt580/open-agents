@@ -61,7 +61,7 @@ function NeuralBackground() {
 /* ============================================
    SCROLL ANIMATION HOOK
    ============================================ */
-function useScrollAnimation(threshold = 0.1) {
+function useScrollAnimation(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -73,7 +73,7 @@ function useScrollAnimation(threshold = 0.1) {
           observer.unobserve(entry.target)
         }
       },
-      { threshold }
+      { threshold, rootMargin: '0px 0px -50px 0px' }
     )
 
     if (ref.current) {
@@ -89,21 +89,47 @@ function useScrollAnimation(threshold = 0.1) {
 /* ============================================
    ANIMATED SECTION COMPONENT
    ============================================ */
-function AnimatedSection({ children, className = '', delay = 0 }: { 
+function AnimatedSection({ children, className = '', delay = 0, animation = 'fadeUp' }: { 
   children: React.ReactNode
   className?: string
-  delay?: number 
+  delay?: number
+  animation?: 'fadeUp' | 'fadeScale' | 'fadeLeft' | 'fadeRight' | 'fadeRotate'
 }) {
   const { ref, isVisible } = useScrollAnimation(0.1)
+  
+  const animations = {
+    fadeUp: {
+      hidden: { opacity: 0, transform: 'translateY(40px) scale(0.98)' },
+      visible: { opacity: 1, transform: 'translateY(0) scale(1)' }
+    },
+    fadeScale: {
+      hidden: { opacity: 0, transform: 'scale(0.85)' },
+      visible: { opacity: 1, transform: 'scale(1)' }
+    },
+    fadeLeft: {
+      hidden: { opacity: 0, transform: 'translateX(-40px) scale(0.98)' },
+      visible: { opacity: 1, transform: 'translateX(0) scale(1)' }
+    },
+    fadeRight: {
+      hidden: { opacity: 0, transform: 'translateX(40px) scale(0.98)' },
+      visible: { opacity: 1, transform: 'translateX(0) scale(1)' }
+    },
+    fadeRotate: {
+      hidden: { opacity: 0, transform: 'translateY(30px) rotate(-3deg) scale(0.95)' },
+      visible: { opacity: 1, transform: 'translateY(0) rotate(0deg) scale(1)' }
+    }
+  }
+  
+  const currentAnim = animations[animation]
   
   return (
     <div
       ref={ref}
-      className={`transition-all duration-500 ${className}`}
+      className={className}
       style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-        transitionDelay: `${delay}ms`
+        opacity: isVisible ? currentAnim.visible.opacity : currentAnim.hidden.opacity,
+        transform: isVisible ? currentAnim.visible.transform : currentAnim.hidden.transform,
+        transition: `opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`
       }}
     >
       {children}
@@ -268,7 +294,7 @@ export default function LandingPage() {
                     ['var(--neural-600)', 'var(--electric-600)', 'var(--plasma-600)'][i % 3]
                   } 0%, transparent 70%)`,
                   opacity: 0.06 + Math.random() * 0.04,
-                  animation: `float ${8 + Math.random() * 10}s ease-in-out infinite`,
+                  animation: `float ${10 + Math.random() * 12}s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite`,
                   animationDelay: `${Math.random() * 5}s`
                 }}
               />
@@ -278,8 +304,8 @@ export default function LandingPage() {
           <div className="max-w-5xl mx-auto text-center relative z-10">
             {/* Badge */}
             <div 
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 transition-all duration-500 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 ${
+                isVisible ? 'animate-badge-in' : 'opacity-0'
               }`}
               style={{ 
                 background: 'var(--accent-glow)', 
@@ -292,8 +318,8 @@ export default function LandingPage() {
             
             {/* Title - Gradient text only here */}
             <h1 
-              className={`text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[0.92] mb-8 tracking-tight transition-all duration-500 delay-100 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              className={`text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[0.92] mb-8 tracking-tight ${
+                isVisible ? 'animate-title-in' : 'opacity-0'
               }`}
             >
               <span className="text-gradient">Automatize</span>
@@ -305,8 +331,8 @@ export default function LandingPage() {
             
             {/* Subtitle */}
             <p 
-              className={`text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed transition-all duration-500 delay-200 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              className={`text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed ${
+                isVisible ? 'animate-subtitle-in' : 'opacity-0'
               }`}
               style={{ color: 'var(--text-secondary)' }}
             >
@@ -317,8 +343,8 @@ export default function LandingPage() {
             
             {/* CTAs */}
             <div 
-              className={`flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 transition-all duration-500 delay-300 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              className={`flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 ${
+                isVisible ? 'animate-cta-in' : 'opacity-0'
               }`}
             >
               <Link href="/dashboard" className="btn-primary text-base py-4 px-8 group">
@@ -331,13 +357,16 @@ export default function LandingPage() {
             </div>
             
             {/* Stats */}
-            <div 
-              className={`grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto transition-all duration-500 delay-400 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-              }`}
-            >
-              {stats.map((stat) => (
-                <div key={stat.label} className="text-center p-4 rounded-xl" style={{ background: 'var(--surface)' }}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              {stats.map((stat, i) => (
+                <div 
+                  key={stat.label} 
+                  className={`text-center p-4 rounded-xl ${isVisible ? 'animate-stat-in' : 'opacity-0'}`}
+                  style={{ 
+                    background: 'var(--surface)',
+                    animationDelay: `${500 + i * 100}ms`
+                  }}
+                >
                   <p className="text-3xl md:text-4xl font-bold" style={{ color: 'var(--plasma-400)' }}>
                     {stat.value}
                   </p>
@@ -434,7 +463,11 @@ export default function LandingPage() {
             </AnimatedSection>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {steps.map((step, i) => (
-                <AnimatedSection key={step.num} delay={i * 100}>
+                <AnimatedSection 
+                  key={step.num} 
+                  delay={i * 120}
+                  animation={i === 0 ? 'fadeLeft' : i === 3 ? 'fadeRight' : 'fadeUp'}
+                >
                   <div className="text-center relative">
                     {i < steps.length - 1 && (
                       <div 
@@ -473,7 +506,11 @@ export default function LandingPage() {
             </AnimatedSection>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {features.map((feat, i) => (
-                <AnimatedSection key={feat.title} delay={i * 80}>
+                <AnimatedSection 
+                  key={feat.title} 
+                  delay={i * 100}
+                  animation={i % 3 === 0 ? 'fadeLeft' : i % 3 === 1 ? 'fadeScale' : 'fadeRight'}
+                >
                   <div 
                     className="card p-6 transition-all duration-200 group relative overflow-hidden hover:border-[var(--neural-500)] hover:shadow-lg hover:-translate-y-1"
                   >
