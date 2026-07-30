@@ -25,7 +25,9 @@ import {
   File,
   X,
   Puzzle,
-  Sparkles
+  Sparkles,
+  Lock,
+  Crown
 } from 'lucide-react'
 import { SkillsSelector } from './SkillsSelector'
 import { Flow } from '@/app/dashboard/page'
@@ -87,10 +89,12 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   const [executionLogs, setExecutionLogs] = useState<ExecutionLog[]>([])
   const [attachedFiles, setAttachedFiles] = useState<string[]>([])
   const [showSkills, setShowSkills] = useState(false)
-  const [selectedModel, setSelectedModel] = useState('moonshotai/kimi-k2.6')
+  const [selectedModel, setSelectedModel] = useState('gpt-4o-mini')
   const [showModelMenu, setShowModelMenu] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const currentPlan = 'free'
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -461,12 +465,14 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                 boxShadow: '0 10px 40px rgba(0,0,0,0.5)'
               }}>
                 <div className="p-2 max-h-80 overflow-y-auto">
-                  <p className="text-xs px-2 py-1 mb-1" style={{ color: 'var(--text-tertiary)' }}>GitHub (GPT)</p>
+                  <div className="flex items-center justify-between px-2 py-1 mb-1">
+                    <p className="text-xs font-medium" style={{ color: 'var(--plasma-400)' }}>Free</p>
+                    <span className="text-xs px-1.5 py-0.5 rounded" style={{ background: 'rgba(52, 211, 153, 0.15)', color: 'var(--plasma-400)' }}>R$0</span>
+                  </div>
                   {[
-                    { id: 'gpt-5', name: 'GPT-5', desc: 'Mais avancado', icon: '🧠' },
-                    { id: 'gpt-4o', name: 'GPT-4o', desc: 'Rapido e inteligente', icon: '⚡' },
-                    { id: 'gpt-4o-mini', name: 'GPT-4o Mini', desc: 'Economico', icon: '💰' },
-                    { id: 'o3-mini', name: 'O3 Mini', desc: 'Raciocinio', icon: '🎯' },
+                    { id: 'gpt-4o-mini', name: 'GPT-4o Mini', desc: 'Rapido e economico', icon: '⚡', free: true },
+                    { id: 'gpt-4o', name: 'GPT-4o', desc: 'Inteligente', icon: '🧠', free: true },
+                    { id: 'o3-mini', name: 'O3 Mini', desc: 'Raciocinio avancado', icon: '🎯', free: true },
                   ].map(model => (
                     <button
                       key={model.id}
@@ -481,14 +487,14 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                       }}
                       className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
                       style={{ 
-                        background: selectedModel === model.id ? 'var(--accent-glow)' : 'transparent',
-                        color: selectedModel === model.id ? 'var(--accent)' : 'var(--text-primary)'
+                        background: selectedModel === model.id ? 'rgba(52, 211, 153, 0.15)' : 'transparent',
+                        color: selectedModel === model.id ? 'var(--plasma-400)' : 'var(--text-primary)'
                       }}
                       aria-selected={selectedModel === model.id}
                       role="option"
                     >
                       <span className="text-lg">{model.icon}</span>
-                      <div>
+                      <div className="flex-1">
                         <p className="text-sm font-medium">{model.name}</p>
                         <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{model.desc}</p>
                       </div>
@@ -497,40 +503,63 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                   
                   <div className="my-2 border-t" style={{ borderColor: 'var(--border)' }} />
                   
-                  <p className="text-xs px-2 py-1 mb-1" style={{ color: 'var(--text-tertiary)' }}>Bluesminds</p>
+                  <div className="flex items-center justify-between px-2 py-1 mb-1">
+                    <p className="text-xs font-medium" style={{ color: 'var(--neural-400)' }}>Premium</p>
+                    <span className="text-xs px-1.5 py-0.5 rounded" style={{ background: 'var(--accent-glow)', color: 'var(--neural-400)' }}>R$10/mes</span>
+                  </div>
                   {[
-                    { id: 'moonshotai/kimi-k2.6', name: 'Kimi K3', desc: 'Mais inteligente', icon: '✨' },
-                    { id: 'minimaxai/minimax-m2.7', name: 'MiniMax M2.7', desc: 'Equilibrado', icon: '⚖️' },
-                    { id: 'google/gemma-3-12b-it', name: 'Gemma 4', desc: 'Rapido', icon: '🏃' },
-                    { id: 'meta/llama2-70b', name: 'Llama 2 70B', desc: 'Avancado', icon: '🦙' },
-                    { id: 'mistralai/mistral-7b-instruct', name: 'Mistral 7B', desc: 'Leve', icon: '💨' },
-                  ].map(model => (
-                    <button
-                      key={model.id}
-                      onClick={() => { setSelectedModel(model.id); setShowModelMenu(false) }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Escape') setShowModelMenu(false)
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
+                    { id: 'moonshotai/kimi-k2.6', name: 'Kimi K3', desc: 'Mais inteligente', icon: '✨', premium: true },
+                    { id: 'minimaxai/minimax-m2.7', name: 'MiniMax M2.7', desc: 'Equilibrado', icon: '⚖️', premium: true },
+                    { id: 'google/gemma-3-12b-it', name: 'Gemma 4', desc: 'Rapido', icon: '🏃', premium: true },
+                    { id: 'meta/llama2-70b', name: 'Llama 2 70B', desc: 'Avancado', icon: '🦙', premium: true },
+                    { id: 'mistralai/mistral-7b-instruct', name: 'Mistral 7B', desc: 'Leve', icon: '💨', premium: true },
+                  ].map(model => {
+                    const isLocked = currentPlan === 'free' && model.premium
+                    return (
+                      <button
+                        key={model.id}
+                        onClick={() => {
+                          if (isLocked) {
+                            setShowUpgradeModal(true)
+                            setShowModelMenu(false)
+                            return
+                          }
                           setSelectedModel(model.id)
                           setShowModelMenu(false)
-                        }
-                      }}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-                      style={{ 
-                        background: selectedModel === model.id ? 'var(--accent-glow)' : 'transparent',
-                        color: selectedModel === model.id ? 'var(--accent)' : 'var(--text-primary)'
-                      }}
-                      aria-selected={selectedModel === model.id}
-                      role="option"
-                    >
-                      <span className="text-lg">{model.icon}</span>
-                      <div>
-                        <p className="text-sm font-medium">{model.name}</p>
-                        <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{model.desc}</p>
-                      </div>
-                    </button>
-                  ))}
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Escape') setShowModelMenu(false)
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            if (isLocked) {
+                              setShowUpgradeModal(true)
+                              setShowModelMenu(false)
+                              return
+                            }
+                            setSelectedModel(model.id)
+                            setShowModelMenu(false)
+                          }
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                        style={{ 
+                          background: selectedModel === model.id ? 'var(--accent-glow)' : 'transparent',
+                          color: selectedModel === model.id ? 'var(--accent)' : isLocked ? 'var(--text-tertiary)' : 'var(--text-primary)',
+                          opacity: isLocked ? 0.6 : 1
+                        }}
+                        aria-selected={selectedModel === model.id}
+                        role="option"
+                      >
+                        <span className="text-lg">{model.icon}</span>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{model.name}</p>
+                          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{model.desc}</p>
+                        </div>
+                        {isLocked && (
+                          <Lock className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--neural-400)' }} />
+                        )}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -725,6 +754,33 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           }} 
           onClose={() => setShowSkills(false)} 
         />
+      )}
+
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
+          <div className="card w-full max-w-md p-6 text-center" style={{ boxShadow: '0 0 60px var(--accent-glow)' }}>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px solid var(--accent)' }}>
+              <Crown className="w-8 h-8" style={{ color: 'var(--accent)' }} />
+            </div>
+            <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Upgrade para Premium</h2>
+            <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
+              Os modelos de IA avancados como Kimi K3, MiniMax e outros estao disponiveis no plano Premium.
+            </p>
+            <div className="p-4 rounded-xl mb-6" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+              <p className="text-3xl font-bold mb-1" style={{ color: 'var(--accent)' }}>R$ 10<span className="text-sm font-normal" style={{ color: 'var(--text-tertiary)' }}>/mes</span></p>
+              <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Acesso ilimitado a todos os modelos</p>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setShowUpgradeModal(false)} className="btn-secondary flex-1">
+                Agora nao
+              </button>
+              <a href="#pricing" onClick={() => setShowUpgradeModal(false)} className="btn-primary flex-1 flex items-center justify-center gap-2">
+                <Crown className="w-4 h-4" />
+                Ver Planos
+              </a>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
