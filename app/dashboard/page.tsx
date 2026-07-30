@@ -71,13 +71,13 @@ export default function DashboardPage() {
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={handleSelectFlow} flows={flows} />
+        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={handleSelectFlow} onNewFlow={handleNewFlow} flows={flows} />
       case 'flows':
         if (selectedFlow) {
           const flow = flows.find(f => f.id === selectedFlow)
           return <FlowEditor flowId={selectedFlow} flow={flow} onBack={() => setSelectedFlow(null)} onSave={handleSaveFlow} />
         }
-        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={handleSelectFlow} flows={flows} />
+        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={handleSelectFlow} onNewFlow={handleNewFlow} flows={flows} />
       case 'browser':
         return <BrowserView />
       case 'skills':
@@ -87,7 +87,7 @@ export default function DashboardPage() {
       case 'scheduler':
         return <Scheduler />
       default:
-        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={handleSelectFlow} flows={flows} />
+        return <Dashboard onNavigate={setCurrentPage} onSelectFlow={handleSelectFlow} onNewFlow={handleNewFlow} flows={flows} />
     }
   }
 

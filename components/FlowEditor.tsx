@@ -464,24 +464,24 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} />
 
       {/* Steps Panel */}
-      <div className="w-80 flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
-        <div className="p-3 flex items-center gap-2" style={{ borderBottom: '1px solid var(--border)' }}>
-          <button onClick={onBack} className="p-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }}>
-            <ArrowLeft className="w-4 h-4" />
+      <div className="w-96 flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
+        <div className="p-4 flex items-center gap-3" style={{ borderBottom: '1px solid var(--border)' }}>
+          <button onClick={onBack} className="btn-icon" style={{ width: '40px', height: '40px' }}>
+            <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1 min-w-0">
-            <h2 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Meu Fluxo</h2>
-            <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{steps.length} etapas</p>
+            <h2 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Meu Fluxo</h2>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{steps.length} etapas</p>
           </div>
           <button 
             onClick={() => setShowCheckpoints(!showCheckpoints)}
-            className="p-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)] relative"
+            className="btn-icon relative"
             style={{ color: checkpoints.length > 0 ? 'var(--emerald-400)' : 'var(--text-muted)' }}
             title="Historico de checkpoints"
           >
-            <Clock className="w-4 h-4" />
+            <Clock className="w-5 h-5" />
             {checkpoints.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full text-[9px] flex items-center justify-center font-bold" style={{ background: 'var(--emerald-500)', color: 'white' }}>
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold" style={{ background: 'var(--emerald-500)', color: 'white' }}>
                 {checkpoints.length}
               </span>
             )}
@@ -489,21 +489,21 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           <button 
             onClick={captureAccessibilityTree}
             disabled={captureTree}
-            className="p-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]"
+            className="btn-icon"
             style={{ color: accessTree ? 'var(--cyan-400)' : 'var(--text-muted)' }}
             title="Capturar Accessibility Tree (BrowserClaw)"
           >
-            {captureTree ? <Loader2 className="w-4 h-4 animate-spin" /> : <Eye className="w-4 h-4" />}
+            {captureTree ? <Loader2 className="w-5 h-5 animate-spin" /> : <Eye className="w-5 h-5" />}
           </button>
           <button 
             onClick={() => setShowHitlLog(!showHitlLog)}
-            className="p-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)] relative"
+            className="btn-icon relative"
             style={{ color: hitlLog.length > 0 ? 'var(--rose-400)' : 'var(--text-muted)' }}
             title="Historico de aprovacoes HITL"
           >
-            <Shield className="w-4 h-4" />
+            <Shield className="w-5 h-5" />
             {hitlLog.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full text-[9px] flex items-center justify-center font-bold" style={{ background: 'var(--rose-500)', color: 'white' }}>
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold" style={{ background: 'var(--rose-500)', color: 'white' }}>
                 {hitlLog.length}
               </span>
             )}
@@ -512,12 +512,12 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
         {/* Checkpoints Panel */}
         {showCheckpoints && (
-          <div className="p-3 space-y-2" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-secondary)' }}>
+          <div className="p-4 space-y-3" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-secondary)' }}>
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>Historico</h3>
+              <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Historico</h3>
               <button 
                 onClick={() => { if (steps.length > 0) createCheckpoint('Checkpoint manual') }}
-                className="text-[10px] px-2 py-1 rounded-md transition-colors"
+                className="text-xs px-3 py-1.5 rounded-lg transition-colors"
                 style={{ 
                   background: steps.length > 0 ? 'var(--accent-glow)' : 'var(--bg-tertiary)',
                   color: steps.length > 0 ? 'var(--violet-400)' : 'var(--text-muted)'
@@ -528,22 +528,22 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               </button>
             </div>
             {checkpoints.length === 0 ? (
-              <p className="text-[10px] text-center py-3" style={{ color: 'var(--text-muted)' }}>Nenhum checkpoint salvo</p>
+              <p className="text-sm text-center py-4" style={{ color: 'var(--text-muted)' }}>Nenhum checkpoint salvo</p>
             ) : (
-              <div className="space-y-1.5 max-h-40 overflow-y-auto">
+              <div className="space-y-2 max-h-48 overflow-y-auto">
                 {checkpoints.map((cp) => (
-                  <div key={cp.id} className="flex items-center gap-2 p-2 rounded-lg" style={{ background: 'var(--surface)' }}>
+                  <div key={cp.id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--surface)' }}>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-medium truncate" style={{ color: 'var(--text-primary)' }}>{cp.nome}</p>
-                      <p className="text-[9px]" style={{ color: 'var(--text-muted)' }}>
+                      <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{cp.nome}</p>
+                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                         {cp.steps.length} etapas - {cp.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
-                    <button onClick={() => restoreCheckpoint(cp.id)} className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: 'var(--emerald-500)', color: 'white' }}>
+                    <button onClick={() => restoreCheckpoint(cp.id)} className="text-xs px-2.5 py-1.5 rounded-lg font-semibold" style={{ background: 'var(--emerald-500)', color: 'white' }}>
                       Restaurar
                     </button>
-                    <button onClick={() => deleteCheckpoint(cp.id)} className="p-1 rounded hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-muted)' }}>
-                      <Trash2 className="w-2.5 h-2.5" />
+                    <button onClick={() => deleteCheckpoint(cp.id)} className="btn-icon" style={{ width: '32px', height: '32px' }}>
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 ))}
@@ -552,16 +552,16 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto p-3 space-y-2">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {steps.length === 0 ? (
-            <div className="text-center py-6">
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2" style={{ background: 'var(--accent-glow)', border: '1px dashed var(--violet-500)' }}>
-                <Plus className="w-5 h-5" style={{ color: 'var(--violet-400)' }} />
+            <div className="text-center py-8">
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px dashed var(--violet-500)' }}>
+                <Plus className="w-7 h-7" style={{ color: 'var(--violet-400)' }} />
               </div>
-              <p className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>Nenhuma etapa ainda</p>
-              <p className="text-[10px] mt-0.5" style={{ color: 'var(--text-muted)' }}>Descreva seu fluxo no chat ao lado</p>
-              <div className="mt-3 p-2 rounded-lg text-left text-[10px]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
-                <p className="font-medium mb-1">Exemplos:</p>
+              <p className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>Nenhuma etapa ainda</p>
+              <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Descreva seu fluxo no chat ao lado</p>
+              <div className="mt-4 p-3 rounded-xl text-left text-sm" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+                <p className="font-semibold mb-2">Exemplos:</p>
                 <p>&bull; &quot;Busque empresas no Google Maps&quot;</p>
                 <p>&bull; &quot;Scraping de sites e criar proposta&quot;</p>
                 <p>&bull; &quot;Criar site melhorado e publicar&quot;</p>
@@ -576,7 +576,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               return (
                 <div 
                   key={step.id}
-                  className="card p-3 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--violet-500)]"
+                  className="card p-4 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--violet-500)]"
                   style={!step.ativo ? { opacity: 0.5 } : isExpanded ? { borderColor: 'var(--violet-500)' } : {}}
                   tabIndex={0}
                   role="button"
@@ -588,40 +588,40 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                     }
                   }}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold" style={{ background: 'var(--accent-glow)', color: 'var(--violet-400)' }}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'var(--accent-glow)', color: 'var(--violet-400)' }}>
                       {index + 1}
                     </div>
                     
-                    <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ background: step.ativo ? 'var(--accent-glow)' : 'var(--bg-secondary)' }}>
-                      <Icon className="w-3.5 h-3.5" style={{ color: step.ativo ? 'var(--violet-400)' : 'var(--text-muted)' }} />
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: step.ativo ? 'var(--accent-glow)' : 'var(--bg-secondary)' }}>
+                      <Icon className="w-5 h-5" style={{ color: step.ativo ? 'var(--violet-400)' : 'var(--text-muted)' }} />
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-xs truncate" style={{ color: 'var(--text-primary)' }}>{step.nome}</p>
-                      <p className="text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>{step.descricao}</p>
+                      <p className="font-semibold text-base truncate" style={{ color: 'var(--text-primary)' }}>{step.nome}</p>
+                      <p className="text-sm truncate" style={{ color: 'var(--text-muted)' }}>{step.descricao}</p>
                     </div>
 
-                    <div className="flex items-center gap-0.5">
-                      <button onClick={() => setExpandedStep(isExpanded ? null : step.id)} className="p-1 rounded hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-muted)' }}>
-                        {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => setExpandedStep(isExpanded ? null : step.id)} className="btn-icon" style={{ width: '36px', height: '36px' }}>
+                        {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                       </button>
                       <div className={`toggle ${step.ativo ? 'active' : ''}`} onClick={() => toggleStep(step.id)} />
-                      <button onClick={() => removeStep(step.id)} className="p-1 rounded hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-muted)' }}>
-                        <Trash2 className="w-3 h-3" />
+                      <button onClick={() => removeStep(step.id)} className="btn-icon" style={{ width: '36px', height: '36px' }}>
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
 
                   {isExpanded && (
-                    <div className="mt-3 pt-3 space-y-2" style={{ borderTop: '1px solid var(--border)' }}>
+                    <div className="mt-4 pt-4 space-y-3" style={{ borderTop: '1px solid var(--border)' }}>
                       <div>
-                        <label className="text-[10px] block mb-0.5" style={{ color: 'var(--text-muted)' }}>Nome</label>
-                        <input type="text" value={step.nome} className="input-field text-xs" readOnly />
+                        <label className="text-sm block mb-1" style={{ color: 'var(--text-muted)' }}>Nome</label>
+                        <input type="text" value={step.nome} className="input-field text-sm" readOnly />
                       </div>
                       <div>
-                        <label className="text-[10px] block mb-0.5" style={{ color: 'var(--text-muted)' }}>Descricao</label>
-                        <textarea value={step.descricao} rows={2} className="input-field text-xs resize-none" readOnly />
+                        <label className="text-sm block mb-1" style={{ color: 'var(--text-muted)' }}>Descricao</label>
+                        <textarea value={step.descricao} rows={2} className="input-field text-sm resize-none" readOnly />
                       </div>
                     </div>
                   )}
@@ -631,21 +631,21 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           )}
         </div>
 
-        <div className="p-3" style={{ borderTop: '1px solid var(--border)' }}>
+        <div className="p-4" style={{ borderTop: '1px solid var(--border)' }}>
           {executing ? (
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {executionLogs.map((log, i) => (
-                <div key={i} className="flex items-center gap-2 text-[10px]">
-                  {log.status === 'running' && <Loader2 className="w-3 h-3 animate-spin" style={{ color: 'var(--violet-400)' }} />}
-                  {log.status === 'done' && <CheckCircle className="w-3 h-3" style={{ color: 'var(--emerald-400)' }} />}
-                  {log.status === 'pending' && <Clock className="w-3 h-3" style={{ color: 'var(--text-muted)' }} />}
+                <div key={i} className="flex items-center gap-2.5 text-sm">
+                  {log.status === 'running' && <Loader2 className="w-4 h-4 animate-spin" style={{ color: 'var(--violet-400)' }} />}
+                  {log.status === 'done' && <CheckCircle className="w-4 h-4" style={{ color: 'var(--emerald-400)' }} />}
+                  {log.status === 'pending' && <Clock className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />}
                   <span style={{ color: log.status === 'done' ? 'var(--emerald-400)' : 'var(--text-secondary)' }}>{log.step}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <button onClick={executeFlow} disabled={steps.length === 0} className="btn-primary w-full text-xs disabled:opacity-50">
-              <Play className="w-4 h-4" />
+            <button onClick={executeFlow} disabled={steps.length === 0} className="btn-primary w-full text-sm disabled:opacity-50">
+              <Play className="w-5 h-5" />
               Executar Fluxo
             </button>
           )}
@@ -654,15 +654,15 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
       {/* Chat Panel */}
       <div className="flex-1 flex flex-col" style={{ background: 'var(--bg-void)' }}>
-        <div className="p-3 flex items-center gap-3" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--violet-500), var(--cyan-500))' }}>
-            <Bot className="w-4 h-4 text-white" />
+        <div className="p-4 flex items-center gap-4" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--violet-500), var(--cyan-500))' }}>
+            <Bot className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Assistente de Fluxo</h3>
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--emerald-400)' }} />
-              <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>IA Ativa</span>
+            <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Assistente de Fluxo</h3>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--emerald-400)' }} />
+              <span className="text-sm" style={{ color: 'var(--text-muted)' }}>IA Ativa</span>
             </div>
           </div>
           
@@ -670,52 +670,52 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           <div className="relative">
             <button 
               onClick={() => setShowModelMenu(!showModelMenu)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-all text-xs"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-sm font-semibold"
               style={{ 
                 background: 'var(--accent-glow)', 
                 border: '1px solid rgba(139, 92, 246, 0.2)',
               }}
             >
-              <Sparkles className="w-3 h-3" style={{ color: 'var(--violet-400)' }} />
-              <span className="font-medium" style={{ color: 'var(--violet-400)' }}>
+              <Sparkles className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
+              <span style={{ color: 'var(--violet-400)' }}>
                 {selectedModel.split('/').pop()?.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
               </span>
-              <ChevronDown className="w-3 h-3" style={{ color: 'var(--violet-400)' }} />
+              <ChevronDown className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
             </button>
             
             {showModelMenu && (
-              <div className="absolute right-0 top-full mt-2 w-52 rounded-lg overflow-hidden z-50" style={{ 
+              <div className="absolute right-0 top-full mt-2 w-64 rounded-xl overflow-hidden z-50" style={{ 
                 background: 'var(--bg-secondary)', 
                 border: '1px solid var(--border)',
-                boxShadow: '0 10px 40px rgba(0,0,0,0.5)'
+                boxShadow: '0 12px 48px rgba(0,0,0,0.5)'
               }}>
-                <div className="p-1.5 max-h-72 overflow-y-auto">
-                  <div className="flex items-center justify-between px-2 py-1 mb-0.5">
-                    <p className="text-[10px] font-medium" style={{ color: 'var(--emerald-400)' }}>Free</p>
-                    <span className="text-[9px] px-1 py-0.5 rounded" style={{ background: 'rgba(52, 211, 153, 0.1)', color: 'var(--emerald-400)' }}>R$0</span>
+                <div className="p-2 max-h-80 overflow-y-auto">
+                  <div className="flex items-center justify-between px-3 py-1.5 mb-1">
+                    <p className="text-xs font-semibold" style={{ color: 'var(--emerald-400)' }}>Free</p>
+                    <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: 'rgba(52, 211, 153, 0.1)', color: 'var(--emerald-400)' }}>R$0</span>
                   </div>
                   {freeModels.map(model => (
                     <button
                       key={model.id}
                       onClick={() => { setSelectedModel(model.id); setShowModelMenu(false) }}
-                      className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors"
                       style={{ 
                         background: selectedModel === model.id ? 'rgba(52, 211, 153, 0.1)' : 'transparent',
                         color: selectedModel === model.id ? 'var(--emerald-400)' : 'var(--text-primary)'
                       }}
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium">{model.name}</p>
-                        <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{model.desc}</p>
+                        <p className="text-sm font-semibold">{model.name}</p>
+                        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{model.desc}</p>
                       </div>
                     </button>
                   ))}
                   
-                  <div className="my-1.5 border-t" style={{ borderColor: 'var(--border)' }} />
+                  <div className="my-2 border-t" style={{ borderColor: 'var(--border)' }} />
                   
-                  <div className="flex items-center justify-between px-2 py-1 mb-0.5">
-                    <p className="text-[10px] font-medium" style={{ color: 'var(--violet-400)' }}>Premium</p>
-                    <span className="text-[9px] px-1 py-0.5 rounded" style={{ background: 'var(--accent-glow)', color: 'var(--violet-400)' }}>R$10/mes</span>
+                  <div className="flex items-center justify-between px-3 py-1.5 mb-1">
+                    <p className="text-xs font-semibold" style={{ color: 'var(--violet-400)' }}>Premium</p>
+                    <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: 'var(--accent-glow)', color: 'var(--violet-400)' }}>R$10/mes</span>
                   </div>
                   {premiumModels.map(model => {
                     const isLocked = currentPlan === 'free' && model.premium
@@ -726,7 +726,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                           if (isLocked) { setShowUpgradeModal(true); setShowModelMenu(false); return }
                           setSelectedModel(model.id); setShowModelMenu(false)
                         }}
-                        className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors"
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors"
                         style={{ 
                           background: selectedModel === model.id ? 'var(--accent-glow)' : 'transparent',
                           color: selectedModel === model.id ? 'var(--violet-400)' : isLocked ? 'var(--text-muted)' : 'var(--text-primary)',
@@ -734,10 +734,10 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                         }}
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium">{model.name}</p>
-                          <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{model.desc}</p>
+                          <p className="text-sm font-semibold">{model.name}</p>
+                          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{model.desc}</p>
                         </div>
-                        {isLocked && <Lock className="w-3 h-3 flex-shrink-0" style={{ color: 'var(--violet-400)' }} />}
+                        {isLocked && <Lock className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--violet-400)' }} />}
                       </button>
                     )
                   })}
@@ -747,27 +747,27 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {apiError && (
             <div 
-              className="flex items-center gap-2 p-2 rounded-lg text-xs"
+              className="flex items-center gap-3 p-3 rounded-xl text-sm"
               style={{ background: 'rgba(244, 63, 94, 0.08)', border: '1px solid rgba(244, 63, 94, 0.2)', color: 'var(--rose-400)' }}
               role="alert"
             >
               <span>Erro: {apiError}</span>
-              <button onClick={() => setApiError(null)} className="ml-auto p-0.5 rounded hover:bg-white/10">
-                <X className="w-3 h-3" />
+              <button onClick={() => setApiError(null)} className="ml-auto p-1 rounded hover:bg-white/10">
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
           
           {messages.length === 1 && !isTyping && (
-            <div className="text-center py-6">
-              <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'var(--accent-glow)', border: '1px solid rgba(139, 92, 246, 0.2)' }}>
-                <Bot className="w-7 h-7" style={{ color: 'var(--violet-400)' }} />
+            <div className="text-center py-8">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px solid rgba(139, 92, 246, 0.2)' }}>
+                <Bot className="w-8 h-8" style={{ color: 'var(--violet-400)' }} />
               </div>
-              <h3 className="text-base font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Como posso ajudar?</h3>
-              <p className="text-xs max-w-md mx-auto" style={{ color: 'var(--text-tertiary)' }}>
+              <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Como posso ajudar?</h3>
+              <p className="text-sm max-w-lg mx-auto" style={{ color: 'var(--text-tertiary)' }}>
                 Descreva o fluxo de automacao que voce quer criar. Posso fazer busca de leads, 
                 scraping, analise com IA, criacao de sites e muito mais.
               </p>
@@ -775,56 +775,56 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
           )}
           
           {messages.map((message) => (
-            <div key={message.id} className={`flex gap-2.5 ${message.tipo === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div key={message.id} className={`flex gap-3 ${message.tipo === 'user' ? 'justify-end' : 'justify-start'}`}>
               {message.tipo === 'ai' && (
-                <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--violet-500), var(--cyan-500))' }}>
-                  <Bot className="w-3.5 h-3.5 text-white" />
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--violet-500), var(--cyan-500))' }}>
+                  <Bot className="w-4.5 h-4.5 text-white" />
                 </div>
               )}
               {message.tipo === 'system' && (
-                <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(52, 211, 153, 0.1)' }}>
-                  <Zap className="w-3.5 h-3.5" style={{ color: 'var(--emerald-400)' }} />
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(52, 211, 153, 0.1)' }}>
+                  <Zap className="w-4.5 h-4.5" style={{ color: 'var(--emerald-400)' }} />
                 </div>
               )}
               
-              <div className="max-w-[75%] rounded-xl px-3 py-2.5" style={{ 
+              <div className="max-w-[75%] rounded-2xl px-4 py-3" style={{ 
                 background: message.tipo === 'user' ? 'var(--violet-600)' : message.tipo === 'system' ? 'rgba(52, 211, 153, 0.08)' : 'var(--surface)',
                 color: message.tipo === 'user' ? 'white' : 'var(--text-primary)',
                 border: message.tipo === 'user' ? 'none' : message.tipo === 'system' ? '1px solid rgba(52, 211, 153, 0.2)' : '1px solid var(--border)',
               }}>
-                <p className="text-xs whitespace-pre-line leading-relaxed">{message.conteudo}</p>
+                <p className="text-sm whitespace-pre-line leading-relaxed">{message.conteudo}</p>
                 {message.files && message.files.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-1.5">
+                  <div className="flex flex-wrap gap-1.5 mt-2">
                     {message.files.map((f, i) => (
-                      <span key={i} className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.15)' }}>
-                        <File className="w-2.5 h-2.5" />{f}
+                      <span key={i} className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                        <File className="w-3 h-3" />{f}
                       </span>
                     ))}
                   </div>
                 )}
-                <p className="text-[9px] mt-1.5 opacity-40">
+                <p className="text-xs mt-2 opacity-40">
                   {message.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
 
               {message.tipo === 'user' && (
-                <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bg-secondary)' }}>
-                  <User className="w-3.5 h-3.5" style={{ color: 'var(--text-tertiary)' }} />
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bg-secondary)' }}>
+                  <User className="w-4.5 h-4.5" style={{ color: 'var(--text-tertiary)' }} />
                 </div>
               )}
             </div>
           ))}
 
           {isTyping && (
-            <div className="flex gap-2.5">
-              <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--violet-500), var(--cyan-500))' }}>
-                <Bot className="w-3.5 h-3.5 text-white" />
+            <div className="flex gap-3">
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, var(--violet-500), var(--cyan-500))' }}>
+                <Bot className="w-4.5 h-4.5 text-white" />
               </div>
-              <div className="rounded-xl px-3 py-2.5" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-                <div className="flex gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: 'var(--violet-400)', animationDelay: '0ms' }} />
-                  <div className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: 'var(--cyan-400)', animationDelay: '150ms' }} />
-                  <div className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: 'var(--emerald-400)', animationDelay: '300ms' }} />
+              <div className="rounded-2xl px-4 py-3" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                <div className="flex gap-1.5">
+                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--violet-400)', animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--cyan-400)', animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--emerald-400)', animationDelay: '300ms' }} />
                 </div>
               </div>
             </div>
@@ -834,33 +834,32 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         </div>
 
         {attachedFiles.length > 0 && (
-          <div className="px-3 py-1.5 flex flex-wrap gap-1.5" style={{ borderTop: '1px solid var(--border)' }}>
+          <div className="px-4 py-2 flex flex-wrap gap-2" style={{ borderTop: '1px solid var(--border)' }}>
             {attachedFiles.map((f, i) => (
-              <span key={i} className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-md" style={{ background: 'var(--accent-glow)', color: 'var(--violet-400)' }}>
-                <File className="w-2.5 h-2.5" />{f}
-                <button onClick={() => removeFile(f)} className="ml-0.5 hover:opacity-70"><X className="w-2.5 h-2.5" /></button>
+              <span key={i} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg" style={{ background: 'var(--accent-glow)', color: 'var(--violet-400)' }}>
+                <File className="w-3 h-3" />{f}
+                <button onClick={() => removeFile(f)} className="ml-0.5 hover:opacity-70"><X className="w-3 h-3" /></button>
               </span>
             ))}
           </div>
         )}
 
-        <div className="p-3" style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
-          <div className="flex gap-2">
+        <div className="p-4" style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
+          <div className="flex gap-3">
             <button 
               onClick={() => setShowSkills(true)} 
-              className="p-2.5 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[var(--violet-500)]"
+              className="btn-icon"
               style={{ color: 'var(--violet-400)', border: '1px solid rgba(139, 92, 246, 0.2)', background: 'var(--accent-glow)' }}
               aria-label="Abrir seletor de skills"
             >
-              <Puzzle className="w-4 h-4" />
+              <Puzzle className="w-5 h-5" />
             </button>
             <button 
               onClick={handleFileAttach} 
-              className="p-2.5 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[var(--violet-500)]"
-              style={{ color: 'var(--text-muted)', border: '1px solid var(--border)' }}
+              className="btn-icon"
               aria-label="Anexar arquivo"
             >
-              <Paperclip className="w-4 h-4" />
+              <Paperclip className="w-5 h-5" />
             </button>
             <input
               type="text"
@@ -868,42 +867,42 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
               placeholder={steps.length === 0 ? "Descreva o fluxo que quer criar..." : "Mande um prompt para executar..."}
-              className="input-field flex-1 text-xs focus:ring-2 focus:ring-[var(--violet-500)]"
+              className="input-field flex-1 text-sm"
               aria-label="Mensagem para o assistente"
               maxLength={2000}
             />
             <button 
               onClick={handleSendMessage} 
               disabled={!inputValue.trim() || isTyping} 
-              className="btn-primary px-3 disabled:opacity-50"
+              className="btn-primary px-5 disabled:opacity-50"
               aria-label={isTyping ? "Enviando..." : "Enviar mensagem"}
             >
-              {isTyping ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              {isTyping ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
             </button>
           </div>
-          <div className="flex items-center justify-between mt-1.5">
-            <div className="flex gap-1.5">
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex gap-2">
               {steps.length === 0 ? (
                 <>
-                  <button onClick={() => setInputValue('Busque empresas no Google Maps, faca scraping, crie proposta e envie por email')} className="text-[10px] px-2 py-1 rounded-md transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+                  <button onClick={() => setInputValue('Busque empresas no Google Maps, faca scraping, crie proposta e envie por email')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
                     Fluxo completo
                   </button>
-                  <button onClick={() => setInputValue('Pesquise leads, analise com IA, crie site melhorado e publique')} className="text-[10px] px-2 py-1 rounded-md transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+                  <button onClick={() => setInputValue('Pesquise leads, analise com IA, crie site melhorado e publique')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
                     Criar sites
                   </button>
                 </>
               ) : (
                 <>
-                  <button onClick={() => setInputValue('20 empresas com site feio em Sao Paulo')} className="text-[10px] px-2 py-1 rounded-md transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+                  <button onClick={() => setInputValue('20 empresas com site feio em Sao Paulo')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
                     20 empresas SP
                   </button>
-                  <button onClick={() => setInputValue('10 clinicas 5 estrelas sem site no RJ')} className="text-[10px] px-2 py-1 rounded-md transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
+                  <button onClick={() => setInputValue('10 clinicas 5 estrelas sem site no RJ')} className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--surface-hover)]" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
                     10 clinicas RJ
                   </button>
                 </>
               )}
             </div>
-            <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
               {inputValue.length}/2000
             </span>
           </div>
@@ -919,24 +918,24 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
       {showUpgradeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
-          <div className="card w-full max-w-sm p-5 text-center" style={{ boxShadow: '0 0 40px var(--accent-glow)' }}>
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'var(--accent-glow)', border: '1px solid rgba(139, 92, 246, 0.2)' }}>
-              <Crown className="w-7 h-7" style={{ color: 'var(--violet-400)' }} />
+          <div className="card w-full max-w-md p-8 text-center" style={{ boxShadow: '0 0 50px var(--accent-glow)' }}>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--accent-glow)', border: '1px solid rgba(139, 92, 246, 0.2)' }}>
+              <Crown className="w-8 h-8" style={{ color: 'var(--violet-400)' }} />
             </div>
-            <h2 className="text-base font-bold mb-1" style={{ color: 'var(--text-primary)' }}>Upgrade para Premium</h2>
-            <p className="text-xs mb-4" style={{ color: 'var(--text-tertiary)' }}>
+            <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Upgrade para Premium</h2>
+            <p className="text-sm mb-6" style={{ color: 'var(--text-tertiary)' }}>
               Os modelos de IA avancados como Kimi K3, MiniMax e outros estao disponiveis no plano Premium.
             </p>
-            <div className="p-3 rounded-lg mb-4" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-              <p className="text-2xl font-bold mb-0.5" style={{ color: 'var(--violet-400)' }}>R$ 10<span className="text-xs font-normal" style={{ color: 'var(--text-muted)' }}>/mes</span></p>
-              <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Acesso ilimitado a todos os modelos</p>
+            <div className="p-4 rounded-xl mb-6" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+              <p className="text-3xl font-bold mb-1" style={{ color: 'var(--violet-400)' }}>R$ 10<span className="text-sm font-normal" style={{ color: 'var(--text-muted)' }}>/mes</span></p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Acesso ilimitado a todos os modelos</p>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => setShowUpgradeModal(false)} className="btn-secondary flex-1 text-xs">
+            <div className="flex gap-3">
+              <button onClick={() => setShowUpgradeModal(false)} className="btn-secondary flex-1 text-sm">
                 Agora nao
               </button>
-              <a href="#pricing" onClick={() => setShowUpgradeModal(false)} className="btn-primary flex-1 flex items-center justify-center gap-1.5 text-xs">
-                <Crown className="w-3.5 h-3.5" />
+              <a href="#pricing" onClick={() => setShowUpgradeModal(false)} className="btn-primary flex-1 flex items-center justify-center gap-2 text-sm">
+                <Crown className="w-4 h-4" />
                 Ver Planos
               </a>
             </div>
@@ -947,54 +946,54 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       {/* HITL Approval Modal */}
       {hitlPending && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)' }}>
-          <div className="card w-full max-w-md" style={{ 
-            boxShadow: '0 0 40px rgba(244, 63, 94, 0.15)',
+          <div className="card w-full max-w-lg" style={{ 
+            boxShadow: '0 0 50px rgba(244, 63, 94, 0.15)',
             border: '1.5px solid var(--rose-400)'
           }}>
-            <div className="p-4" style={{ borderBottom: '1px solid var(--border)' }}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(244, 63, 94, 0.08)' }}>
-                  <AlertTriangle className="w-5 h-5" style={{ color: 'var(--rose-400)' }} />
+            <div className="p-5" style={{ borderBottom: '1px solid var(--border)' }}>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(244, 63, 94, 0.1)' }}>
+                  <AlertTriangle className="w-6 h-6" style={{ color: 'var(--rose-400)' }} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
+                  <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>
                     Aprovacao Necessaria (HITL)
                   </h3>
-                  <p className="text-[10px]" style={{ color: 'var(--rose-400)' }}>
+                  <p className="text-sm" style={{ color: 'var(--rose-400)' }}>
                     Acao potencialmente perigosa detectada
                   </p>
                 </div>
               </div>
             </div>
-            <div className="p-4 space-y-3">
-              <div className="p-3 rounded-lg" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-                <p className="text-[10px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Etapa</p>
-                <p className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>{hitlPending.step.nome}</p>
+            <div className="p-5 space-y-4">
+              <div className="p-4 rounded-xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+                <p className="text-sm font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Etapa</p>
+                <p className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>{hitlPending.step.nome}</p>
               </div>
-              <div className="p-3 rounded-lg" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-                <p className="text-[10px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Descricao</p>
-                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{hitlPending.step.descricao}</p>
+              <div className="p-4 rounded-xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+                <p className="text-sm font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Descricao</p>
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{hitlPending.step.descricao}</p>
               </div>
-              <div className="p-3 rounded-lg" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-                <p className="text-[10px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Tipo de risco</p>
-                <p className="text-xs font-semibold" style={{ color: 'var(--rose-40)' }}>{hitlPending.actionType.replace('_', ' ').toUpperCase()}</p>
+              <div className="p-4 rounded-xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+                <p className="text-sm font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Tipo de risco</p>
+                <p className="text-base font-bold" style={{ color: 'var(--rose-400)' }}>{hitlPending.actionType.replace('_', ' ').toUpperCase()}</p>
               </div>
             </div>
-            <div className="p-4 flex gap-2" style={{ borderTop: '1px solid var(--border)' }}>
+            <div className="p-5 flex gap-3" style={{ borderTop: '1px solid var(--border)' }}>
               <button 
                 onClick={() => handleHITLDecision(false)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-medium transition-all"
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all"
                 style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--rose-400)', border: '1px solid rgba(244, 63, 94, 0.2)' }}
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
                 Rejeitar
               </button>
               <button 
                 onClick={() => handleHITLDecision(true)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-medium transition-all"
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all"
                 style={{ background: 'var(--emerald-500)', color: 'white' }}
               >
-                <CheckCircle className="w-3.5 h-3.5" />
+                <CheckCircle className="w-4 h-4" />
                 Aprovar
               </button>
             </div>
@@ -1006,27 +1005,27 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       {showHitlLog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
           <div className="card w-full max-w-lg max-h-[80vh] flex flex-col">
-            <div className="p-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
-                <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Historico de Aprovacoes</h3>
+            <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
+              <div className="flex items-center gap-3">
+                <Shield className="w-5 h-5" style={{ color: 'var(--violet-400)' }} />
+                <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Historico de Aprovacoes</h3>
               </div>
-              <button onClick={() => setShowHitlLog(false)} className="text-xs" style={{ color: 'var(--text-muted)' }}>Fechar</button>
+              <button onClick={() => setShowHitlLog(false)} className="text-sm" style={{ color: 'var(--text-muted)' }}>Fechar</button>
             </div>
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {hitlLog.length === 0 ? (
-                <p className="text-center text-xs py-8" style={{ color: 'var(--text-muted)' }}>Nenhuma aprovacao registrada</p>
+                <p className="text-center text-sm py-10" style={{ color: 'var(--text-muted)' }}>Nenhuma aprovacao registrada</p>
               ) : (
                 hitlLog.map((entry, i) => (
-                  <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg" style={{ background: 'var(--surface)' }}>
-                    <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: entry.status === 'approved' ? 'rgba(52, 211, 153, 0.1)' : 'rgba(244, 63, 94, 0.1)' }}>
-                      {entry.status === 'approved' ? <CheckCircle className="w-4 h-4" style={{ color: 'var(--emerald-400)' }} /> : <X className="w-4 h-4" style={{ color: 'var(--rose-400)' }} />}
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--surface)' }}>
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: entry.status === 'approved' ? 'rgba(52, 211, 153, 0.1)' : 'rgba(244, 63, 94, 0.1)' }}>
+                      {entry.status === 'approved' ? <CheckCircle className="w-5 h-5" style={{ color: 'var(--emerald-400)' }} /> : <X className="w-5 h-5" style={{ color: 'var(--rose-400)' }} />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium truncate" style={{ color: 'var(--text-primary)' }}>{entry.step}</p>
-                      <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{entry.actionType.replace('_', ' ')} - {entry.timestamp.toLocaleTimeString('pt-BR')}</p>
+                      <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{entry.step}</p>
+                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{entry.actionType.replace('_', ' ')} - {entry.timestamp.toLocaleTimeString('pt-BR')}</p>
                     </div>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded" style={{
+                    <span className="text-xs px-2 py-1 rounded-lg" style={{
                       background: entry.status === 'approved' ? 'rgba(52, 211, 153, 0.1)' : 'rgba(244, 63, 94, 0.1)',
                       color: entry.status === 'approved' ? 'var(--emerald-400)' : 'var(--rose-400)'
                     }}>
@@ -1042,17 +1041,17 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
 
       {/* Accessibility Tree Panel */}
       {accessTree && (
-        <div className="fixed bottom-4 left-4 z-40 w-96 max-h-64 rounded-lg overflow-hidden" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', boxShadow: '0 10px 40px rgba(0,0,0,0.4)' }}>
-          <div className="p-2.5 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
+        <div className="fixed bottom-4 left-4 z-40 w-[480px] max-h-80 rounded-xl overflow-hidden" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', boxShadow: '0 12px 48px rgba(0,0,0,0.4)' }}>
+          <div className="p-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
             <div className="flex items-center gap-2">
-              <Eye className="w-3.5 h-3.5" style={{ color: 'var(--cyan-400)' }} />
-              <span className="text-[10px] font-medium" style={{ color: 'var(--text-primary)' }}>Accessibility Tree</span>
+              <Eye className="w-4 h-4" style={{ color: 'var(--cyan-400)' }} />
+              <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Accessibility Tree</span>
             </div>
-            <button onClick={() => setAccessTree(null)} className="p-0.5 rounded hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-muted)' }}>
-              <X className="w-3 h-3" />
+            <button onClick={() => setAccessTree(null)} className="btn-icon" style={{ width: '32px', height: '32px' }}>
+              <X className="w-4 h-4" />
             </button>
           </div>
-          <pre className="p-3 text-[10px] font-mono overflow-y-auto max-h-48" style={{ color: 'var(--text-secondary)' }}>
+          <pre className="p-4 text-sm font-mono overflow-y-auto max-h-60" style={{ color: 'var(--text-secondary)' }}>
             {accessTree}
           </pre>
         </div>

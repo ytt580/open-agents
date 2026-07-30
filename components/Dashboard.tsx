@@ -10,32 +10,33 @@ import { Flow } from '@/app/dashboard/page'
 interface DashboardProps {
   onNavigate: (page: string) => void
   onSelectFlow: (id: string) => void
+  onNewFlow: () => void
   flows: Flow[]
 }
 
-export function Dashboard({ onNavigate, onSelectFlow, flows }: DashboardProps) {
+export function Dashboard({ onNavigate, onSelectFlow, onNewFlow, flows }: DashboardProps) {
   const currentPlan = 'free' as string
   
   return (
-    <div className="p-5 md:p-6 space-y-5 animate-fade-in">
+    <div className="p-6 md:p-8 space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Visao Geral</h1>
-          <p className="mt-0.5 text-xs" style={{ color: 'var(--text-tertiary)' }}>Acompanhe suas automacoes</p>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Visao Geral</h1>
+          <p className="mt-1 text-base" style={{ color: 'var(--text-tertiary)' }}>Acompanhe suas automacoes</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <div 
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold"
             style={{ 
-              background: currentPlan === 'premium' ? 'var(--accent-glow)' : 'rgba(34, 211, 238, 0.06)', 
-              border: `1px solid ${currentPlan === 'premium' ? 'var(--violet-500)' : 'rgba(34, 211, 238, 0.15)'}`
+              background: currentPlan === 'premium' ? 'var(--accent-glow)' : 'rgba(34, 211, 238, 0.08)', 
+              border: `1px solid ${currentPlan === 'premium' ? 'var(--violet-500)' : 'rgba(34, 211, 238, 0.2)'}`
             }}
           >
             {currentPlan === 'premium' ? (
-              <Crown className="w-3.5 h-3.5" style={{ color: 'var(--violet-400)' }} />
+              <Crown className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
             ) : (
-              <Zap className="w-3.5 h-3.5" style={{ color: 'var(--cyan-400)' }} />
+              <Zap className="w-4 h-4" style={{ color: 'var(--cyan-400)' }} />
             )}
             <span style={{ color: currentPlan === 'premium' ? 'var(--violet-400)' : 'var(--cyan-400)' }}>
               {currentPlan === 'premium' ? 'Premium (Kimi K3)' : 'Free (GPT-4o)'}
@@ -45,61 +46,61 @@ export function Dashboard({ onNavigate, onSelectFlow, flows }: DashboardProps) {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="card p-4 transition-all duration-200 hover:border-[var(--violet-500)]">
-          <div className="flex items-center gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="card p-5 transition-all duration-200 hover:border-[var(--violet-500)]">
+          <div className="flex items-center gap-4">
             <div 
-              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: 'rgba(139, 92, 246, 0.08)' }}
+              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'rgba(139, 92, 246, 0.1)' }}
             >
-              <BarChart3 className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
+              <BarChart3 className="w-6 h-6" style={{ color: 'var(--violet-400)' }} />
             </div>
             <div>
-              <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Fluxos</p>
-              <p className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{flows.length}</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Fluxos</p>
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{flows.length}</p>
             </div>
           </div>
         </div>
-        <div className="card p-4 transition-all duration-200 hover:border-[var(--emerald-500)]">
-          <div className="flex items-center gap-3">
+        <div className="card p-5 transition-all duration-200 hover:border-[var(--emerald-500)]">
+          <div className="flex items-center gap-4">
             <div 
-              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: 'rgba(52, 211, 153, 0.08)' }}
+              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'rgba(52, 211, 153, 0.1)' }}
             >
-              <CheckCircle className="w-4 h-4" style={{ color: 'var(--emerald-400)' }} />
+              <CheckCircle className="w-6 h-6" style={{ color: 'var(--emerald-400)' }} />
             </div>
             <div>
-              <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Tarefas Hoje</p>
-              <p className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>0</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Tarefas Hoje</p>
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>0</p>
             </div>
           </div>
         </div>
-        <div className="card p-4 transition-all duration-200 hover:border-[var(--cyan-500)]">
-          <div className="flex items-center gap-3">
+        <div className="card p-5 transition-all duration-200 hover:border-[var(--cyan-500)]">
+          <div className="flex items-center gap-4">
             <div 
-              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: 'rgba(34, 211, 238, 0.08)' }}
+              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'rgba(34, 211, 238, 0.1)' }}
             >
-              <Users className="w-4 h-4" style={{ color: 'var(--cyan-400)' }} />
+              <Users className="w-6 h-6" style={{ color: 'var(--cyan-400)' }} />
             </div>
             <div>
-              <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Leads</p>
-              <p className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>0</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Leads</p>
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>0</p>
             </div>
           </div>
         </div>
-        <div className="card p-4 transition-all duration-200 hover:border-[var(--rose-500)]">
-          <div className="flex items-center gap-3">
+        <div className="card p-5 transition-all duration-200 hover:border-[var(--rose-500)]">
+          <div className="flex items-center gap-4">
             <div 
-              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: 'rgba(244, 63, 94, 0.08)' }}
+              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'rgba(244, 63, 94, 0.1)' }}
             >
-              <Terminal className="w-4 h-4" style={{ color: 'var(--rose-400)' }} />
+              <Terminal className="w-6 h-6" style={{ color: 'var(--rose-400)' }} />
             </div>
             <div>
-              <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Uso IA</p>
-              <p className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
-                0<span className="text-xs font-normal" style={{ color: 'var(--text-muted)' }}>/100</span>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Uso IA</p>
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                0<span className="text-sm font-normal" style={{ color: 'var(--text-muted)' }}>/100</span>
               </p>
             </div>
           </div>
@@ -108,36 +109,36 @@ export function Dashboard({ onNavigate, onSelectFlow, flows }: DashboardProps) {
 
       {/* Flows list or empty state */}
       {flows.length > 0 ? (
-        <div className="space-y-3">
-          <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Seus Fluxos</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Seus Fluxos</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {flows.map((flow) => (
               <div 
                 key={flow.id}
-                className="card p-4 cursor-pointer group transition-all duration-200 hover:border-[var(--violet-500)]"
+                className="card p-5 cursor-pointer group transition-all duration-200 hover:border-[var(--violet-500)]"
                 onClick={() => onSelectFlow(flow.id)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && onSelectFlow(flow.id)}
                 aria-label={`Abrir fluxo ${flow.nome}`}
               >
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-4">
                   <div 
-                    className="w-9 h-9 rounded-lg flex items-center justify-center"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center"
                     style={{ background: 'var(--accent-glow)' }}
                   >
-                    <Bot className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
+                    <Bot className="w-6 h-6" style={{ color: 'var(--violet-400)' }} />
                   </div>
                   <ArrowUpRight 
-                    className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all duration-150"
+                    className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-all duration-200"
                     style={{ color: 'var(--violet-400)' }}
                   />
                 </div>
-                <h3 className="font-semibold text-sm mb-0.5" style={{ color: 'var(--text-primary)' }}>{flow.nome}</h3>
-                <p className="text-xs mb-2" style={{ color: 'var(--text-muted)' }}>
+                <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--text-primary)' }}>{flow.nome}</h3>
+                <p className="text-sm mb-3" style={{ color: 'var(--text-muted)' }}>
                   {flow.steps.length} etapas
                 </p>
-                <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
                   Criado em {new Date(flow.createdAt).toLocaleDateString('pt-BR')}
                 </p>
               </div>
@@ -145,20 +146,20 @@ export function Dashboard({ onNavigate, onSelectFlow, flows }: DashboardProps) {
             
             {/* New flow card */}
             <div 
-              className="card p-4 cursor-pointer group transition-all duration-200 border-dashed hover:border-[var(--violet-500)]"
-              onClick={() => onNavigate('flows')}
+              className="card p-5 cursor-pointer group transition-all duration-200 border-dashed hover:border-[var(--violet-500)]"
+              onClick={onNewFlow}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && onNavigate('flows')}
+              onKeyDown={(e) => e.key === 'Enter' && onNewFlow()}
               aria-label="Criar novo fluxo"
             >
-              <div className="flex items-center justify-center h-full min-h-[100px]">
+              <div className="flex items-center justify-center h-full min-h-[140px]">
                 <div className="text-center">
                   <Plus 
-                    className="w-7 h-7 mx-auto mb-2 transition-transform duration-200 group-hover:scale-105"
+                    className="w-10 h-10 mx-auto mb-3 transition-transform duration-200 group-hover:scale-110"
                     style={{ color: 'var(--violet-400)' }}
                   />
-                  <p className="text-xs font-medium" style={{ color: 'var(--text-tertiary)' }}>Novo Fluxo</p>
+                  <p className="text-base font-semibold" style={{ color: 'var(--text-tertiary)' }}>Novo Fluxo</p>
                 </div>
               </div>
             </div>
@@ -166,102 +167,104 @@ export function Dashboard({ onNavigate, onSelectFlow, flows }: DashboardProps) {
         </div>
       ) : (
         <div 
-          className="card p-8 md:p-10 text-center"
-          style={{ boxShadow: '0 0 30px var(--accent-glow)' }}
+          className="card p-10 md:p-12 text-center"
+          style={{ boxShadow: '0 0 40px var(--accent-glow)' }}
         >
           <div 
-            className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4"
+            className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6"
             style={{ background: 'var(--accent-glow)' }}
           >
-            <Bot className="w-7 h-7" style={{ color: 'var(--violet-400)' }} />
+            <Bot className="w-10 h-10" style={{ color: 'var(--violet-400)' }} />
           </div>
-          <h3 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Nenhum fluxo ainda</h3>
-          <p className="mb-5 text-xs" style={{ color: 'var(--text-tertiary)' }}>Crie seu primeiro fluxo de automacao para comecar</p>
+          <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Nenhum fluxo ainda</h3>
+          <p className="mb-8 text-base max-w-md mx-auto" style={{ color: 'var(--text-tertiary)' }}>
+            Crie seu primeiro fluxo de automacao para comecar a automatizar tarefas repetitivas
+          </p>
           <button 
-            onClick={() => onNavigate('flows')}
-            className="btn-primary text-sm"
+            onClick={onNewFlow}
+            className="btn-primary text-base"
             aria-label="Criar primeiro fluxo"
           >
-            <Terminal className="w-4 h-4" />
+            <Terminal className="w-5 h-5" />
             <span>Criar Primeiro Fluxo</span>
           </button>
         </div>
       )}
 
       {/* Quick actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <button 
           onClick={() => onNavigate('browser')}
-          className="card p-4 text-left transition-all duration-200 group hover:border-[var(--cyan-500)]"
+          className="card p-6 text-left transition-all duration-200 group hover:border-[var(--cyan-500)]"
           aria-label="Abrir navegador"
         >
           <div 
-            className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 transition-transform duration-200 group-hover:scale-105"
-            style={{ background: 'rgba(34, 211, 238, 0.08)' }}
+            className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-transform duration-200 group-hover:scale-105"
+            style={{ background: 'rgba(34, 211, 238, 0.1)' }}
           >
-            <Globe className="w-5 h-5" style={{ color: 'var(--cyan-400)' }} />
+            <Globe className="w-7 h-7" style={{ color: 'var(--cyan-400)' }} />
           </div>
-          <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Abrir Navegador</h3>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>Acesse sites e navegue com IA</p>
+          <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Abrir Navegador</h3>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>Acesse sites e navegue com IA</p>
         </button>
 
         <button 
           onClick={() => onNavigate('skills')}
-          className="card p-4 text-left transition-all duration-200 group hover:border-[var(--violet-500)]"
+          className="card p-6 text-left transition-all duration-200 group hover:border-[var(--violet-500)]"
           aria-label="Gerenciar skills"
         >
           <div 
-            className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 transition-transform duration-200 group-hover:scale-105"
-            style={{ background: 'rgba(139, 92, 246, 0.08)' }}
+            className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-transform duration-200 group-hover:scale-105"
+            style={{ background: 'rgba(139, 92, 246, 0.1)' }}
           >
-            <Puzzle className="w-5 h-5" style={{ color: 'var(--violet-400)' }} />
+            <Puzzle className="w-7 h-7" style={{ color: 'var(--violet-400)' }} />
           </div>
-          <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Gerenciar Skills</h3>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>Crie e use skills de automacao</p>
+          <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Gerenciar Skills</h3>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>Crie e use skills de automacao</p>
         </button>
 
         <button 
           onClick={() => onNavigate('api')}
-          className="card p-4 text-left transition-all duration-200 group hover:border-[var(--rose-500)]"
+          className="card p-6 text-left transition-all duration-200 group hover:border-[var(--rose-500)]"
           aria-label="Configurar APIs"
         >
           <div 
-            className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 transition-transform duration-200 group-hover:scale-105"
-            style={{ background: 'rgba(244, 63, 94, 0.08)' }}
+            className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-transform duration-200 group-hover:scale-105"
+            style={{ background: 'rgba(244, 63, 94, 0.1)' }}
           >
-            <Zap className="w-5 h-5" style={{ color: 'var(--rose-400)' }} />
+            <Zap className="w-7 h-7" style={{ color: 'var(--rose-400)' }} />
           </div>
-          <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Configurar APIs</h3>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>Adicione suas chaves de API</p>
+          <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Configurar APIs</h3>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>Adicione suas chaves de API</p>
         </button>
       </div>
 
       {/* Plan upgrade banner */}
       {currentPlan === 'free' && (
         <div 
-          className="card p-4 relative overflow-hidden transition-all duration-200 hover:shadow-lg"
-          style={{ border: '1px solid var(--violet-500)', boxShadow: '0 0 25px var(--accent-glow)' }}
+          className="card p-6 relative overflow-hidden transition-all duration-200 hover:shadow-lg"
+          style={{ border: '1px solid var(--violet-500)', boxShadow: '0 0 30px var(--accent-glow)' }}
         >
           <div 
-            className="absolute top-0 right-0 w-56 h-56 opacity-[0.06]"
+            className="absolute top-0 right-0 w-64 h-64 opacity-[0.08]"
             style={{ background: 'radial-gradient(circle, var(--violet-500) 0%, transparent 70%)' }}
           />
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
+            <div className="flex items-center gap-4">
               <div 
-                className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{ background: 'var(--accent-glow)' }}
               >
-                <Crown className="w-5 h-5" style={{ color: 'var(--violet-400)' }} />
+                <Crown className="w-7 h-7" style={{ color: 'var(--violet-400)' }} />
               </div>
               <div>
-                <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Upgrade para Premium</h3>
-                <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Desbloqueie Kimi K3, agentes ilimitados, WhatsApp, API e mais</p>
+                <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>Upgrade para Premium</h3>
+                <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>Desbloqueie Kimi K3, agentes ilimitados, WhatsApp, API e mais</p>
               </div>
             </div>
-            <button className="btn-primary text-xs py-2 px-4 flex-shrink-0" aria-label="Ver planos premium">
+            <button className="btn-primary text-sm py-3 px-6 flex-shrink-0" aria-label="Ver planos premium">
               <span>Ver Planos</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

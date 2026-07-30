@@ -31,32 +31,32 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
     <aside 
       className={clsx(
         'fixed left-0 top-0 h-full transition-all duration-300 z-50',
-        collapsed ? 'w-16' : 'w-56'
+        collapsed ? 'w-20' : 'w-64'
       )} 
       style={{ 
         background: 'var(--bg-primary)', 
         borderRight: '1px solid var(--border)',
-        boxShadow: '4px 0 20px rgba(0, 0, 0, 0.4)'
+        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.4)'
       }}
     >
       <div className="flex flex-col h-full">
         {/* Logo */}
-        <div className="p-4" style={{ borderBottom: '1px solid var(--border)' }}>
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 flex-shrink-0">
+        <div className="p-5" style={{ borderBottom: '1px solid var(--border)' }}>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 flex-shrink-0">
               <img src="/logo.svg" alt="Open-Agents" className="w-full h-full" />
             </div>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <h1 className="font-bold text-sm tracking-tight" style={{ color: 'var(--text-primary)' }}>Open-Agents</h1>
-                <div className="flex items-center gap-1 mt-0.5">
+                <h1 className="font-bold text-lg tracking-tight" style={{ color: 'var(--text-primary)' }}>Open-Agents</h1>
+                <div className="flex items-center gap-1.5 mt-0.5">
                   {currentPlan === 'premium' ? (
-                    <Crown className="w-2.5 h-2.5" style={{ color: 'var(--violet-400)' }} />
+                    <Crown className="w-3 h-3" style={{ color: 'var(--violet-400)' }} />
                   ) : (
-                    <Zap className="w-2.5 h-2.5" style={{ color: 'var(--cyan-400)' }} />
+                    <Zap className="w-3 h-3" style={{ color: 'var(--cyan-400)' }} />
                   )}
                   <span 
-                    className="text-[10px] font-medium"
+                    className="text-xs font-medium"
                     style={{ color: currentPlan === 'premium' ? 'var(--violet-400)' : 'var(--cyan-400)' }}
                   >
                     {currentPlan === 'premium' ? 'Premium' : 'Free'}
@@ -68,26 +68,27 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
         </div>
 
         {/* New Flow Button */}
-        <div className="p-3">
+        <div className="p-4">
           <button 
             onClick={onNewFlow} 
             className={clsx(
-              'w-full flex items-center justify-center gap-2 py-2.5 rounded-lg font-medium text-xs transition-all duration-200',
-              'hover:shadow-md hover:scale-[1.01] active:scale-[0.98]'
+              'w-full flex items-center justify-center gap-2.5 py-3 rounded-xl font-semibold text-sm transition-all duration-200',
+              'hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]'
             )} 
             style={{ 
               background: 'linear-gradient(135deg, var(--violet-600), var(--violet-500))', 
               color: 'white', 
-              boxShadow: '0 0 16px var(--accent-glow)' 
+              boxShadow: '0 0 20px var(--accent-glow)',
+              minHeight: '48px'
             }}
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-5 h-5" />
             {!collapsed && <span>Novo Fluxo</span>}
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-2 space-y-0.5">
+        <nav className="flex-1 px-3 space-y-1">
           {menuItems.map((item) => {
             const isActive = currentPage === item.id
             return (
@@ -95,21 +96,21 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
                 className={clsx(
-                  'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all duration-200',
+                  'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
                   isActive 
-                    ? 'font-medium' 
+                    ? 'font-semibold' 
                     : 'hover:bg-[var(--surface-hover)]'
                 )}
                 style={isActive ? {
                   background: 'var(--accent-glow)',
                   color: 'var(--violet-300)',
-                  boxShadow: 'inset 0 0 16px var(--accent-glow)'
+                  boxShadow: 'inset 0 0 20px var(--accent-glow)'
                 } : {
                   color: 'var(--text-tertiary)'
                 }}
               >
-                <item.icon className="w-4 h-4 flex-shrink-0" />
-                {!collapsed && <span className="text-xs">{item.label}</span>}
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                {!collapsed && <span className="text-sm">{item.label}</span>}
               </button>
             )
           })}
@@ -118,23 +119,23 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
         {/* Upgrade banner */}
         {!collapsed && currentPlan === 'free' && (
           <div 
-            className="mx-2 mb-2 p-3 rounded-lg"
+            className="mx-3 mb-3 p-4 rounded-xl"
             style={{ 
               background: 'var(--accent-glow)', 
               border: '1px solid rgba(139, 92, 246, 0.2)',
-              boxShadow: '0 0 16px var(--accent-glow)'
+              boxShadow: '0 0 20px var(--accent-glow)'
             }}
           >
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <Crown className="w-3.5 h-3.5" style={{ color: 'var(--violet-400)' }} />
-              <span className="text-xs font-semibold" style={{ color: 'var(--violet-400)' }}>Premium</span>
+            <div className="flex items-center gap-2 mb-2">
+              <Crown className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
+              <span className="text-sm font-bold" style={{ color: 'var(--violet-400)' }}>Premium</span>
             </div>
-            <p className="text-[10px] mb-2" style={{ color: 'var(--text-tertiary)' }}>
+            <p className="text-xs mb-3" style={{ color: 'var(--text-tertiary)' }}>
               Desbloqueie Kimi K3 e agentes ilimitados
             </p>
             <button 
-              className="w-full py-1.5 rounded-md text-[10px] font-semibold transition-all hover:scale-[1.01]"
-              style={{ background: 'var(--violet-600)', color: 'white' }}
+              className="w-full py-2.5 rounded-lg text-xs font-bold transition-all hover:scale-[1.02]"
+              style={{ background: 'var(--violet-600)', color: 'white', minHeight: '40px' }}
             >
               Upgrade
             </button>
@@ -142,13 +143,13 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
         )}
 
         {/* Collapse button */}
-        <div className="p-2">
+        <div className="p-3">
           <button
             onClick={onToggleCollapse}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-[var(--surface-hover)]"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-[var(--surface-hover)]"
             style={{ color: 'var(--text-muted)' }}
           >
-            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
           </button>
         </div>
       </div>
