@@ -30,7 +30,7 @@ const actionConfig: Record<HITLActionType, { label: string; icon: any; cor: stri
   deletion: { label: 'Exclusao', icon: Trash2, cor: 'var(--rose-400)', bg: 'rgba(244, 63, 94, 0.08)', alerta: 'Exclusao permanente de dados' },
   financial_data: { label: 'Dados Financeiros', icon: FileText, cor: 'var(--amber-400)', bg: 'rgba(251, 191, 36, 0.08)', alerta: 'Informacoes financeiras expostas' },
   mass_send: { label: 'Envio em Massa', icon: Send, cor: 'var(--amber-400)', bg: 'rgba(251, 191, 36, 0.08)', alerta: 'Envio para multiplos destinatarios' },
-  sensitive_data: { label: 'Dados Sensiveis', icon: Lock, cor: 'var(--violet-400)', bg: 'rgba(217, 70, 239, 0.08)', alerta: 'Dados pessoais ou confidenciais' },
+  sensitive_data: { label: 'Dados Sensiveis', icon: Lock, cor: 'var(--violet-400)', bg: 'rgba(249, 115, 22, 0.08)', alerta: 'Dados pessoais ou confidenciais' },
   custom: { label: 'Acao Personalizada', icon: AlertTriangle, cor: 'var(--cyan-400)', bg: 'rgba(34, 211, 238, 0.08)', alerta: 'Acao que requer aprovacao' },
 }
 

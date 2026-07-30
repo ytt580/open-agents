@@ -33,31 +33,28 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
         collapsed ? 'w-20' : 'w-64'
       )} 
       style={{ 
-        background: 'var(--bg-primary)', 
-        borderRight: '1px solid var(--border)',
-        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.4)'
+        background: '#ffffff', 
+        borderRight: '1px solid #e7e5e4',
+        boxShadow: '1px 0 8px rgba(0, 0, 0, 0.04)'
       }}
     >
       <div className="flex flex-col h-full">
         {/* Logo */}
-        <div className="p-5" style={{ borderBottom: '1px solid var(--border)' }}>
+        <div className="p-5" style={{ borderBottom: '1px solid #e7e5e4' }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 flex-shrink-0">
-              <img src="/logo.svg" alt="Open-Agents" className="w-full h-full" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #f97316, #ef4444)' }}>
+              <Zap className="w-5 h-5 text-white" strokeWidth={3} />
             </div>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <h1 className="font-bold text-lg tracking-tight" style={{ color: 'var(--text-primary)' }}>Open-Agents</h1>
+                <h1 className="font-black text-lg tracking-tight" style={{ color: '#1c1917' }}>Open-Agents</h1>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   {currentPlan === 'premium' ? (
-                    <Crown className="w-3 h-3" style={{ color: 'var(--violet-400)' }} />
+                    <Crown className="w-3 h-3" style={{ color: '#f97316' }} />
                   ) : (
-                    <Zap className="w-3 h-3" style={{ color: 'var(--cyan-400)' }} />
+                    <Zap className="w-3 h-3" style={{ color: '#78716c' }} />
                   )}
-                  <span 
-                    className="text-xs font-medium"
-                    style={{ color: currentPlan === 'premium' ? 'var(--violet-400)' : 'var(--cyan-400)' }}
-                  >
+                  <span className="text-xs font-bold" style={{ color: currentPlan === 'premium' ? '#ea580c' : '#78716c' }}>
                     {currentPlan === 'premium' ? 'Premium' : 'Free'}
                   </span>
                 </div>
@@ -71,13 +68,12 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
           <button 
             onClick={onNewFlow} 
             className={clsx(
-              'w-full flex items-center justify-center gap-2.5 py-3 rounded-xl font-semibold text-sm transition-all duration-200',
-              'hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]'
+              'w-full flex items-center justify-center gap-2.5 py-3 rounded-xl font-bold text-sm transition-all duration-200',
+              'hover:shadow-md hover:scale-[1.02] active:scale-[0.98]'
             )} 
             style={{ 
-              background: 'linear-gradient(135deg, var(--violet-600), var(--violet-500))', 
-              color: 'white', 
-              boxShadow: '0 0 20px var(--accent-glow)',
+              background: '#1c1917', 
+              color: 'white',
               minHeight: '48px'
             }}
           >
@@ -97,15 +93,14 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
                 className={clsx(
                   'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
                   isActive 
-                    ? 'font-semibold' 
-                    : 'hover:bg-[var(--surface-hover)]'
+                    ? 'font-bold' 
+                    : 'hover:bg-[#f5f5f4]'
                 )}
                 style={isActive ? {
-                  background: 'var(--accent-glow)',
-                  color: 'var(--violet-300)',
-                  boxShadow: 'inset 0 0 20px var(--accent-glow)'
+                  background: '#fff7ed',
+                  color: '#ea580c',
                 } : {
-                  color: 'var(--text-tertiary)'
+                  color: '#78716c'
                 }}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -120,21 +115,20 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
           <div 
             className="mx-3 mb-3 p-4 rounded-xl"
             style={{ 
-              background: 'var(--accent-glow)', 
-              border: '1px solid rgba(217, 70, 239, 0.2)',
-              boxShadow: '0 0 20px var(--accent-glow)'
+              background: '#fff7ed', 
+              border: '1px solid #fed7aa',
             }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <Crown className="w-4 h-4" style={{ color: 'var(--violet-400)' }} />
-              <span className="text-sm font-bold" style={{ color: 'var(--violet-400)' }}>Premium</span>
+              <Crown className="w-4 h-4" style={{ color: '#f97316' }} />
+              <span className="text-sm font-bold" style={{ color: '#ea580c' }}>Premium</span>
             </div>
-            <p className="text-xs mb-3" style={{ color: 'var(--text-tertiary)' }}>
+            <p className="text-xs mb-3" style={{ color: '#78716c' }}>
               Desbloqueie Kimi K3 e agentes ilimitados
             </p>
             <button 
               className="w-full py-2.5 rounded-lg text-xs font-bold transition-all hover:scale-[1.02]"
-              style={{ background: 'var(--violet-600)', color: 'white', minHeight: '40px' }}
+              style={{ background: '#f97316', color: 'white', minHeight: '40px' }}
             >
               Upgrade
             </button>
@@ -145,8 +139,8 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
         <div className="p-3">
           <button
             onClick={onToggleCollapse}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-[var(--surface-hover)]"
-            style={{ color: 'var(--text-muted)' }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-[#f5f5f4]"
+            style={{ color: '#a8a29e' }}
           >
             {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
           </button>

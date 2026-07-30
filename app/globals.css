@@ -5,32 +5,32 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /* ============================================
-   OPEN-AGENTS DESIGN SYSTEM v4
-   Style: WishLabs — Bold, Spacious, Vibrant
+   OPEN-AGENTS DESIGN SYSTEM v5
+   Style: Warm, Bold, Distinctive — Not Generic AI
    ============================================ */
 
 :root {
-  /* === BACKGROUNDS === */
-  --bg-void: #0a0a0f;
-  --bg-primary: #0e0e16;
-  --bg-secondary: #13131f;
-  --bg-tertiary: #1a1a2e;
-  --bg-elevated: #222240;
+  /* === BACKGROUNDS — Light/Warm === */
+  --bg-void: #fafaf9;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f4;
+  --bg-tertiary: #e7e5e4;
+  --bg-elevated: #ffffff;
   
-  /* === ACCENTS — WishLabs Pink/Fuchsia/Magenta === */
-  --violet-50: #fdf4ff;
-  --violet-100: #fae8ff;
-  --violet-200: #f5d0fe;
-  --violet-300: #f0abfc;
-  --violet-400: #e879f9;
-  --violet-500: #d946ef;
-  --violet-600: #c026d3;
-  --violet-700: #a21caf;
-  --violet-800: #86198f;
-  --violet-900: #701a75;
+  /* === ACCENTS — Warm/Orange/Pink === */
+  --violet-50: #fff7ed;
+  --violet-100: #ffedd5;
+  --violet-200: #fed7aa;
+  --violet-300: #fdba74;
+  --violet-400: #fb923c;
+  --violet-500: #f97316;
+  --violet-600: #ea580c;
+  --violet-700: #c2410c;
+  --violet-800: #9a3412;
+  --violet-900: #7c2d12;
   
-  --cyan-400: #22d3ee;
-  --cyan-500: #06b6d4;
+  --cyan-400: #06b6d4;
+  --cyan-500: #0891b2;
   
   --emerald-400: #34d399;
   --emerald-500: #10b981;
@@ -43,30 +43,30 @@
   /* === SEMANTIC === */
   --accent: var(--violet-500);
   --accent-light: var(--violet-400);
-  --accent-glow: rgba(217, 70, 239, 0.12);
-  --accent-glow-strong: rgba(217, 70, 239, 0.25);
+  --accent-glow: rgba(249, 115, 22, 0.08);
+  --accent-glow-strong: rgba(249, 115, 22, 0.15);
   
-  /* === TEXT === */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-tertiary: #64748b;
-  --text-muted: #475569;
+  /* === TEXT — Dark on Light === */
+  --text-primary: #1c1917;
+  --text-secondary: #57534e;
+  --text-tertiary: #78716c;
+  --text-muted: #a8a29e;
   
   /* === BORDERS === */
-  --border: rgba(255, 255, 255, 0.07);
-  --border-hover: rgba(217, 70, 239, 0.2);
+  --border: #e7e5e4;
+  --border-hover: #d6d3d1;
   --border-active: var(--violet-500);
   
   /* === SURFACES === */
-  --surface: rgba(255, 255, 255, 0.025);
-  --surface-hover: rgba(255, 255, 255, 0.05);
+  --surface: #ffffff;
+  --surface-hover: #f5f5f4;
   
   /* === SHADOWS === */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.6);
-  --shadow-xl: 0 24px 80px rgba(0, 0, 0, 0.7);
-  --shadow-glow: 0 0 60px var(--accent-glow);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 40px var(--accent-glow);
   
   /* === RADIUS === */
   --radius-sm: 10px;
@@ -104,10 +104,10 @@ body {
    SCROLLBAR
    ============================================ */
 
-::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
 
 /* ============================================
    CARD
@@ -140,7 +140,7 @@ body {
   font-size: 1rem;
   border-radius: var(--radius-md);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  background: linear-gradient(135deg, #c026d3, #e879f9);
+  background: #1c1917;
   color: white;
   border: none;
   cursor: pointer;
@@ -149,8 +149,8 @@ body {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #d946ef, #f0abfc);
-  box-shadow: 0 0 40px rgba(217, 70, 239, 0.3);
+  background: #292524;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
 
@@ -168,29 +168,32 @@ body {
   border-radius: var(--radius-md);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   background: transparent;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   border: 1.5px solid var(--border);
   cursor: pointer;
   min-height: 52px;
+  letter-spacing: -0.02em;
 }
 
 .btn-secondary:hover {
-  background: var(--surface-hover);
   border-color: var(--border-hover);
-  color: var(--text-primary);
+  background: var(--surface-hover);
+  transform: translateY(-1px);
 }
+
+.btn-secondary:active { transform: translateY(0); }
 
 .btn-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-md);
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border);
+  color: var(--text-tertiary);
+  border: 1px solid transparent;
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -198,6 +201,7 @@ body {
 .btn-icon:hover {
   background: var(--surface-hover);
   color: var(--text-primary);
+  border-color: var(--border);
 }
 
 /* ============================================
@@ -206,82 +210,33 @@ body {
 
 .input-field {
   width: 100%;
-  padding: 14px 20px;
-  background: var(--bg-secondary);
-  border: 1.5px solid var(--border);
+  padding: 14px 16px;
   border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
   color: var(--text-primary);
-  font-size: 1rem;
   font-family: var(--font-sans);
-  transition: all 0.2s;
-  min-height: 52px;
-}
-
-.input-field:focus {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
   outline: none;
-  border-color: var(--violet-500);
-  box-shadow: 0 0 0 4px var(--accent-glow);
 }
 
 .input-field::placeholder { color: var(--text-muted); }
 
-textarea.input-field { min-height: 100px; resize: vertical; }
-
-/* ============================================
-   TEXT
-   ============================================ */
-
-.text-gradient {
-  background: linear-gradient(135deg, #a78bfa, #22d3ee);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.input-field:focus {
+  border-color: var(--violet-400);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+.input-field:read-only {
+  background: var(--surface-hover);
+  cursor: default;
 }
 
-.animate-fade-in { animation: fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-.animate-on-scroll {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s cubic-bezier(0.33, 1, 0.68, 1), transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.animate-on-scroll.animate-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.hero-element {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s cubic-bezier(0.33, 1, 0.68, 1), transform 0.7s cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.hero-element.hero-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
-  50% { box-shadow: 0 0 30px 8px var(--accent-glow); }
-}
-
-.animate-pulse-glow { animation: pulse-glow 2.5s ease-in-out infinite; }
-
-@keyframes float {
-  0%, 100% { transform: translate(0, 0); }
-  33% { transform: translate(8px, -14px); }
-  66% { transform: translate(-6px, -8px); }
+textarea.input-field {
+  resize: none;
+  line-height: 1.5;
 }
 
 /* ============================================
@@ -289,19 +244,14 @@ textarea.input-field { min-height: 100px; resize: vertical; }
    ============================================ */
 
 .toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: #d6d3d1;
   position: relative;
-  width: 48px;
-  height: 26px;
-  border-radius: var(--radius-full);
-  transition: all 0.2s;
   cursor: pointer;
-  background: var(--border);
+  transition: background 0.2s ease;
   flex-shrink: 0;
-}
-
-.toggle.active {
-  background: var(--violet-600);
-  box-shadow: 0 0 16px var(--accent-glow);
 }
 
 .toggle::after {
@@ -309,40 +259,68 @@ textarea.input-field { min-height: 100px; resize: vertical; }
   position: absolute;
   top: 3px;
   left: 3px;
-  width: 20px;
-  height: 20px;
-  background: white;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: var(--shadow-sm);
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease;
 }
 
-.toggle.active::after { transform: translateX(22px); }
+.toggle.active {
+  background: var(--violet-500);
+}
+
+.toggle.active::after {
+  transform: translateX(20px);
+}
 
 /* ============================================
-   STATUS
+   ANIMATIONS
    ============================================ */
 
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
-  font-size: 0.875rem;
-  font-weight: 600;
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.status-online {
-  background: rgba(52, 211, 153, 0.12);
-  color: var(--emerald-400);
+.animate-on-scroll.animate-visible {
+  opacity: 1;
+  transform: none;
 }
 
-.status-online::before {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--emerald-400);
-  animation: pulse-glow 2s ease-in-out infinite;
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-12px) rotate(1deg); }
+  66% { transform: translateY(6px) rotate(-1deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+  50% { box-shadow: 0 0 40px var(--accent-glow-strong); }
+}
+
+/* ============================================
+   HERO ANIMATIONS
+   ============================================ */
+
+.hero-element {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-element.hero-visible {
+  opacity: 1;
+  transform: none;
 }
