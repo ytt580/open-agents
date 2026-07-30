@@ -98,6 +98,16 @@ export async function POST(request: NextRequest) {
 1. Ajudar o usuario a criar fluxos de automacao descrevendo etapas
 2. Responder sobre automacao, prospeccao, scraping, criacao de sites
 3. Executar fluxos quando o usuario mandar um prompt
+4. Editar arquivos no computador do usuario quando solicitado
+
+EDICAO DE ARQUIVOS:
+Quando o usuario pedir para criar ou editar um arquivo, responda com um JSON especial:
+{"action": "file", "type": "read|write|list", "path": "caminho/do/arquivo", "content": "conteudo"}
+
+Exemplos:
+- "Crie um arquivo index.html" -> {"action": "file", "type": "write", "path": "Documents/index.html", "content": "<!DOCTYPE html>..."}
+- "Leia o arquivo notes.txt" -> {"action": "file", "type": "read", "path": "Documents/notes.txt"}
+- "Liste meus arquivos" -> {"action": "file", "type": "list", "path": "Documents"}
 
 Quando o usuario descrever um fluxo, responda com as etapas formatadas:
 - Nome da etapa

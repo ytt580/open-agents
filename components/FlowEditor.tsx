@@ -61,7 +61,16 @@ interface ExecutionLog {
   message: string
 }
 
+interface Checkpoint {
+  id: string
+  nome: string
+  timestamp: Date
+  steps: Step[]
+  messages: Message[]
+}
+
 const MESSAGES_STORAGE_KEY = 'open-agents-messages'
+const CHECKPOINTS_STORAGE_KEY = 'open-agents-checkpoints'
 
 function loadMessages(flowId: string): Message[] {
   if (typeof window === 'undefined') return []
@@ -82,6 +91,28 @@ function saveMessages(flowId: string, messages: Message[]) {
   if (typeof window === 'undefined') return
   try {
     localStorage.setItem(`${MESSAGES_STORAGE_KEY}-${flowId}`, JSON.stringify(messages))
+  } catch {}
+}
+
+function loadCheckpoints(flowId: string): Checkpoint[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const stored = localStorage.getItem(`${CHECKPOINTS_STORAGE_KEY}-${flowId}`)
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      return parsed.map((c: any) => ({
+        ...c,
+        timestamp: new Date(c.timestamp)
+      }))
+    }
+  } catch {}
+  return []
+}
+
+function saveCheckpoints(flowId: string, checkpoints: Checkpoint[]) {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(`${CHECKPOINTS_STORAGE_KEY}-${flowId}`, JSON.stringify(checkpoints))
   } catch {}
 }
 
@@ -112,6 +143,8 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   const [apiError, setApiError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([])
+  const [showCheckpoints, setShowCheckpoints] = useState(false)
   const currentPlan = 'free'
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -128,6 +161,7 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
         timestamp: new Date()
       }])
     }
+    setCheckpoints(loadCheckpoints(flowId))
     setLoaded(true)
   }, [flowId])
 
@@ -154,6 +188,34 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       return () => document.removeEventListener('click', handleClickOutside)
     }
   }, [showModelMenu])
+
+  const createCheckpoint = (name: string) => {
+    const checkpoint: Checkpoint = {
+      id: Date.now().toString(),
+      nome: name,
+      timestamp: new Date(),
+      steps: [...steps],
+      messages: [...messages]
+    }
+    const updated = [...checkpoints, checkpoint]
+    setCheckpoints(updated)
+    saveCheckpoints(flowId, updated)
+  }
+
+  const restoreCheckpoint = (checkpointId: string) => {
+    const checkpoint = checkpoints.find(c => c.id === checkpointId)
+    if (checkpoint) {
+      setSteps(checkpoint.steps)
+      setMessages(checkpoint.messages)
+      setShowCheckpoints(false)
+    }
+  }
+
+  const deleteCheckpoint = (checkpointId: string) => {
+    const updated = checkpoints.filter(c => c.id !== checkpointId)
+    setCheckpoints(updated)
+    saveCheckpoints(flowId, updated)
+  }
 
   const parseFlowFromAI = (input: string): Step[] => {
     const lower = input.toLowerCase()
@@ -256,6 +318,10 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       lower.includes('maps') || lower.includes('google') || lower.includes('leads') ||
       lower.includes('empresa') || lower.includes('negocio')
 
+    if (isCreatingFlow && steps.length > 0) {
+      createCheckpoint('Antes de modificar fluxo')
+    }
+
     if (isCreatingFlow) {
       const parsed = parseFlowFromAI(userInput)
       setSteps(parsed)
@@ -272,10 +338,11 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
       }, 1000)
     } else {
       const aiResponse = await callAI(userInput, [...messages, userMessage])
+      const processedResponse = await processAIResponse(aiResponse)
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         tipo: 'ai',
-        conteudo: aiResponse,
+        conteudo: processedResponse,
         timestamp: new Date()
       }])
       setIsTyping(false)
@@ -342,6 +409,51 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
     }])
   }
 
+  const handleFileAction = async (action: string, path: string, content?: string) => {
+    try {
+      const res = await fetch('/api/files', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, path, content })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      return data
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao acessar arquivo'
+      setApiError(message)
+      return null
+    }
+  }
+
+  const processAIResponse = async (response: string) => {
+    const jsonMatch = response.match(/\{"action":\s*"file"[^}]+\}/)
+    if (jsonMatch) {
+      try {
+        const fileAction = JSON.parse(jsonMatch[0])
+        if (fileAction.action === 'file') {
+          const result = await handleFileAction(
+            fileAction.type,
+            fileAction.path,
+            fileAction.content
+          )
+          if (result) {
+            if (fileAction.type === 'read') {
+              return `Conteudo de ${fileAction.path}:\n\`\`\`\n${result.content}\n\`\`\``
+            } else if (fileAction.type === 'write') {
+              return `Arquivo ${fileAction.path} criado/salvo com sucesso!`
+            } else if (fileAction.type === 'list') {
+              const items = result.items.map((i: any) => `${i.isDirectory ? '📁' : '📄'} ${i.name}`).join('\n')
+              return `Arquivos em ${fileAction.path}:\n${items}`
+            }
+          }
+          return 'Nao consegui processar a acao no arquivo.'
+        }
+      } catch {}
+    }
+    return response
+  }
+
   return (
     <div className="flex h-screen" style={{ background: 'var(--bg-primary)' }}>
       <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} />
@@ -356,7 +468,76 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
             <h2 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Meu Fluxo</h2>
             <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{steps.length} etapas</p>
           </div>
+          <button 
+            onClick={() => setShowCheckpoints(!showCheckpoints)}
+            className="p-2 rounded-lg transition-colors hover:bg-[var(--bg-secondary)] relative"
+            style={{ color: checkpoints.length > 0 ? 'var(--plasma-400)' : 'var(--text-tertiary)' }}
+            title="Historico de checkpoints"
+          >
+            <Clock className="w-5 h-5" />
+            {checkpoints.length > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-xs flex items-center justify-center" style={{ background: 'var(--plasma-500)', color: 'white', fontSize: '10px' }}>
+                {checkpoints.length}
+              </span>
+            )}
+          </button>
         </div>
+
+        {/* Checkpoints Panel */}
+        {showCheckpoints && (
+          <div className="p-4 space-y-3" style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-secondary)' }}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Historico</h3>
+              <button 
+                onClick={() => {
+                  if (steps.length > 0) {
+                    createCheckpoint('Checkpoint manual')
+                  }
+                }}
+                className="text-xs px-2 py-1 rounded-lg transition-colors"
+                style={{ 
+                  background: steps.length > 0 ? 'var(--accent-glow)' : 'var(--bg-tertiary)',
+                  color: steps.length > 0 ? 'var(--accent)' : 'var(--text-tertiary)'
+                }}
+                disabled={steps.length === 0}
+              >
+                + Salvar agora
+              </button>
+            </div>
+            {checkpoints.length === 0 ? (
+              <p className="text-xs text-center py-4" style={{ color: 'var(--text-tertiary)' }}>
+                Nenhum checkpoint salvo
+              </p>
+            ) : (
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {checkpoints.map((cp) => (
+                  <div key={cp.id} className="flex items-center gap-2 p-2 rounded-lg" style={{ background: 'var(--surface)' }}>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate" style={{ color: 'var(--text-primary)' }}>{cp.nome}</p>
+                      <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+                        {cp.steps.length} etapas - {cp.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                    <button 
+                      onClick={() => restoreCheckpoint(cp.id)}
+                      className="text-xs px-2 py-1 rounded transition-colors"
+                      style={{ background: 'var(--plasma-500)', color: 'white' }}
+                    >
+                      Restaurar
+                    </button>
+                    <button 
+                      onClick={() => deleteCheckpoint(cp.id)}
+                      className="p-1 rounded transition-colors hover:bg-[var(--bg-secondary)]"
+                      style={{ color: 'var(--text-tertiary)' }}
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {steps.length === 0 ? (
