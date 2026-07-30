@@ -176,9 +176,25 @@ export function BrowserView() {
                     {browserclawConnected ? 'Sessoes autenticadas disponiveis' : 'Porta 9222 nao encontrada'}
                   </p>
                 </div>
+                <button 
+                  onClick={async () => {
+                    try {
+                      const res = await fetch('http://localhost:9222/json/version', { 
+                        method: 'GET',
+                        signal: AbortSignal.timeout(3000)
+                      })
+                      if (res.ok) setBrowserclawConnected(true)
+                      else setBrowserclawConnected(false)
+                    } catch { setBrowserclawConnected(false) }
+                  }}
+                  className="text-xs px-3 py-1.5 rounded-lg font-medium transition-all hover:opacity-80"
+                  style={{ background: 'var(--bg-muted)', color: 'var(--fg)', border: '1px solid var(--border)' }}
+                >
+                  Testar
+                </button>
               </div>
               {!browserclawConnected && (
-                <div className="p-3 rounded-xl text-xs space-y-2" style={{ 
+                <div className="p-3 rounded-xl text-xs space-y-2.5" style={{ 
                   background: 'var(--bg-muted)', 
                   border: '1px solid var(--border)',
                   color: 'var(--fg-muted)'
@@ -186,12 +202,27 @@ export function BrowserView() {
                   <p className="font-semibold" style={{ color: 'var(--fg)' }}>Para ativar o BrowserClaw:</p>
                   <ol className="list-decimal list-inside space-y-1">
                     <li>Fechhe todos os Chrome abertos</li>
-                    <li>Abra o terminal e execute:</li>
+                    <li>Clique no botao abaixo ou execute no terminal:</li>
                   </ol>
-                  <code className="block p-2 rounded-lg text-xs" style={{ background: 'var(--bg)', color: 'var(--green)', wordBreak: 'break-all' }}>
-                    chrome.exe --remote-debugging-port=9222
-                  </code>
-                  <p>Usara seus logins salvos (LinkedIn, CRM, etc.)</p>
+                  <button 
+                    onClick={() => navigator.clipboard.writeText('chrome.exe --remote-debugging-port=9222')}
+                    className="w-full text-left p-2 rounded-lg text-xs font-medium transition-all hover:opacity-80 cursor-pointer"
+                    style={{ background: 'var(--bg)', color: 'var(--green)', border: '1px solid var(--border)', wordBreak: 'break-all' }}
+                  >
+                    $ chrome.exe --remote-debugging-port=9222
+                    <span className="ml-2 opacity-50">clicar para copiar</span>
+                  </button>
+                  <p className="text-[11px] leading-relaxed">Usara seus logins salvos (LinkedIn, CRM, etc.)</p>
+                </div>
+              )}
+              {browserclawConnected && (
+                <div className="p-3 rounded-xl text-xs space-y-2" style={{ 
+                  background: 'rgba(52, 211, 153, 0.05)', 
+                  border: '1px solid rgba(52, 211, 153, 0.15)',
+                  color: 'var(--fg-muted)'
+                }}>
+                  <p className="font-semibold" style={{ color: 'var(--green)' }}>Chrome conectado!</p>
+                  <p>Navegue pelo BrowserClaw para usar sessoes autenticadas.</p>
                 </div>
               )}
             </div>
