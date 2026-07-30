@@ -5,42 +5,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --bg: #ffffff;
-  --bg-subtle: #fafafa;
-  --bg-muted: #f5f5f5;
-  --bg-inset: #eeeeee;
-  --bg-void: #ffffff;
-  --bg-primary: #ffffff;
-  --bg-alt: #f5f5f5;
-  --surface: #ffffff;
+  --bg: #0a0a0a;
+  --bg-subtle: #111111;
+  --bg-muted: #1a1a1a;
+  --bg-inset: #222222;
+  --bg-void: #000000;
+  --bg-primary: #0a0a0a;
+  --bg-alt: #141414;
+  --surface: #141414;
   
-  --fg: #0a0a0a;
-  --fg-secondary: #555555;
-  --fg-muted: #888888;
-  --fg-faint: #bbbbbb;
-  --fg-subtle: #888888;
-  --text-secondary: #555555;
+  --fg: #fafafa;
+  --fg-secondary: #a1a1a1;
+  --fg-muted: #666666;
+  --fg-faint: #444444;
+  --fg-subtle: #666666;
+  --text-secondary: #a1a1a1;
   
-  --border: #e5e5e5;
-  --border-hover: #d4d4d4;
+  --border: #222222;
+  --border-hover: #333333;
   
-  --accent: #0a0a0a;
-  --accent-secondary: #555555;
-  --accent-glow: rgba(10, 10, 10, 0.08);
+  --accent: #fafafa;
+  --accent-secondary: #a1a1a1;
+  --accent-glow: rgba(250, 250, 250, 0.06);
   
-  --green: #16a34a;
-  --green-bg: #f0fdf4;
-  --red: #dc2626;
-  --red-bg: #fef2f2;
-  --orange: #ea580c;
-  --orange-bg: #fff7ed;
-  --blue: #2563eb;
-  --blue-bg: #eff6ff;
-  --purple: #7c3aed;
-  --purple-bg: #f5f3ff;
-  --cyan: #0891b2;
-  --cyan-bg: #ecfeff;
-  --amber-400: #d97706;
+  --green: #22c55e;
+  --green-bg: rgba(34, 197, 94, 0.1);
+  --red: #ef4444;
+  --red-bg: rgba(239, 68, 68, 0.1);
+  --orange: #f97316;
+  --orange-bg: rgba(249, 115, 22, 0.1);
+  --blue: #3b82f6;
+  --blue-bg: rgba(59, 130, 246, 0.1);
+  --purple: #a855f7;
+  --purple-bg: rgba(168, 85, 247, 0.1);
+  --cyan: #06b6d4;
+  --cyan-bg: rgba(6, 182, 212, 0.1);
+  --amber-400: #fbbf24;
   --violet-300: #c4b5fd;
   --violet-500: #8b5cf6;
   
@@ -51,10 +51,10 @@
   --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
 }
 
 * { box-sizing: border-box; }
@@ -74,12 +74,12 @@ body {
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #ccc; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #444; }
 
 /* CARD */
 .card {
-  background: var(--bg);
+  background: var(--surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -100,13 +100,13 @@ body {
   border-radius: var(--radius);
   transition: all 0.15s ease;
   background: var(--fg);
-  color: white;
+  color: var(--bg);
   border: none;
   cursor: pointer;
   white-space: nowrap;
   min-height: 48px;
 }
-.btn-primary:hover { background: #222; }
+.btn-primary:hover { opacity: 0.9; }
 .btn-primary:active { transform: scale(0.98); }
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
@@ -120,14 +120,14 @@ body {
   font-size: 16px;
   border-radius: var(--radius);
   transition: all 0.15s ease;
-  background: var(--bg);
+  background: transparent;
   color: var(--fg);
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   cursor: pointer;
   white-space: nowrap;
   min-height: 48px;
 }
-.btn-secondary:hover { border-color: var(--border-hover); background: var(--bg-subtle); }
+.btn-secondary:hover { border-color: var(--border-hover); background: var(--bg-muted); }
 .btn-secondary:active { transform: scale(0.98); }
 
 .btn-icon {
@@ -151,8 +151,8 @@ body {
   width: 100%;
   padding: 14px 18px;
   border-radius: var(--radius);
-  border: 1.5px solid var(--border);
-  background: var(--bg);
+  border: 1px solid var(--border);
+  background: var(--bg-muted);
   color: var(--fg);
   font-family: var(--font);
   font-size: 16px;
@@ -161,7 +161,7 @@ body {
   outline: none;
 }
 .input-field::placeholder { color: var(--fg-faint); }
-.input-field:focus { border-color: var(--fg); box-shadow: 0 0 0 1px var(--fg); }
+.input-field:focus { border-color: var(--fg-muted); box-shadow: 0 0 0 1px var(--fg-muted); }
 .input-field:read-only { background: var(--bg-subtle); cursor: default; }
 textarea.input-field { resize: none; line-height: 1.6; }
 
@@ -170,7 +170,7 @@ textarea.input-field { resize: none; line-height: 1.6; }
   width: 44px;
   height: 24px;
   border-radius: 12px;
-  background: #ddd;
+  background: #333;
   position: relative;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -185,7 +185,7 @@ textarea.input-field { resize: none; line-height: 1.6; }
   height: 18px;
   border-radius: 50%;
   background: white;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   transition: transform 0.15s ease;
 }
 .toggle.active { background: var(--fg); }
@@ -198,4 +198,41 @@ textarea.input-field { resize: none; line-height: 1.6; }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* CODE BLOCK */
+.code-block {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  overflow-x: auto;
+}
+
+/* GLOW */
+.glow {
+  position: relative;
+}
+.glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--orange), var(--purple), var(--cyan));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(20px);
+}
+.glow:hover::before {
+  opacity: 0.15;
 }

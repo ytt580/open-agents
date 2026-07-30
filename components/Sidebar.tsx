@@ -42,8 +42,8 @@ export function Sidebar({ currentPage, onNavigate, onNewFlow, collapsed, onToggl
         {/* Logo */}
         <div className="p-5 pb-4" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--fg)' }}>
-              <Zap className="w-5 h-5 text-white" strokeWidth={3} />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#fafafa' }}>
+              <Zap className="w-5 h-5" style={{ color: '#0a0a0a' }} strokeWidth={3} />
             </div>
             {!collapsed && (
               <div className="flex-1 min-w-0">
