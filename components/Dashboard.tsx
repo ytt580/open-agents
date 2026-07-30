@@ -143,14 +143,31 @@ export function Dashboard({ onNavigate, onSelectFlow, onNewFlow, flows }: Dashbo
           </div>
         </div>
       ) : (
-        <div className="card p-12 text-center">
+        <div className="card p-8 md:p-12 text-center">
           <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ background: 'var(--bg-muted)' }}>
             <Bot className="w-10 h-10" style={{ color: 'var(--fg)' }} />
           </div>
-          <h3 className="text-3xl font-extrabold mb-3" style={{ color: 'var(--fg)' }}>Nenhum fluxo ainda</h3>
-          <p className="mb-8 text-lg max-w-md mx-auto" style={{ color: 'var(--fg-muted)' }}>
-            Crie seu primeiro fluxo de automacao para comecar a automatizar tarefas repetitivas
+          <h3 className="text-2xl md:text-3xl font-extrabold mb-3" style={{ color: 'var(--fg)' }}>Como posso ajudar?</h3>
+          <p className="mb-8 text-base md:text-lg max-w-lg mx-auto" style={{ color: 'var(--fg-muted)' }}>
+            Descreva o que voce quer automatizar e eu crio o fluxo completo pra voce
           </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto mb-8">
+            {[
+              '20 empresas com site feio em SP pra enviar proposta',
+              'Scraping de leads no Google Maps de restaurantes',
+              'Criar site profissional pra clinica odontologica',
+              'Enviar emails personalizados pra 50 prospects',
+            ].map((prompt, i) => (
+              <button
+                key={i}
+                onClick={onNewFlow}
+                className="text-left p-3 rounded-xl text-sm transition-all hover:scale-[1.02]"
+                style={{ background: 'var(--bg-muted)', color: 'var(--fg-secondary)', border: '1px solid var(--border)' }}
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
           <button onClick={onNewFlow} className="btn-primary text-base" aria-label="Criar primeiro fluxo">
             <Terminal className="w-5 h-5" />
             <span>Criar Primeiro Fluxo</span>
@@ -207,7 +224,7 @@ export function Dashboard({ onNavigate, onSelectFlow, onNewFlow, flows }: Dashbo
               </div>
               <div>
                 <h3 className="font-bold text-lg" style={{ color: 'var(--fg)' }}>Upgrade para Premium</h3>
-                <p className="text-base" style={{ color: 'var(--fg-muted)' }}>Kimi K3, agentes ilimitados, WhatsApp, API e mais</p>
+                <p className="text-base" style={{ color: 'var(--fg-muted)' }}>Fable 5, gerador de sites Next.js, R$99 por site</p>
               </div>
             </div>
             <button className="btn-primary flex-shrink-0" aria-label="Ver planos premium">
