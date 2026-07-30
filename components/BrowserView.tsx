@@ -128,7 +128,7 @@ export function BrowserView() {
   }
 
   return (
-    <div className="flex h-screen" style={{ background: 'var(--bg-subtle)' }}>
+    <div className="flex h-full" style={{ background: 'var(--bg-subtle)' }}>
       {/* Sidebar */}
       <div className="w-80 flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--bg)' }}>
         {/* Mode Selector */}
