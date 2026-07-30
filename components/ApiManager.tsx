@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   Plus, 
   Trash2, 
@@ -21,7 +21,7 @@ import {
 interface ApiKey {
   id: string
   nome: string
-  provedor: 'openai' | 'anthropic' | 'google' | 'modal' | 'outro'
+  provedor: 'openai' | 'anthropic' | 'google' | 'modal' | 'github' | 'outro'
   chave: string
   ativo: boolean
   usoHoje: number
@@ -33,13 +33,47 @@ const provedores = {
   anthropic: { label: 'Anthropic (Claude)', icon: Bot, cor: 'var(--accent)', bg: 'var(--accent-glow)', url: 'https://console.anthropic.com/' },
   google: { label: 'Google (Gemini)', icon: Globe, cor: 'var(--cyan)', bg: 'rgba(34, 211, 238, 0.15)', url: 'https://aistudio.google.com/apikey' },
   modal: { label: 'Bluesminds (Kimi K3)', icon: Zap, cor: 'var(--pink)', bg: 'rgba(244, 114, 182, 0.15)', url: '' },
+  github: { label: 'GitHub (GPT-5/4o)', icon: Bot, cor: 'var(--accent)', bg: 'var(--accent-glow)', url: 'https://github.com/settings/tokens' },
   outro: { label: 'Outro', icon: Key, cor: 'var(--text-secondary)', bg: 'var(--bg-secondary)', url: '' },
 }
 
+const STORAGE_KEY = 'open-agents-api-keys'
+
+function loadKeys(): ApiKey[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      return JSON.parse(stored)
+    }
+  } catch {}
+  
+  return [
+    { id: '1', nome: 'Bluesminds Kimi K3', provedor: 'modal', chave: 'sk-kHPpzsSnsB3qFGzLHc5faG2KDkOfXY16U7rTnzNDvIMiuc1l', ativo: true, usoHoje: 0, limiteDiario: 600 },
+  ]
+}
+
+function saveKeys(keys: ApiKey[]) {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(keys))
+  } catch {}
+}
+
 export function ApiManager() {
-  const [keys, setKeys] = useState<ApiKey[]>([
-    { id: '1', nome: 'Bluesminds Kimi K3', provedor: 'modal', chave: 'sk-kHPpzsSnsB3qFGzLHc5faG2KDkOfXY16U7rTnzNDvIMiuc1l', ativo: true, usoHoje: 47, limiteDiario: 1000 },
-  ])
+  const [keys, setKeys] = useState<ApiKey[]>([])
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    setKeys(loadKeys())
+    setLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    if (loaded) {
+      saveKeys(keys)
+    }
+  }, [keys, loaded])
 
   const [showModal, setShowModal] = useState(false)
   const [editing, setEditing] = useState<ApiKey | null>(null)
@@ -92,6 +126,14 @@ export function ApiManager() {
     setShowKeys(prev => ({ ...prev, [id]: !prev[id] }))
   }
 
+  if (!loaded) {
+    return (
+      <div className="h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
+        <div className="animate-pulse" style={{ color: 'var(--text-tertiary)' }}>Carregando...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="h-screen flex flex-col" style={{ background: 'var(--bg-primary)' }}>
       {/* Header */}
@@ -116,7 +158,7 @@ export function ApiManager() {
         <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'rgba(6, 214, 160, 0.05)', border: '1px solid rgba(6, 214, 160, 0.2)' }}>
           <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--neon)' }} />
           <div className="text-sm" style={{ color: 'var(--neon)' }}>
-            <strong>Seguranca:</strong> As chaves sao salvas localmente no navegador. Para producao, use variaveis de ambiente no servidor. As chaves ficam acessiveis para todos os fluxos e skills que precisem de IA.
+            <strong>Salvo automaticamente:</strong> Suas chaves sao salvas no navegador e persistem apos fechar a pagina. Para producao, use variaveis de ambiente no servidor.
           </div>
         </div>
       </div>
@@ -219,14 +261,14 @@ export function ApiManager() {
                     const prov = provedores[p]
                     const Icon = prov.icon
                     return (
-                      <button key={p} onClick={() => setForm({...form, provedor: p})} className="flex items-center gap-2 p-3 rounded-xl border-2 transition-all" style={{
+                      <button key={p} onClick={() => setForm({...form, provedor: p})} className="flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left" style={{
                         borderColor: form.provedor === p ? 'var(--accent)' : 'var(--border)',
                         background: form.provedor === p ? 'var(--accent-glow)' : 'transparent',
                         color: form.provedor === p ? 'var(--accent)' : 'var(--text-tertiary)',
                         boxShadow: form.provedor === p ? '0 0 15px var(--accent-glow)' : 'none'
                       }}>
-                        <Icon className="w-4 h-4" />
-                        {prov.label}
+                        <Icon className="w-4 h-4 flex-shrink-0" />
+                        <span className="text-xs">{prov.label}</span>
                       </button>
                     )
                   })}

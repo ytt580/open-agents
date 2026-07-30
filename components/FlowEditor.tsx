@@ -460,14 +460,13 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                 border: '1px solid var(--border)',
                 boxShadow: '0 10px 40px rgba(0,0,0,0.5)'
               }}>
-                <div className="p-2">
-                  <p className="text-xs px-2 py-1 mb-1" style={{ color: 'var(--text-tertiary)' }}>Modelo de IA</p>
+                <div className="p-2 max-h-80 overflow-y-auto">
+                  <p className="text-xs px-2 py-1 mb-1" style={{ color: 'var(--text-tertiary)' }}>GitHub (GPT)</p>
                   {[
-                    { id: 'moonshotai/kimi-k2.6', name: 'Kimi K3', desc: 'Mais inteligente' },
-                    { id: 'minimaxai/minimax-m2.7', name: 'MiniMax M2.7', desc: 'Equilibrado' },
-                    { id: 'google/gemma-3-12b-it', name: 'Gemma 4', desc: 'Rapido' },
-                    { id: 'meta/llama2-70b', name: 'Llama 2 70B', desc: 'Avancado' },
-                    { id: 'mistralai/mistral-7b-instruct', name: 'Mistral 7B', desc: 'Leve' },
+                    { id: 'gpt-5', name: 'GPT-5', desc: 'Mais avancado', icon: '🧠' },
+                    { id: 'gpt-4o', name: 'GPT-4o', desc: 'Rapido e inteligente', icon: '⚡' },
+                    { id: 'gpt-4o-mini', name: 'GPT-4o Mini', desc: 'Economico', icon: '💰' },
+                    { id: 'o3-mini', name: 'O3 Mini', desc: 'Raciocinio', icon: '🎯' },
                   ].map(model => (
                     <button
                       key={model.id}
@@ -488,7 +487,44 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
                       aria-selected={selectedModel === model.id}
                       role="option"
                     >
-                      <Sparkles className="w-4 h-4" />
+                      <span className="text-lg">{model.icon}</span>
+                      <div>
+                        <p className="text-sm font-medium">{model.name}</p>
+                        <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{model.desc}</p>
+                      </div>
+                    </button>
+                  ))}
+                  
+                  <div className="my-2 border-t" style={{ borderColor: 'var(--border)' }} />
+                  
+                  <p className="text-xs px-2 py-1 mb-1" style={{ color: 'var(--text-tertiary)' }}>Bluesminds</p>
+                  {[
+                    { id: 'moonshotai/kimi-k2.6', name: 'Kimi K3', desc: 'Mais inteligente', icon: '✨' },
+                    { id: 'minimaxai/minimax-m2.7', name: 'MiniMax M2.7', desc: 'Equilibrado', icon: '⚖️' },
+                    { id: 'google/gemma-3-12b-it', name: 'Gemma 4', desc: 'Rapido', icon: '🏃' },
+                    { id: 'meta/llama2-70b', name: 'Llama 2 70B', desc: 'Avancado', icon: '🦙' },
+                    { id: 'mistralai/mistral-7b-instruct', name: 'Mistral 7B', desc: 'Leve', icon: '💨' },
+                  ].map(model => (
+                    <button
+                      key={model.id}
+                      onClick={() => { setSelectedModel(model.id); setShowModelMenu(false) }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') setShowModelMenu(false)
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          setSelectedModel(model.id)
+                          setShowModelMenu(false)
+                        }
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                      style={{ 
+                        background: selectedModel === model.id ? 'var(--accent-glow)' : 'transparent',
+                        color: selectedModel === model.id ? 'var(--accent)' : 'var(--text-primary)'
+                      }}
+                      aria-selected={selectedModel === model.id}
+                      role="option"
+                    >
+                      <span className="text-lg">{model.icon}</span>
                       <div>
                         <p className="text-sm font-medium">{model.name}</p>
                         <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{model.desc}</p>
