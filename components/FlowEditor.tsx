@@ -61,6 +61,30 @@ interface ExecutionLog {
   message: string
 }
 
+const MESSAGES_STORAGE_KEY = 'open-agents-messages'
+
+function loadMessages(flowId: string): Message[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const stored = localStorage.getItem(`${MESSAGES_STORAGE_KEY}-${flowId}`)
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      return parsed.map((m: any) => ({
+        ...m,
+        timestamp: new Date(m.timestamp)
+      }))
+    }
+  } catch {}
+  return []
+}
+
+function saveMessages(flowId: string, messages: Message[]) {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(`${MESSAGES_STORAGE_KEY}-${flowId}`, JSON.stringify(messages))
+  } catch {}
+}
+
 const stepIcons: Record<string, any> = {
   busca: Search,
   scraping: Globe,
@@ -74,14 +98,8 @@ const stepIcons: Record<string, any> = {
 export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   const [steps, setSteps] = useState<Step[]>(flow?.steps || [])
   const [flowName, setFlowName] = useState(flow?.nome || 'Novo Fluxo')
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      tipo: 'ai',
-      conteudo: 'Ola! Sou sua assistente de automacao. Descreva o fluxo que voce quer criar.\n\nExemplos:\n- "Busque empresas no Google Maps, faca scraping do site, crie uma proposta e envie por email"\n- "Pesquise leads, analise com IA, crie site melhorado e publique"\n\nO que voce quer automatizar?',
-      timestamp: new Date()
-    }
-  ])
+  const [messages, setMessages] = useState<Message[]>([])
+  const [loaded, setLoaded] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [expandedStep, setExpandedStep] = useState<string | null>(null)
@@ -97,6 +115,27 @@ export function FlowEditor({ flowId, flow, onBack, onSave }: FlowEditorProps) {
   const currentPlan = 'free'
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const stored = loadMessages(flowId)
+    if (stored.length > 0) {
+      setMessages(stored)
+    } else {
+      setMessages([{
+        id: '1',
+        tipo: 'ai',
+        conteudo: 'Ola! Sou sua assistente de automacao. Descreva o fluxo que voce quer criar.\n\nExemplos:\n- "Busque empresas no Google Maps, faca scraping do site, crie uma proposta e envie por email"\n- "Pesquise leads, analise com IA, crie site melhorado e publique"\n\nO que voce quer automatizar?',
+        timestamp: new Date()
+      }])
+    }
+    setLoaded(true)
+  }, [flowId])
+
+  useEffect(() => {
+    if (loaded && messages.length > 0) {
+      saveMessages(flowId, messages)
+    }
+  }, [messages, flowId, loaded])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
