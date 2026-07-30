@@ -2,27 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { 
-  Plus, 
-  Trash2, 
-  Edit3, 
-  Clock, 
-  Calendar, 
-  Zap,
-  Play,
-  Pause,
-  CheckCircle,
-  XCircle,
-  ToggleLeft,
-  ToggleRight,
-  Repeat,
-  Sun,
-  Moon,
-  Loader2,
-  Trash2 as Trash,
-  ChevronDown,
-  ChevronUp,
-  AlertTriangle,
-  Save
+  Plus, Trash2, Edit3, Clock, Calendar, Play, Pause,
+  Repeat, Sun, AlertTriangle, Save, ChevronDown
 } from 'lucide-react'
 
 type ScheduleType = 'cron' | 'interval' | 'once' | 'daily' | 'weekly' | 'monthly'
@@ -48,7 +29,6 @@ const scheduleTemplates = [
   { label: 'A cada 30 min', tipo: 'interval' as ScheduleType, expressao: '*/30 * * * *', desc: 'Executa a cada 30 minutos' },
   { label: 'Segundas 9:00', tipo: 'weekly' as ScheduleType, expressao: '0 9 * * 1', desc: 'Toda segunda as 09:00' },
   { label: 'Dia 1 de cada mes', tipo: 'monthly' as ScheduleType, expressao: '0 9 1 * *', desc: 'Primeiro dia do mes as 09:00' },
-  { label: 'Personalizado', tipo: 'cron' as ScheduleType, expressao: '', desc: 'Digite expressao cron customizada' },
 ]
 
 const flows = [
@@ -101,298 +81,155 @@ function formatNextRun(date: Date): string {
   if (diff < 0) return 'Atrasado'
   if (hours < 1) return `Em ${minutes}min`
   if (hours < 24) return `Em ${hours}h ${minutes}min`
-  return date.toLocaleString('pt-BR', { 
-    weekday: 'short', 
-    day: '2-digit', 
-    month: '2-digit', 
-    hour: '2-digit', 
-    minute: '2-digit' 
-  })
+  return date.toLocaleString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
 }
 
 export function Scheduler() {
   const [schedules, setSchedules] = useState<Schedule[]>([
-    {
-      id: '1',
-      nome: 'Prospeccao Diaria 9h',
-      flowId: '1',
-      tipo: 'daily',
-      expressao: '0 9 * * *',
-      proximaExecucao: getProximaExecucao('0 9 * * *'),
-      ativo: true,
-      timezone: 'America/Sao_Paulo',
-      proximaExecucaoStr: ''
-    },
-    {
-      id: '2',
-      nome: 'WhatsApp Follow-up',
-      flowId: '2',
-      tipo: 'interval',
-      expressao: '*/30 * * * *',
-      proximaExecucao: getProximaExecucao('*/30 * * * *'),
-      ativo: true,
-      timezone: 'America/Sao_Paulo',
-      proximaExecucaoStr: ''
-    },
-    {
-      id: '3',
-      nome: 'Publicacao Semanal',
-      flowId: '3',
-      tipo: 'weekly',
-      expressao: '0 9 * * 1',
-      proximaExecucao: getProximaExecucao('0 9 * * 1'),
-      ativo: false,
-      timezone: 'America/Sao_Paulo',
-      proximaExecucaoStr: ''
-    }
+    { id: '1', nome: 'Prospeccao Diaria 9h', flowId: '1', tipo: 'daily', expressao: '0 9 * * *', proximaExecucao: getProximaExecucao('0 9 * * *'), ativo: true, timezone: 'America/Sao_Paulo', proximaExecucaoStr: '' },
+    { id: '2', nome: 'WhatsApp Follow-up', flowId: '2', tipo: 'interval', expressao: '*/30 * * * *', proximaExecucao: getProximaExecucao('*/30 * * * *'), ativo: true, timezone: 'America/Sao_Paulo', proximaExecucaoStr: '' },
+    { id: '3', nome: 'Publicacao Semanal', flowId: '3', tipo: 'weekly', expressao: '0 9 * * 1', proximaExecucao: getProximaExecucao('0 9 * * 1'), ativo: false, timezone: 'America/Sao_Paulo', proximaExecucaoStr: '' },
   ])
 
   const [showModal, setShowModal] = useState(false)
   const [editingSchedule, setEditingSchedule] = useState<Schedule | null>(null)
-  const [formData, setFormData] = useState({
-    nome: '',
-    flowId: '1',
-    tipo: 'daily' as ScheduleType,
-    expressao: '0 9 * * *',
-    timezone: 'America/Sao_Paulo',
-    ativo: true
-  })
+  const [formData, setFormData] = useState({ nome: '', flowId: '1', tipo: 'daily' as ScheduleType, expressao: '0 9 * * *', timezone: 'America/Sao_Paulo', ativo: true })
 
   useEffect(() => {
     const interval = setInterval(() => {
       setSchedules(prev => prev.map(s => ({
-        ...s,
-        proximaExecucao: getProximaExecucao(s.expressao),
-        proximaExecucaoStr: formatNextRun(getProximaExecucao(s.expressao))
+        ...s, proximaExecucao: getProximaExecucao(s.expressao), proximaExecucaoStr: formatNextRun(getProximaExecucao(s.expressao))
       })))
     }, 60000)
-    
-    setSchedules(prev => prev.map(s => ({
-      ...s,
-      proximaExecucaoStr: formatNextRun(getProximaExecucao(s.expressao))
-    })))
-    
+    setSchedules(prev => prev.map(s => ({ ...s, proximaExecucaoStr: formatNextRun(getProximaExecucao(s.expressao)) })))
     return () => clearInterval(interval)
   }, [])
 
   const handleSave = () => {
     if (!formData.nome || !formData.expressao) return
-    
     const newSchedule: Schedule = {
-      id: editingSchedule?.id || Date.now().toString(),
-      ...formData,
-      proximaExecucao: getProximaExecucao(formData.expressao),
-      proximaExecucaoStr: formatNextRun(getProximaExecucao(formData.expressao))
+      id: editingSchedule?.id || Date.now().toString(), ...formData,
+      proximaExecucao: getProximaExecucao(formData.expressao), proximaExecucaoStr: formatNextRun(getProximaExecucao(formData.expressao))
     }
-    
-    if (editingSchedule) {
-      setSchedules(prev => prev.map(s => s.id === editingSchedule.id ? newSchedule : s))
-    } else {
-      setSchedules(prev => [...prev, newSchedule])
-    }
-    
+    if (editingSchedule) setSchedules(prev => prev.map(s => s.id === editingSchedule.id ? newSchedule : s))
+    else setSchedules(prev => [...prev, newSchedule])
     closeModal()
   }
 
-  const closeModal = () => {
-    setShowModal(false)
-    setEditingSchedule(null)
-    setFormData({
-      nome: '',
-      flowId: '1',
-      tipo: 'daily',
-      expressao: '0 9 * * *',
-      timezone: 'America/Sao_Paulo',
-      ativo: true
-    })
-  }
-
-  const handleEdit = (schedule: Schedule) => {
-    setEditingSchedule(schedule)
-    setFormData({
-      nome: schedule.nome,
-      flowId: schedule.flowId,
-      tipo: schedule.tipo,
-      expressao: schedule.expressao,
-      timezone: schedule.timezone,
-      ativo: schedule.ativo
-    })
-    setShowModal(true)
-  }
-
-  const handleDelete = (id: string) => {
-    if (confirm('Excluir este agendamento?')) {
-      setSchedules(prev => prev.filter(s => s.id !== id))
-    }
-  }
-
-  const handleTemplateClick = (template: typeof scheduleTemplates[0]) => {
-    setFormData(prev => ({
-      ...prev,
-      tipo: template.tipo,
-      expressao: template.expressao
-    }))
-  }
-
+  const closeModal = () => { setShowModal(false); setEditingSchedule(null); setFormData({ nome: '', flowId: '1', tipo: 'daily', expressao: '0 9 * * *', timezone: 'America/Sao_Paulo', ativo: true }) }
+  const handleEdit = (schedule: Schedule) => { setEditingSchedule(schedule); setFormData({ nome: schedule.nome, flowId: schedule.flowId, tipo: schedule.tipo, expressao: schedule.expressao, timezone: schedule.timezone, ativo: schedule.ativo }); setShowModal(true) }
+  const handleDelete = (id: string) => { if (confirm('Excluir este agendamento?')) setSchedules(prev => prev.filter(s => s.id !== id)) }
   const getDefaultCron = (tipo: ScheduleType): string => {
     switch (tipo) {
-      case 'daily': return '0 9 * * *'
-      case 'weekly': return '0 9 * * 1'
-      case 'monthly': return '0 9 1 * *'
-      case 'interval': return '*/30 * * * *'
-      case 'cron': return '0 9 * * *'
-      default: return '0 9 * * *'
+      case 'daily': return '0 9 * * *'; case 'weekly': return '0 9 * * 1'; case 'monthly': return '0 9 1 * *'; case 'interval': return '*/30 * * * *'; default: return '0 9 * * *'
     }
   }
 
   return (
-    <div className="h-screen flex flex-col" style={{ background: 'var(--bg-primary)' }}>
-      {/* Header */}
-      <div className="p-6 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(34, 211, 238, 0.15)' }}>
-            <Clock className="w-6 h-6" style={{ color: 'var(--cyan)' }} />
+    <div className="h-screen flex flex-col" style={{ background: 'var(--bg-void)' }}>
+      <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(34, 211, 238, 0.08)' }}>
+            <Clock className="w-5 h-5" style={{ color: 'var(--cyan-400)' }} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Agendador 24/7</h1>
-            <p style={{ color: 'var(--text-tertiary)' }}>
+            <h1 className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>Agendador 24/7</h1>
+            <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
               {schedules.filter(s => s.ativo).length} ativos - {schedules.length} total
             </p>
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: 'rgba(6, 214, 160, 0.1)', border: '1px solid rgba(6, 214, 160, 0.3)' }}>
-            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--neon)' }} />
-            <span className="text-sm font-medium" style={{ color: 'var(--neon)' }}>Scheduler Online</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium" style={{ background: 'rgba(52, 211, 153, 0.06)', border: '1px solid rgba(52, 211, 153, 0.15)' }}>
+            <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--emerald-400)' }} />
+            <span style={{ color: 'var(--emerald-400)' }}>Online</span>
           </div>
-          <button onClick={() => { setFormData({...formData, nome: '', expressao: '0 9 * * *'}); setShowModal(true); }} 
-            className="btn-primary flex items-center gap-2"
-          >
-            <Plus className="w-5 h-5" />
-            Novo Agendamento
+          <button onClick={() => { setFormData({...formData, nome: '', expressao: '0 9 * * *'}); setShowModal(true) }} className="btn-primary text-xs py-2 px-3">
+            <Plus className="w-3.5 h-3.5" />
+            Novo
           </button>
         </div>
       </div>
 
-      {/* Aviso */}
-      <div className="px-6 py-3" style={{ borderBottom: '1px solid rgba(251, 191, 36, 0.3)', background: 'rgba(251, 191, 36, 0.05)' }}>
-        <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'rgba(251, 191, 36, 0.05)', border: '1px solid rgba(251, 191, 36, 0.2)' }}>
-          <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--warning)' }} />
-          <div className="text-sm" style={{ color: 'var(--warning)' }}>
-            <strong>Para rodar 24/7:</strong> Este frontend precisa de um backend rodando continuamente. 
-            Opcoes: <strong>Render Background Worker</strong> (gratis), 
-            <strong>GitHub Actions</strong> (agendado), 
-            <strong>Servidor proprio/VPS</strong> (PM2 + Node.js). 
-            O agendamento aqui define <em>quando</em> rodar; a execucao real precisa de um worker rodando 24/7.
-          </div>
+      <div className="px-4 py-2" style={{ borderBottom: '1px solid rgba(251, 191, 36, 0.15)', background: 'rgba(251, 191, 36, 0.03)' }}>
+        <div className="flex items-start gap-2 p-2.5 rounded-lg" style={{ background: 'rgba(251, 191, 36, 0.04)', border: '1px solid rgba(251, 191, 36, 0.12)' }}>
+          <AlertTriangle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: 'var(--amber-400)' }} />
+          <p className="text-[10px]" style={{ color: 'var(--amber-400)' }}>
+            <strong>Para rodar 24/7:</strong> Render Background Worker, GitHub Actions ou VPS + PM2.
+          </p>
         </div>
       </div>
 
-      {/* Templates */}
-      <div className="px-6 py-4" style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
-        <h3 className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-tertiary)' }}>Templates Rapidos</h3>
-        <div className="flex gap-2 flex-wrap">
+      <div className="px-4 py-2.5" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
+        <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Templates Rapidos</h3>
+        <div className="flex gap-1.5 flex-wrap">
           {scheduleTemplates.map((template) => (
-            <button
-              key={template.label}
-              onClick={() => { handleTemplateClick(template); setFormData(prev => ({...prev, nome: template.label.replace('Todo ', '').replace(' as ', ' ').replace(' a ', ' ') })); setShowModal(true); }}
-              className="px-4 py-2 rounded-xl text-sm transition-all whitespace-nowrap hover:border-[var(--accent)]"
-              style={{ 
-                background: 'var(--bg-secondary)', 
-                border: '1px solid var(--border)',
-                color: 'var(--text-primary)'
-              }}
-            >
+            <button key={template.label}
+              onClick={() => { setFormData(prev => ({...prev, tipo: template.tipo, expressao: template.expressao, nome: template.label.replace('Todo ', '').replace(' as ', ' ').replace(' a ', ' ') })); setShowModal(true) }}
+              className="px-2.5 py-1 rounded-md text-[10px] transition-all whitespace-nowrap hover:border-[var(--violet-500)]"
+              style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-tertiary)' }}>
               {template.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Lista */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-4">
         {schedules.length === 0 ? (
-          <div className="text-center py-16">
-            <Clock className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border)' }} />
-            <h3 style={{ color: 'var(--text-primary)' }}>Nenhum agendamento</h3>
-            <p style={{ color: 'var(--text-tertiary)' }}>Clique em "Novo Agendamento" para criar</p>
+          <div className="text-center py-12">
+            <Clock className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--border)' }} />
+            <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Nenhum agendamento</h3>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Clique em "Novo" para criar</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-2">
             {schedules.map((schedule) => {
               const flow = flows.find(f => f.id === schedule.flowId)
               const isDue = schedule.proximaExecucao.getTime() - Date.now() < 5 * 60 * 1000 && schedule.ativo
               
               return (
-                <div 
-                  key={schedule.id}
-                  className="card p-5 transition-all duration-200 hover:border-[var(--accent)]"
-                  style={{
-                    opacity: schedule.ativo ? 1 : 0.7,
-                    boxShadow: isDue ? '0 0 0 2px var(--cyan)' : 'none'
-                  }}
-                >
+                <div key={schedule.id} className="card p-3.5 transition-all duration-200 hover:border-[var(--violet-500)]" style={{ opacity: schedule.ativo ? 1 : 0.6 }}>
                   <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{
-                        background: schedule.ativo ? 'rgba(6, 214, 160, 0.2)' : 'var(--bg-secondary)'
-                      }}>
-                        <Clock className="w-6 h-6" style={{ color: schedule.ativo ? 'var(--neon)' : 'var(--text-tertiary)' }} />
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: schedule.ativo ? 'rgba(52, 211, 153, 0.08)' : 'var(--bg-secondary)' }}>
+                        <Clock className="w-4 h-4" style={{ color: schedule.ativo ? 'var(--emerald-400)' : 'var(--text-muted)' }} />
                       </div>
                       <div className="min-w-0">
-                        <div className="flex items-center gap-3">
-                          <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{schedule.nome}</h3>
-                          <span className="px-2 py-0.5 rounded text-xs font-medium" style={{
-                            background: schedule.ativo ? 'rgba(6, 214, 160, 0.2)' : 'var(--bg-secondary)',
-                            color: schedule.ativo ? 'var(--neon)' : 'var(--text-tertiary)'
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-sm truncate" style={{ color: 'var(--text-primary)' }}>{schedule.nome}</h3>
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{
+                            background: schedule.ativo ? 'rgba(52, 211, 153, 0.1)' : 'var(--bg-secondary)',
+                            color: schedule.ativo ? 'var(--emerald-400)' : 'var(--text-muted)'
                           }}>
                             {schedule.ativo ? 'Ativo' : 'Pausado'}
                           </span>
                           {isDue && (
-                            <span className="px-2 py-0.5 rounded text-xs font-medium animate-pulse" style={{
-                              background: 'rgba(34, 211, 238, 0.2)',
-                              color: 'var(--cyan)'
-                            }}>
-                              Executando em breve
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-medium animate-pulse" style={{ background: 'rgba(34, 211, 238, 0.1)', color: 'var(--cyan-400)' }}>
+                              Executando
                             </span>
                           )}
                         </div>
-                        <p className="text-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>{flow?.nome}</p>
-                        <div className="flex items-center gap-4 mt-2 text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            Proxima: {schedule.proximaExecucaoStr}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Repeat className="w-3 h-3" />
-                            Cron: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>{schedule.expressao}</code>
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Sun className="w-3 h-3" />
-                            {schedule.timezone}
-                          </span>
+                        <p className="text-[10px] mt-0.5" style={{ color: 'var(--text-muted)' }}>{flow?.nome}</p>
+                        <div className="flex items-center gap-3 mt-1 text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                          <span className="flex items-center gap-1"><Calendar className="w-2.5 h-2.5" />{schedule.proximaExecucaoStr}</span>
+                          <span className="flex items-center gap-1"><Repeat className="w-2.5 h-2.5" /><code className="px-1 py-0.5 rounded" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>{schedule.expressao}</code></span>
+                          <span className="flex items-center gap-1"><Sun className="w-2.5 h-2.5" />{schedule.timezone}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 ml-4 flex-shrink-0">
-                      <button
-                        onClick={() => setSchedules(prev => prev.map(s => s.id === schedule.id ? {...s, ativo: !s.ativo} : s))}
-                        className="p-2 rounded-lg transition-colors"
-                        style={{
-                          background: schedule.ativo ? 'rgba(34, 211, 238, 0.2)' : 'var(--bg-secondary)',
-                          color: schedule.ativo ? 'var(--cyan)' : 'var(--text-tertiary)'
-                        }}
-                        title={schedule.ativo ? 'Pausar' : 'Ativar'}
-                      >
-                        {schedule.ativo ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                    <div className="flex items-center gap-1 ml-3 flex-shrink-0">
+                      <button onClick={() => setSchedules(prev => prev.map(s => s.id === schedule.id ? {...s, ativo: !s.ativo} : s))}
+                        className="p-1.5 rounded-md transition-colors" style={{ background: schedule.ativo ? 'rgba(34, 211, 238, 0.08)' : 'var(--bg-secondary)', color: schedule.ativo ? 'var(--cyan-400)' : 'var(--text-muted)' }}
+                        title={schedule.ativo ? 'Pausar' : 'Ativar'}>
+                        {schedule.ativo ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                       </button>
-                      <button onClick={() => handleEdit(schedule)} className="p-2 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-tertiary)' }} title="Editar">
-                        <Edit3 className="w-5 h-5" />
+                      <button onClick={() => handleEdit(schedule)} className="p-1.5 rounded-md hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }} title="Editar">
+                        <Edit3 className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => handleDelete(schedule.id)} className="p-2 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-tertiary)' }} title="Excluir">
-                        <Trash className="w-5 h-5" />
+                      <button onClick={() => handleDelete(schedule.id)} className="p-1.5 rounded-md hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }} title="Excluir">
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -403,128 +240,77 @@ export function Scheduler() {
         )}
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
-          <div className="card w-full max-w-2xl max-h-[90vh] flex flex-col" style={{ boxShadow: '0 0 60px var(--accent-glow)' }}>
-            <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
-              <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                {editingSchedule ? 'Editar Agendamento' : 'Novo Agendamento'}
-              </h2>
-              <button onClick={closeModal} className="p-2 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--text-tertiary)' }}>
-                <ChevronDown className="w-5 h-5" />
+          <div className="card w-full max-w-lg max-h-[85vh] flex flex-col" style={{ boxShadow: '0 0 40px var(--accent-glow)' }}>
+            <div className="p-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
+              <h2 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{editingSchedule ? 'Editar Agendamento' : 'Novo Agendamento'}</h2>
+              <button onClick={closeModal} className="p-1 rounded hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }}>
+                <ChevronDown className="w-4 h-4" />
               </button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-3 space-y-3">
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Nome do Agendamento</label>
-                <input
-                  type="text"
-                  value={formData.nome}
-                  onChange={(e) => setFormData({...formData, nome: e.target.value})}
-                  className="input-field"
-                  placeholder="Ex: Prospeccao Diaria 9h"
-                />
+                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--text-tertiary)' }}>Nome</label>
+                <input type="text" value={formData.nome} onChange={(e) => setFormData({...formData, nome: e.target.value})} className="input-field text-xs" placeholder="Ex: Prospeccao Diaria 9h" />
               </div>
-
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Fluxo para Executar</label>
-                <select
-                  value={formData.flowId}
-                  onChange={(e) => setFormData({...formData, flowId: e.target.value})}
-                  className="input-field"
-                >
+                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--text-tertiary)' }}>Fluxo</label>
+                <select value={formData.flowId} onChange={(e) => setFormData({...formData, flowId: e.target.value})} className="input-field text-xs">
                   {flows.map(f => <option key={f.id} value={f.id}>{f.nome}</option>)}
                 </select>
               </div>
-
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Tipo de Agendamento</label>
-                <div className="flex gap-2 flex-wrap">
+                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--text-tertiary)' }}>Tipo</label>
+                <div className="flex gap-1.5 flex-wrap">
                   {(['daily', 'weekly', 'monthly', 'interval', 'cron'] as ScheduleType[]).map((tipo) => (
-                    <button
-                      key={tipo}
+                    <button key={tipo}
                       onClick={() => setFormData({...formData, tipo, expressao: tipo === 'cron' ? formData.expressao : getDefaultCron(tipo)})}
-                      className="px-4 py-2 rounded-xl text-sm font-medium transition-all"
+                      className="px-2.5 py-1.5 rounded-md text-[10px] font-medium transition-all"
                       style={{
-                        background: formData.tipo === tipo ? 'var(--accent-glow)' : 'var(--bg-secondary)',
-                        color: formData.tipo === tipo ? 'var(--accent)' : 'var(--text-tertiary)',
-                        border: `1px solid ${formData.tipo === tipo ? 'var(--accent)' : 'var(--border)'}`,
-                        boxShadow: formData.tipo === tipo ? '0 0 15px var(--accent-glow)' : 'none'
-                      }}
-                    >
-                      {tipo === 'daily' && 'Diario'}
-                      {tipo === 'weekly' && 'Semanal'}
-                      {tipo === 'monthly' && 'Mensal'}
-                      {tipo === 'interval' && 'Intervalo'}
-                      {tipo === 'cron' && 'Cron Custom'}
+                        background: formData.tipo === tipo ? 'var(--violet-600)' : 'var(--bg-secondary)',
+                        color: formData.tipo === tipo ? 'white' : 'var(--text-muted)',
+                      }}>
+                      {tipo === 'daily' && 'Diario'}{tipo === 'weekly' && 'Semanal'}{tipo === 'monthly' && 'Mensal'}{tipo === 'interval' && 'Intervalo'}{tipo === 'cron' && 'Cron'}
                     </button>
                   ))}
                 </div>
               </div>
-
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
-                  Expressao Cron {formData.tipo === 'cron' && <span style={{ color: 'var(--accent)' }}>(obrigatorio)</span>}
+                <label className="block text-[10px] font-medium mb-1" style={{ color: 'var(--text-tertiary)' }}>
+                  Expressao Cron {formData.tipo === 'cron' && <span style={{ color: 'var(--violet-400)' }}>(obrigatorio)</span>}
                 </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.expressao}
-                    onChange={(e) => setFormData({...formData, expressao: e.target.value})}
-                    className="input-field font-mono text-sm"
-                    placeholder="0 9 * * *"
-                  />
-                </div>
-                <p className="text-xs mt-2" style={{ color: 'var(--text-tertiary)' }}>
-                  Formato: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>min hora dia mes dia_semana</code>
-                  - Ex: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>0 9 * * *</code> = todo dia 9h
-                  - Ex: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>*/30 * * * *</code> = a cada 30 min
-                  - Ex: <code className="px-1.5 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>0 9 * * 1-5</code> = seg-sex 9h
+                <input type="text" value={formData.expressao} onChange={(e) => setFormData({...formData, expressao: e.target.value})} className="input-field text-xs font-mono" placeholder="0 9 * * *" />
+                <p className="text-[9px] mt-1" style={{ color: 'var(--text-muted)' }}>
+                  Formato: <code className="px-1 py-0.5 rounded" style={{ background: 'var(--bg-secondary)' }}>min hora dia mes dia_semana</code>
                 </p>
-                <div className="mt-2 text-sm">
-                  <strong style={{ color: 'var(--text-primary)' }}>Proxima execucao estimada:</strong>{' '}
-                  <span className="font-mono" style={{ color: 'var(--accent)' }}>
+                <p className="text-[10px] mt-1">
+                  <strong style={{ color: 'var(--text-primary)' }}>Proxima:</strong>{' '}
+                  <span className="font-mono" style={{ color: 'var(--violet-400)' }}>
                     {formData.expressao ? formatNextRun(getProximaExecucao(formData.expressao)) : 'Invalido'}
                   </span>
-                </div>
+                </p>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Timezone</label>
-                  <select
-                    value={formData.timezone}
-                    onChange={(e) => setFormData({...formData, timezone: e.target.value})}
-                    className="input-field"
-                  >
-                    <option value="America/Sao_Paulo">America/Sao_Paulo (UTC-3)</option>
-                    <option value="UTC">UTC</option>
-                    <option value="America/New_York">America/New_York (UTC-5)</option>
-                    <option value="Europe/London">Europe/London (UTC+0)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
-                    <input
-                      type="checkbox"
-                      checked={formData.ativo}
-                      onChange={(e) => setFormData({...formData, ativo: e.target.checked})}
-                      className="w-4 h-4 rounded"
-                      style={{ accentColor: 'var(--accent)' }}
-                    />
-                    Ativar imediatamente apos salvar
-                  </label>
-                </div>
+              <div className="flex items-center gap-2">
+                <label className="text-[10px] font-medium" style={{ color: 'var(--text-tertiary)' }}>Timezone</label>
+                <select value={formData.timezone} onChange={(e) => setFormData({...formData, timezone: e.target.value})} className="input-field text-[10px] flex-1">
+                  <option value="America/Sao_Paulo">Sao Paulo (UTC-3)</option>
+                  <option value="UTC">UTC</option>
+                  <option value="America/New_York">New York (UTC-5)</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" checked={formData.ativo} onChange={(e) => setFormData({...formData, ativo: e.target.checked})} className="w-3.5 h-3.5 rounded" style={{ accentColor: 'var(--violet-500)' }} />
+                <label className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>Ativar imediatamente</label>
               </div>
             </div>
 
-            <div className="p-4 flex justify-end gap-3" style={{ borderTop: '1px solid var(--border)' }}>
-              <button onClick={closeModal} className="btn-secondary">Cancelar</button>
-              <button onClick={handleSave} disabled={!formData.nome || !formData.expressao} className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                <Save className="w-5 h-5" />
-                {editingSchedule ? 'Salvar Alteracoes' : 'Criar Agendamento'}
+            <div className="p-3 flex justify-end gap-2" style={{ borderTop: '1px solid var(--border)' }}>
+              <button onClick={closeModal} className="btn-secondary text-xs py-2 px-3">Cancelar</button>
+              <button onClick={handleSave} disabled={!formData.nome || !formData.expressao} className="btn-primary text-xs py-2 px-3 disabled:opacity-50">
+                <Save className="w-3.5 h-3.5" />
+                {editingSchedule ? 'Salvar' : 'Criar'}
               </button>
             </div>
           </div>

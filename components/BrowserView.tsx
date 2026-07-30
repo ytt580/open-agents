@@ -1,16 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { 
-  Globe, 
-  Search,
-  MapPin,
-  ExternalLink,
-  Clock,
-  Trash2,
-  Plus,
-  Sparkles
-} from 'lucide-react'
+import { Globe, Search, MapPin, Clock, Trash2, Plus } from 'lucide-react'
 
 interface SavedSite {
   nome: string
@@ -47,78 +38,54 @@ export function BrowserView() {
     setShowAddSite(false)
   }
 
-  const removeSite = (url: string) => {
-    setSites(prev => prev.filter(s => s.url !== url))
-  }
+  const removeSite = (url: string) => setSites(prev => prev.filter(s => s.url !== url))
 
   return (
-    <div className="flex h-screen" style={{ background: 'var(--bg-primary)' }}>
+    <div className="flex h-screen" style={{ background: 'var(--bg-void)' }}>
       {/* Sidebar */}
-      <div className="w-72 flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--surface)' }}>
-        <div className="p-4" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+      <div className="w-64 flex flex-col" style={{ borderRight: '1px solid var(--border)', background: 'var(--bg-primary)' }}>
+        <div className="p-3" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-tertiary)' }} />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'var(--text-muted)' }} />
             <input
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && url && openUrl(url)}
               placeholder="Digite uma URL..."
-              className="input-field pl-10"
+              className="input-field text-xs pl-8"
             />
           </div>
         </div>
 
-        <div className="p-4" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Sites Salvos</h3>
-            <button onClick={() => setShowAddSite(!showAddSite)} className="p-1 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]" style={{ color: 'var(--accent)' }}>
-              <Plus className="w-4 h-4" />
+        <div className="p-3" style={{ borderBottom: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Sites Salvos</h3>
+            <button onClick={() => setShowAddSite(!showAddSite)} className="p-1 rounded hover:bg-[var(--surface-hover)]" style={{ color: 'var(--violet-400)' }}>
+              <Plus className="w-3 h-3" />
             </button>
           </div>
 
           {showAddSite && (
-            <div className="space-y-2 mb-3">
-              <input
-                type="text"
-                value={newSiteName}
-                onChange={(e) => setNewSiteName(e.target.value)}
-                placeholder="Nome do site"
-                className="input-field text-sm"
-              />
-              <input
-                type="text"
-                value={newSiteUrl}
-                onChange={(e) => setNewSiteUrl(e.target.value)}
-                placeholder="URL (ex: google.com)"
-                className="input-field text-sm"
-                onKeyDown={(e) => e.key === 'Enter' && addSite()}
-              />
-              <button onClick={addSite} className="btn-primary w-full text-sm py-2">
-                Salvar
-              </button>
+            <div className="space-y-1.5 mb-2.5">
+              <input type="text" value={newSiteName} onChange={(e) => setNewSiteName(e.target.value)} placeholder="Nome" className="input-field text-[10px]" />
+              <input type="text" value={newSiteUrl} onChange={(e) => setNewSiteUrl(e.target.value)} placeholder="URL" className="input-field text-[10px]"
+                onKeyDown={(e) => e.key === 'Enter' && addSite()} />
+              <button onClick={addSite} className="btn-primary w-full text-[10px] py-1.5">Salvar</button>
             </div>
           )}
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             {sites.map((site) => {
               const Icon = site.icon
               return (
-                <div key={site.url} className="flex items-center gap-2 group">
-                  <button 
-                    onClick={() => openUrl(site.url)} 
-                    className="flex-1 flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-200 hover:border-[var(--accent)]"
-                    style={{ border: '1px solid var(--border)' }}
-                  >
-                    <Icon className="w-5 h-5" style={{ color: 'var(--cyan)' }} />
-                    <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{site.nome}</span>
+                <div key={site.url} className="flex items-center gap-1.5 group">
+                  <button onClick={() => openUrl(site.url)} className="flex-1 flex items-center gap-2 p-2 rounded-lg text-left transition-all hover:border-[var(--violet-500)]" style={{ border: '1px solid var(--border)' }}>
+                    <Icon className="w-3.5 h-3.5" style={{ color: 'var(--cyan-400)' }} />
+                    <span className="text-[10px] font-medium" style={{ color: 'var(--text-primary)' }}>{site.nome}</span>
                   </button>
-                  <button 
-                    onClick={() => removeSite(site.url)} 
-                    className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[var(--bg-secondary)]"
-                    style={{ color: 'var(--text-tertiary)' }}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
+                  <button onClick={() => removeSite(site.url)} className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-[var(--surface-hover)]" style={{ color: 'var(--text-muted)' }}>
+                    <Trash2 className="w-2.5 h-2.5" />
                   </button>
                 </div>
               )
@@ -126,20 +93,16 @@ export function BrowserView() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
-          <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Historico</h3>
+        <div className="flex-1 overflow-y-auto p-3">
+          <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Historico</h3>
           {history.length === 0 ? (
-            <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Nenhum site visitado</p>
+            <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Nenhum site visitado</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {history.map((h, i) => (
-                <button 
-                  key={i} 
-                  onClick={() => openUrl(h)} 
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-left transition-colors hover:bg-[var(--bg-secondary)]"
-                >
-                  <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
-                  <span className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{h}</span>
+                <button key={i} onClick={() => openUrl(h)} className="w-full flex items-center gap-1.5 p-1.5 rounded-md text-left hover:bg-[var(--surface-hover)]">
+                  <Clock className="w-2.5 h-2.5 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
+                  <span className="text-[10px] truncate" style={{ color: 'var(--text-tertiary)' }}>{h}</span>
                 </button>
               ))}
             </div>
@@ -148,28 +111,28 @@ export function BrowserView() {
       </div>
 
       {/* Main Area */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8" style={{ background: 'var(--bg-secondary)' }}>
-        <div className="text-center max-w-md">
-          <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(34, 211, 238, 0.15)' }}>
-            <Globe className="w-10 h-10" style={{ color: 'var(--cyan)' }} />
+      <div className="flex-1 flex flex-col items-center justify-center p-6" style={{ background: 'var(--bg-secondary)' }}>
+        <div className="text-center max-w-sm">
+          <div className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(34, 211, 238, 0.08)' }}>
+            <Globe className="w-8 h-8" style={{ color: 'var(--cyan-400)' }} />
           </div>
-          <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Navegador</h2>
-          <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>
-            Digite uma URL acima ou selecione um site salvo para abrir em uma nova aba
+          <h2 className="text-lg font-bold mb-1" style={{ color: 'var(--text-primary)' }}>Navegador</h2>
+          <p className="text-xs mb-4" style={{ color: 'var(--text-tertiary)' }}>
+            Digite uma URL acima ou selecione um site salvo para abrir em nova aba
           </p>
-          <div className="card p-4 text-left">
-            <p className="text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Como funciona:</p>
-            <ul className="space-y-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-              <li className="flex items-start gap-2">
-                <span style={{ color: 'var(--accent)' }}>1.</span>
+          <div className="card p-3 text-left">
+            <p className="text-[10px] font-medium mb-1.5" style={{ color: 'var(--text-primary)' }}>Como funciona:</p>
+            <ul className="space-y-1 text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
+              <li className="flex items-start gap-1.5">
+                <span style={{ color: 'var(--violet-400)' }}>1.</span>
                 <span>Digite uma URL no campo de busca</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span style={{ color: 'var(--cyan)' }}>2.</span>
+              <li className="flex items-start gap-1.5">
+                <span style={{ color: 'var(--cyan-400)' }}>2.</span>
                 <span>O site abre na sua aba do navegador</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span style={{ color: 'var(--neon)' }}>3.</span>
+              <li className="flex items-start gap-1.5">
+                <span style={{ color: 'var(--emerald-400)' }}>3.</span>
                 <span>Use o Copilot para automatizar acoes</span>
               </li>
             </ul>
